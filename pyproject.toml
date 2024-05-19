@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=7"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wenxian"
+dynamic = ["version"]
+description = "Generate references."
+authors = [
+    { name = "Jinzhe Zeng", email = "jinzhe.zeng@rutgers.edu"},
+]
+license = { file = "LICENSE" }
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+]
+dependencies = [
+    "requests",
+    "pylatexenc",
+    "metapub",
+    "unidecode",
+    "pyiso4",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+keywords = ["bib"]
+
+[project.scripts]
+wenxian = "wenxian.__main__:main"
+
+[project.urls]
+repository = "https://github.com/njzjz/wenxian"
+
+[project.optional-dependencies]
+test = [
+    'pytest',
+]
+
+[tool.setuptools.packages.find]
+include = ["wenxian*"]
+
+[tool.setuptools_scm]
+
+[tool.ruff.lint]
+select = [
+    "E", # errors
+    "W", # warnings
+    "F", # pyflakes
+    "D", # pydocstyle
+	"I", # isort
+    "UP", # pyupgrade
+    "C4", # flake8-comprehensions
+    "RUF", # ruff
+    "I", # isort
+    "TCH", # flake8-type-checking
+    "T", # flake8-print
+]
+ignore = [
+    "E501", # line too long
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]

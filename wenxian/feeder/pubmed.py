@@ -1,0 +1,152 @@
+"""Feeder for PubMed."""
+
+from __future__ import annotations
+
+from typing import ClassVar, overload
+from xml.etree import ElementTree
+
+import requests
+
+from wenxian import __email__, __tool__
+from wenxian.feeder.feeder import Feeder
+from wenxian.reference import Name, Reference
+
+
+class Pubmed(Feeder):
+    """Feeder for PubMed."""
+
+    def _doi2pmid_pmc(self, doi: str) -> str | None:
+        """Convert DOI to PMID using PMC database.
+
+        Parameters
+        ----------
+        doi : str
+            A DOI string.
+
+        Returns
+        -------
+        str | None
+            A PMID string if found or None if not found.
+        """
+        r = requests.get(
+            "http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/",
+            params={"tool": __tool__, "email": __email__, "ids": doi, "format": "json"},
+        )
+        res = r.json()
+        if res["status"] == "error":
+            return None
+        records = res["records"]
+
+        if records and "pmid" in records[0]:
+            return records[0]["pmid"]
+
+    def _doi2pmid_search(self, doi: str) -> str | None:
+        """Convert DOI to PMID using PubMed search.
+
+        The returned PMID may be incorrect if the reference is not in the
+        database. Need to validate it.
+
+        Parameters
+        ----------
+        doi : str
+            A DOI string.
+
+        Returns
+        -------
+        str | None
+            A PMID string if found or None if not found.
+        """
+        r = requests.get(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+            params={
+                "tool": __tool__,
+                "email": __email__,
+                "db": "pubmed",
+                "term": doi,
+                "retmode": "json",
+                "retmax": 1,
+            },
+        )
+        records = r.json()["esearchresult"]["idlist"]
+
+        if records:
+            return records[0]
+
+    @overload
+    def _text(self, node: ElementTree.Element) -> str: ...
+
+    @overload
+    def _text(self, node: None) -> None: ...
+
+    def _text(self, node: ElementTree.Element | None) -> str | None:
+        """Read text from node, return None if node is None."""
+        return "".join(node.itertext()) if node is not None else None
+
+    PUBMED_PATH: ClassVar[dict[str, str]] = {
+        "author": "PubmedArticle/MedlineCitation/Article/AuthorList/Author",
+        "title": "PubmedArticle/MedlineCitation/Article/ArticleTitle",
+        "abstract": "PubmedArticle/MedlineCitation/Article/Abstract/AbstractText",
+        "journal": "PubmedArticle/MedlineCitation/Article/Journal/Title",
+        "volume": "PubmedArticle/MedlineCitation/Article/Journal/JournalIssue/Volume",
+        "issue": "PubmedArticle/MedlineCitation/Article/Journal/JournalIssue/Issue",
+        "year": "PubmedArticle/MedlineCitation/Article/Journal/JournalIssue/PubDate/Year",
+        "pages": "PubmedArticle/MedlineCitation/Article/Pagination/MedlinePgn",
+        "doi": "PubmedArticle/PubmedData/ArticleIdList/ArticleId[@IdType='doi']",
+    }
+    """XPath for PubMed XML."""
+
+    def from_doi(self, doi: str) -> Reference | None:
+        """Fetch a reference from a DOI."""
+        # get PMID. PMC is more reliable than search
+        pmid = self._doi2pmid_pmc(doi)
+        if pmid is None:
+            pmid = self._doi2pmid_search(doi)
+        if pmid is None:
+            # not found
+            return
+        r = requests.get(
+            "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+            params={
+                "tool": __tool__,
+                "email": __email__,
+                "db": "pubmed",
+                "id": pmid,
+                "format": "xml",
+            },
+        )
+        tree = ElementTree.fromstring(r.content)
+        fetched_doi = self._text(tree.find(self.PUBMED_PATH["doi"]))
+        if fetched_doi != doi:
+            # DOI not match, ignore
+            return
+        rets = {}
+        for key, path in self.PUBMED_PATH.items():
+            if key in ("author",):
+                # require to find all
+                rets[key] = tree.findall(path)
+            else:
+                rets[key] = self._text(tree.find(path))
+
+        if rets["author"] is not None:
+            author = []
+            for aa in rets["author"]:
+                author.append(
+                    Name(
+                        first=self._text(aa.find("ForeName")),
+                        last=self._text(aa.find("LastName")),
+                        suffix=self._text(aa.find("Suffix")),
+                    )
+                )
+        else:
+            author = None
+        return Reference(
+            author=author,
+            title=rets["title"].rstrip("."),
+            journal=rets["journal"],
+            year=self._int(rets["year"]),
+            volume=self._int(rets["volume"]),
+            issue=self._int(rets["issue"]),
+            pages=self._pages(rets["pages"]),
+            annote=rets["abstract"],
+            doi=doi,
+        )

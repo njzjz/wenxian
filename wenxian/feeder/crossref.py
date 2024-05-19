@@ -1,0 +1,69 @@
+"""Feeder for Crossref API."""
+
+from __future__ import annotations
+
+import requests
+
+from wenxian.feeder.feeder import Feeder
+from wenxian.reference import Name, Reference
+
+
+class Crossref(Feeder):
+    """Feeder for Crossref API."""
+
+    def from_doi(self, doi: str) -> Reference | None:
+        """Fetch a reference from a DOI."""
+        r = requests.get(
+            f"https://api.crossref.org/works/{doi}",
+        )
+        res = r.json()
+
+        m = res["message"]
+        # title
+        if "title" in m:
+            title = m["title"][0]
+        else:
+            title = None
+        # author
+        if "author" in m:
+            author = []
+            for aa in m["author"]:
+                author.append(Name(first=aa["given"], last=aa["family"]))
+        else:
+            author = None
+        # volume & issue
+        volume = m.get("volume")
+        issue = m.get("issue")
+        # page
+        if "page" in m:
+            page = m["page"]
+        elif "article-number" in m:
+            page = m["article-number"]
+        else:
+            page = None
+        # abstract
+        abstract = m.get("abstract")
+
+        # year
+        if "published-print" in m:
+            year = m["published-print"]["date-parts"][0][0]
+        elif "published-online" in m:
+            year = m["published-online"]["date-parts"][0][0]
+        else:
+            year = None
+        # journal
+        if m.get("short-container-title"):
+            journal = m["short-container-title"][0]
+        else:
+            journal = None
+        return Reference(
+            author=author,
+            title=title,
+            journal=journal,
+            year=self._int(year),
+            volume=self._int(volume),
+            issue=self._int(issue),
+            pages=self._pages(page),
+            annote=abstract,
+            doi=doi,
+        )
