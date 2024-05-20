@@ -1,5 +1,3 @@
-
-
 """Feeder for Crossref API."""
 
 from __future__ import annotations
@@ -16,9 +14,7 @@ class Semanticscholar(Feeder):
         """Fetch a reference from a identifier."""
         r = SESSION.get(
             f"https://api.semanticscholar.org/graph/v1/paper/{identifier}",
-            params={
-                "fields": "title,year,abstract,authors.name,journal,externalIds"
-            }
+            params={"fields": "title,year,abstract,authors.name,journal,externalIds"},
         )
         if r.status_code == 404:
             # DOI not found

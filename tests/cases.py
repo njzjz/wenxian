@@ -342,10 +342,10 @@ TEST_CASES = [
     ReferenceCase(
         reference=Reference(
             author=[
-                Author(first='Jinzhe', last='Zeng'),
-                Author(first='Linfeng', last='Zhang'),
-                Author(first='Han', last='Wang'),
-                Author(first='Tong', last='Zhu')
+                Author(first="Jinzhe", last="Zeng"),
+                Author(first="Linfeng", last="Zhang"),
+                Author(first="Han", last="Wang"),
+                Author(first="Tong", last="Zhu"),
             ],
             title="Exploring the Chemical Space of Linear Alkane Pyrolysis via Deep Potential GENerator",
             journal="Energy Fuels",
@@ -353,11 +353,13 @@ TEST_CASES = [
             volume=35,
             issue=1,
             pages=(762, 769),
-            annote = textwrap.dedent("""\
+            annote=textwrap.dedent("""\
                 Reactive molecular dynamics (MD) simulation is a powerful tool to study the reaction
                 mechanism of complex chemical systems. Central to the method is the potential energy
-                surface (PES) that can desc...""").strip().replace("\n", " "),
-            doi="10.1021/acs.energyfuels.0c03211"
+                surface (PES) that can desc...""")
+            .strip()
+            .replace("\n", " "),
+            doi="10.1021/acs.energyfuels.0c03211",
         ),
         expected_bibtex=textwrap.dedent(r"""
             @Article{Zeng_EnergyFuels_2021_v35_p762,
@@ -374,5 +376,5 @@ TEST_CASES = [
                          study the reaction mechanism of complex chemical systems. Central to
                          the method is the potential energy surface (PES) that can desc...},
             }""").strip(),
-    )
+    ),
 ]

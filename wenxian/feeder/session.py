@@ -36,9 +36,7 @@ adapter_arxiv = LimiterAdapter(
 )
 SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
 # https://www.semanticscholar.org/product/api
-adapter_semanticscholar = LimiterAdapter(
-    per_second=1, max_retries=retries
-)
+adapter_semanticscholar = LimiterAdapter(per_second=1, max_retries=retries)
 SESSION.mount("https://api.semanticscholar.org/", adapter_semanticscholar)
 
 SESSION.mount("https://", HTTPAdapter(max_retries=retries))
