@@ -214,4 +214,128 @@ TEST_CASES = [
             """).strip(),
         arxiv="1910.12690",
     ),
+    # test pii
+    ReferenceCase(
+        Reference(
+            author=[
+                Author(first="Jinzhe", last="Zeng"),
+                Author(first="Duo", last="Zhang"),
+                Author(first="Denghui", last="Lu"),
+                Author(first="Pinghui", last="Mo"),
+                Author(first="Zeyu", last="Li"),
+                Author(first="Yixiao", last="Chen"),
+                Author(first="Marián", last="Rynik"),
+                Author(first="Li'ang", last="Huang"),
+                Author(first="Ziyao", last="Li"),
+                Author(first="Shaochen", last="Shi"),
+                Author(first="Yingze", last="Wang"),
+                Author(first="Haotian", last="Ye"),
+                Author(first="Ping", last="Tuo"),
+                Author(first="Jiabin", last="Yang"),
+                Author(first="Ye", last="Ding"),
+                Author(first="Yifan", last="Li"),
+                Author(first="Davide", last="Tisi"),
+                Author(first="Qiyu", last="Zeng"),
+                Author(first="Han", last="Bao"),
+                Author(first="Yu", last="Xia"),
+                Author(first="Jiameng", last="Huang"),
+                Author(first="Koki", last="Muraoka"),
+                Author(first="Yibo", last="Wang"),
+                Author(first="Junhan", last="Chang"),
+                Author(first="Fengbo", last="Yuan"),
+                Author(first="Sigbjørn Løland", last="Bore"),
+                Author(first="Chun", last="Cai"),
+                Author(first="Yinnian", last="Lin"),
+                Author(first="Bo", last="Wang"),
+                Author(first="Jiayan", last="Xu"),
+                Author(first="Jia-Xin", last="Zhu"),
+                Author(first="Chenxing", last="Luo"),
+                Author(first="Yuzhi", last="Zhang"),
+                Author(first="Rhys E. A.", last="Goodall"),
+                Author(first="Wenshuo", last="Liang"),
+                Author(first="Anurag Kumar", last="Singh"),
+                Author(first="Sikai", last="Yao"),
+                Author(first="Jingchao", last="Zhang"),
+                Author(first="Renata", last="Wentzcovitch"),
+                Author(first="Jiequn", last="Han"),
+                Author(first="Jie", last="Liu"),
+                Author(first="Weile", last="Jia"),
+                Author(first="Darrin M.", last="York"),
+                Author(first="Weinan", last="E"),
+                Author(first="Roberto", last="Car"),
+                Author(first="Linfeng", last="Zhang"),
+                Author(first="Han", last="Wang"),
+            ],
+            title="DeePMD-kit v2: A software package for deep potential models",
+            journal="The Journal of chemical physics",
+            year=2023,
+            volume=159,
+            issue=5,
+            pages="054801",
+            doi="10.1063/5.0155600",
+            annote=textwrap.dedent(
+                """\
+                DeePMD-kit is a powerful open-source software package that facilitates
+                molecular dynamics simulations using machine learning potentials known
+                as Deep Potential (DP) models. This package, which was released in
+                2017, has been widely used in the fields of physics, chemistry,
+                biology, and material science for studying atomistic systems. The
+                current version of DeePMD-kit offers numerous advanced features, such
+                as DeepPot-SE, attention-based and hybrid descriptors, the ability to
+                fit tensile properties, type embedding, model deviation, DP-range
+                correction, DP long range, graphics processing unit support for
+                customized operators, model compression, non-von Neumann molecular
+                dynamics, and improved usability, including documentation, compiled
+                binary packages, graphical user interfaces, and application
+                programming interfaces. This article presents an overview of the
+                current major version of the DeePMD-kit package, highlighting its
+                features and technical details. Additionally, this article presents a
+                comprehensive procedure for conducting molecular dynamics as a
+                representative application, benchmarks the accuracy and efficiency of
+                different models, and discusses ongoing developments.
+                """
+            )
+            .strip()
+            .replace("\n", " "),
+        ),
+        textwrap.dedent(r"""
+        @Article{Zeng_JChemPhys_2023_v159_p054801,
+            author =   {Jinzhe Zeng and Duo Zhang and Denghui Lu and Pinghui Mo and Zeyu Li
+                     and Yixiao Chen and Mari{\'a}n Rynik and Li'ang Huang and Ziyao Li and
+                     Shaochen Shi and Yingze Wang and Haotian Ye and Ping Tuo and Jiabin
+                     Yang and Ye Ding and Yifan Li and Davide Tisi and Qiyu Zeng and Han
+                     Bao and Yu Xia and Jiameng Huang and Koki Muraoka and Yibo Wang and
+                     Junhan Chang and Fengbo Yuan and Sigbj{\o}rn L{\o}land Bore and Chun
+                     Cai and Yinnian Lin and Bo Wang and Jiayan Xu and Jia-Xin Zhu and
+                     Chenxing Luo and Yuzhi Zhang and Rhys E. A. Goodall and Wenshuo Liang
+                     and Anurag Kumar Singh and Sikai Yao and Jingchao Zhang and Renata
+                     Wentzcovitch and Jiequn Han and Jie Liu and Weile Jia and Darrin M.
+                     York and Weinan E and Roberto Car and Linfeng Zhang and Han Wang},
+            title =    {{DeePMD-kit v2: A software package for deep potential models}},
+            journal =  {J. Chem. Phys.},
+            year =     2023,
+            volume =   159,
+            issue =    5,
+            pages =    054801,
+            doi =      {10.1063/5.0155600},
+            annote =   {DeePMD-kit is a powerful open-source software package that facilitates
+                     molecular dynamics simulations using machine learning potentials known
+                     as Deep Potential (DP) models. This package, which was released in
+                     2017, has been widely used in the fields of physics, chemistry,
+                     biology, and material science for studying atomistic systems. The
+                     current version of DeePMD-kit offers numerous advanced features, such
+                     as DeepPot-SE, attention-based and hybrid descriptors, the ability to
+                     fit tensile properties, type embedding, model deviation, DP-range
+                     correction, DP long range, graphics processing unit support for
+                     customized operators, model compression, non-von Neumann molecular
+                     dynamics, and improved usability, including documentation, compiled
+                     binary packages, graphical user interfaces, and application
+                     programming interfaces. This article presents an overview of the
+                     current major version of the DeePMD-kit package, highlighting its
+                     features and technical details. Additionally, this article presents a
+                     comprehensive procedure for conducting molecular dynamics as a
+                     representative application, benchmarks the accuracy and efficiency of
+                     different models, and discusses ongoing developments.},
+        }"""),
+    ),
 ]

@@ -83,6 +83,7 @@ class Pubmed(Feeder):
         "year": "PubmedArticle/MedlineCitation/Article/Journal/JournalIssue/PubDate/Year",
         "pages": "PubmedArticle/MedlineCitation/Article/Pagination/MedlinePgn",
         "doi": "PubmedArticle/PubmedData/ArticleIdList/ArticleId[@IdType='doi']",
+        "pii": "PubmedArticle/MedlineCitation/Article/ELocationID[@EIdType='pii']",
     }
     """XPath for PubMed XML."""
 
@@ -150,7 +151,7 @@ class Pubmed(Feeder):
             year=self._int(rets["year"]),
             volume=self._int(rets["volume"]),
             issue=self._int(rets["issue"]),
-            pages=self._pages(rets["pages"]),
+            pages=self._pages(rets["pages"]) or rets["pii"],
             annote=rets["abstract"],
             doi=fetched_doi,
         )
