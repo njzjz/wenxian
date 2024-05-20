@@ -5,6 +5,7 @@ from __future__ import annotations
 from wenxian.feeder.arxiv import Arxiv
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.pubmed import Pubmed
+from wenxian.feeder.semanticscholar import Semanticscholar
 from wenxian.identifier import Identifier, get_identifier_type
 from wenxian.reference import Reference
 
@@ -17,6 +18,7 @@ def from_doi(doi: str) -> Reference | None:
         | Pubmed().from_doi(doi)
         | Crossref().from_doi(doi)
         | Arxiv().from_doi(doi)
+        | Semanticscholar().from_doi(doi)
     )
 
 
@@ -28,6 +30,7 @@ def from_pmid(pmid: str | int) -> Reference | None:
 
 def from_arxiv(arxiv: str) -> Reference | None:
     """Fetch a reference from an arXiv identifier."""
+    # arxiv api has all information for arxiv papers
     return Reference() | Arxiv().from_arxiv(arxiv)
 
 
