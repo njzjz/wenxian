@@ -9,7 +9,7 @@ import requests
 
 from wenxian import __email__, __tool__
 from wenxian.feeder.feeder import Feeder
-from wenxian.reference import Name, Reference
+from wenxian.reference import Author, Reference
 
 
 class Pubmed(Feeder):
@@ -130,9 +130,15 @@ class Pubmed(Feeder):
         if author_tree is not None:
             author = []
             for aa in author_tree:
+                first = self._text(aa.find("ForeName"))
+                if first is not None:
+                    # add period if it is a single letter, e.g., Darrin M -> Darrin M.
+                    first = " ".join(
+                        f"{x}." if len(x) == 1 else x for x in first.split()
+                    )
                 author.append(
-                    Name(
-                        first=self._text(aa.find("ForeName")),
+                    Author(
+                        first=first,
                         last=self._text(aa.find("LastName")),
                         suffix=self._text(aa.find("Suffix")),
                     )

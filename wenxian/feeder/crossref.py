@@ -5,7 +5,7 @@ from __future__ import annotations
 import requests
 
 from wenxian.feeder.feeder import Feeder
-from wenxian.reference import Name, Reference
+from wenxian.reference import Author, Reference
 
 
 class Crossref(Feeder):
@@ -28,7 +28,7 @@ class Crossref(Feeder):
         if "author" in m:
             author = []
             for aa in m["author"]:
-                author.append(Name(first=aa["given"], last=aa["family"]))
+                author.append(Author(first=aa["given"], last=aa["family"]))
         else:
             author = None
         # volume & issue
