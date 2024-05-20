@@ -16,7 +16,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.x
-    - run: python -m build
+    - run: pipx run build
     - name: Upload release distributions
       uses: actions/upload-artifact@v4
       with:
