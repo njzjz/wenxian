@@ -3,7 +3,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/wenxian)
 ![Pepy Total Downlods](https://img.shields.io/pepy/dt/wenxian)
 
-`wenxian` is a tool to generate BibTeX files from given identifiers (DOI, PIMD, or arXiv ID).
+`wenxian` is a tool to generate BibTeX files from given identifiers (DOI, PMID, or arXiv ID).
 
 > 子曰:“夏礼，吾能言之，杞不足征也。殷礼，吾能言之，宋不足征也。<b>文献</b>不足故也。足，则吾能征之矣。”——《论语》
 
