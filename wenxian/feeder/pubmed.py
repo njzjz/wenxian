@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, overload
+from typing import ClassVar
 from xml.etree import ElementTree
 
 from wenxian import __email__, __tool__
@@ -72,16 +72,6 @@ class Pubmed(Feeder):
         if records:
             return records[0]
         return None
-
-    @overload
-    def _text(self, node: ElementTree.Element) -> str: ...
-
-    @overload
-    def _text(self, node: None) -> None: ...
-
-    def _text(self, node: ElementTree.Element | None) -> str | None:
-        """Read text from node, return None if node is None."""
-        return "".join(node.itertext()) if node is not None else None
 
     PUBMED_PATH: ClassVar[dict[str, str]] = {
         "author": "PubmedArticle/MedlineCitation/Article/AuthorList/Author",

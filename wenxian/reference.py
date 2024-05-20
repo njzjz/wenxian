@@ -44,7 +44,7 @@ class Reference:
     year: int | None = None
     volume: int | None = None
     issue: int | None = None
-    pages: tuple[int] | tuple[int, int] | None = None
+    pages: tuple[int] | tuple[int, int] | str | None = None
     annote: str | None = None
     doi: str | None = None
 
@@ -65,13 +65,23 @@ class Reference:
         journal_abbr = self.journal_abbr
         if journal_abbr is None:
             raise ValueError("No journal is found.")
-        return "{last}_{journal}_{year}_v{volume}_p{page}".format(
+        if self.pages is None:
+            first_page: str | int | None = None
+        elif isinstance(self.pages, tuple):
+            first_page = self.pages[0]
+        else:
+            first_page = self.pages
+        key = "{last}_{journal}".format(
             last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
             journal=re.sub(r"[\ \-\.]", "", journal_abbr),
-            year=self.year,
-            volume=self.volume,
-            page=self.pages[0] if self.pages is not None else None,
         )
+        if self.year is not None:
+            key += f"self_{self.year}"
+        if self.volume is not None:
+            key += f"_v{self.volume}"
+        if first_page is not None:
+            key += f"_p{first_page}"
+        return key
 
     @property
     def bibtex(self) -> str:
@@ -82,8 +92,10 @@ class Reference:
             author_string = " and ".join(str(aa) for aa in self.author)
         if self.pages is None:
             page_string = None
-        else:
+        elif isinstance(self.pages, tuple):
             page_string = "--".join(str(x) for x in self.pages)
+        else:
+            page_string = str(self.pages)
 
         data = {
             "author": author_string,
@@ -139,4 +151,20 @@ class Reference:
             pages=self.pages or other.pages,
             annote=self.annote or other.annote,
             doi=self.doi or other.doi,
+        )
+
+    def is_empty(self) -> bool:
+        """Check if the reference is empty."""
+        return all(
+            (
+                self.author is None,
+                self.title is None,
+                self.journal is None,
+                self.year is None,
+                self.volume is None,
+                self.issue is None,
+                self.pages is None,
+                self.annote is None,
+                self.doi is None,
+            )
         )

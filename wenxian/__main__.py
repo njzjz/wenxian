@@ -19,7 +19,7 @@ def cmd_from(
     references = []
     for identifier in IDENTIFIER:
         ref = from_identifier(identifier)
-        if ref is None:
+        if ref is None or ref.is_empty():
             raise ValueError(f"Failed to fetch reference from {identifier}")
         references.append(ref)
         buff.append(ref.bibtex)
@@ -43,7 +43,10 @@ def main_parser() -> argparse.ArgumentParser:
         "from", help="Generate BibTeX from a identifier."
     )
     parser_from.add_argument(
-        "IDENTIFIER", type=str, nargs="+", help="Identifier. Support DOI and PMID."
+        "IDENTIFIER",
+        type=str,
+        nargs="+",
+        help="Identifier. Support DOI, PMID, and arXiv ID.",
     )
     parser_from.add_argument(
         "-o",
