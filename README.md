@@ -9,6 +9,12 @@
 
 ## Usage
 
+### Use wenxian in the browser
+
+Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to use wenxian in the browser.
+
+### Command line interface
+
 `wenxian` requires Python 3.8. It's suggested to install [`pipx`](https://github.com/pypa/pipx) first:
 
 ```sh
