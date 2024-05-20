@@ -12,7 +12,9 @@ if TYPE_CHECKING:
     from wenxian.reference import Reference
 
 
-@pytest.mark.parametrize("reference, expected", TEST_CASES)
+@pytest.mark.parametrize(
+    "reference, expected", [(cc.reference, cc.expected_bibtex) for cc in TEST_CASES]
+)
 def test_bibtex(reference: Reference, expected):
     """Test generating BibTeX entries from references."""
     assert reference.bibtex.strip() == expected
