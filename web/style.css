@@ -1,0 +1,125 @@
+html,
+body {
+  width: 100%;
+  margin: 0;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+p {
+  word-break: break-all;
+}
+
+@media (max-width: 500px) {
+  h1 {
+    margin-top: 80px;
+  }
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.block {
+  display: block;
+  position: relative;
+}
+
+.identifier {
+  font-size: 18px;
+  padding: 10px 10px 10px 5px;
+  position: relative;
+  width: 300px;
+  border: none;
+  border-bottom: 1px solid #bfbfbf;
+}
+
+input:focus {
+  outline: none;
+}
+
+.bar {
+  content: "";
+  height: 2px;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+  background: #00bfb3;
+  transition: 0.2s ease transform;
+  -moz-transition: 0.2s ease transform;
+  -webkit-transition: 0.2s ease transform;
+  transform: scaleX(0);
+}
+
+.identifier:focus ~ .bar {
+  transform: scaleX(1);
+}
+
+.btn {
+  line-height: 38px;
+  background-color: #00bfb3;
+  color: #fff;
+  white-space: nowrap;
+  text-align: center;
+  font-size: 14px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 5px;
+  width: 160px;
+  margin: 30px 0;
+}
+
+.tips,
+.example {
+  color: #7b7b7b;
+  position: relative;
+  align-self: flex-start;
+  margin-left: 7.5em;
+}
+
+.tips > p:first-child::before {
+  position: absolute;
+  left: -3em;
+  content: "";
+  color: #7b7b7b;
+}
+
+.example > p:first-child::before {
+  position: absolute;
+  left: -7.5em;
+  content: "Example:";
+  color: #7b7b7b;
+}
+
+pre[class*="language-"] {
+  position: relative;
+  overflow: auto;
+
+  /* make space  */
+  margin: 5px 0;
+  padding: 1.75rem 0 1.75rem 1rem;
+  border-radius: 10px;
+}
+
+pre[class*="language-"] button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+pre[class*="language-"] button:hover {
+  cursor: pointer;
+  background-color: #bcbabb;
+}

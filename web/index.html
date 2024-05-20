@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-solarizedlight.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
+    <title>wenxian</title>
+  </head>
+
+  <body class="flex">
+    <a
+      style="position: absolute; top: 0; right: 0"
+      href="https://github.com/njzjz/wenxian"
+      ><img
+        width="149"
+        height="149"
+        referrerpolicy="no-referrer"
+        src="https://inews.gtimg.com/newsapp_ls/0/12025455907/0"
+        alt="Fork me on GitHub"
+        data-recalc-dims="1"
+    /></a>
+    <h1 style="margin-bottom: 50px">wenxian</h1>
+    <form style="padding-bottom: 40px" target="_blank" class="flex">
+      <label class="block" style="width: fit-content">
+        <input
+          class="block identifier"
+          id="identifier"
+          type="text"
+          placeholder="DOI/PMID/arXiv identifier"
+          required
+        />
+        <div class="bar"></div>
+      </label>
+      <input
+        type="submit"
+        id="submit"
+        class="block btn"
+        value="Generate BibTeX"
+      />
+    </form>
+    <div class="examples" id="message">
+      <p><b>Examples:</b></p>
+      <ul>
+        <li>
+          <a href="javascript:run_example('10.1063/5.0155600')"
+            >10.1063/5.0155600</a
+          >
+        </li>
+        <li><a href="javascript:run_example('37526163')">37526163</a></li>
+        <li><a href="javascript:run_example('2304.09409')">2304.09409</a></li>
+      </ul>
+    </div>
+    <div id="output" style="display: none">
+      <pre><code class="language-bib" id="bibtex"></code><div class="tooltip"><button id="copy_button" onclick="copy_bibtex()">Copy BibTeX</button></div></pre>
+    </div>
+    <p style="position: sticky; top: calc(100% - 2.5em)">
+      Powered by
+      <a style="color: #3294ea" href="https://github.com/njzjz/wenxian"
+        >njzjz/wenxian</a
+      >
+    </p>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.1.0/prism-bibtex.js"
+      integrity="sha256-A5GMUmGHpY8mVpfcaRLQFeHtmdjZLumKBOMpf81FXX0="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="wenxian.js" type="module"></script>
+  </body>
+</html>
