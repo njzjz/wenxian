@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pyrate_limiter import Duration, Limiter, RequestRate
 from requests import Session
+from requests.adapters import HTTPAdapter, Retry
 from requests_ratelimiter import LimiterAdapter
 
 SESSION = Session()
@@ -20,5 +21,9 @@ adapter_arxiv = LimiterAdapter(
     limiter=Limiter(RequestRate(1, Duration.SECOND * 3)), burst=1
 )
 SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
+
+# retry logic
+retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+SESSION.mount("https://", HTTPAdapter(max_retries=retries))
 
 __all__ = ["SESSION"]
