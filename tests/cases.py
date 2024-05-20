@@ -3,13 +3,23 @@
 from __future__ import annotations
 
 import textwrap
+from dataclasses import dataclass
 
 from wenxian.reference import Author, Reference
 
+
+@dataclass
+class ReferenceCase:
+    """Test case for a reference."""
+
+    reference: Reference
+    expected_bibtex: str
+
+
 TEST_CASES = [
-    (
-        # mainly from pubmed
-        Reference(
+    # mainly from pubmed
+    ReferenceCase(
+        reference=Reference(
             author=[
                 Author(first="Jinzhe", last="Zeng"),
                 Author(first="Yujun", last="Tao"),
@@ -51,7 +61,7 @@ TEST_CASES = [
             .replace("\n", " "),
             doi="10.1021/acs.jctc.2c01172",
         ),
-        textwrap.dedent(r"""
+        expected_bibtex=textwrap.dedent(r"""
         @Article{Zeng_JChemTheoryComput_2023_v19_p1261,
             author =   {Jinzhe Zeng and Yujun Tao and Timothy J. Giese and Darrin M. York},
             title =    {{QD{\ensuremath{\pi}}: A Quantum Deep Potential Interaction Model for
@@ -88,5 +98,37 @@ TEST_CASES = [
                      highly attractive as a potential force field model for drug discovery.},
         }
     """).strip(),
-    )
+    ),
+    # no records in PubMed, mainly from crossref
+    ReferenceCase(
+        reference=Reference(
+            author=[
+                Author(first="Yuzhi", last="Zhang"),
+                Author(first="Haidi", last="Wang"),
+                Author(first="Weijie", last="Chen"),
+                Author(first="Jinzhe", last="Zeng"),
+                Author(first="Linfeng", last="Zhang"),
+                Author(first="Han", last="Wang"),
+                Author(first="Weinan", last="E"),
+            ],
+            title="DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models",
+            journal="Computer Physics Communications",
+            year=2020,
+            volume=253,
+            pages=(107206,),
+            doi="10.1016/j.cpc.2020.107206",
+        ),
+        expected_bibtex=textwrap.dedent(r"""
+            @Article{Zhang_ComputPhysCommun_2020_v253_p107206,
+                author =   {Yuzhi Zhang and Haidi Wang and Weijie Chen and Jinzhe Zeng and Linfeng
+                         Zhang and Han Wang and Weinan E},
+                title =    {{DP-GEN: A concurrent learning platform for the generation of reliable
+                         deep learning based potential energy models}},
+                journal =  {Comput. Phys. Commun.},
+                year =     2020,
+                volume =   253,
+                pages =    107206,
+                doi =      {10.1016/j.cpc.2020.107206},
+            }""").strip(),
+    ),
 ]
