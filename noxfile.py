@@ -8,11 +8,14 @@ import nox
 @nox.session
 def tests(session: nox.Session) -> None:
     """Run test suite with pytest."""
-    session.create_tmp()
     session.install("-e.[test]")
     session.run(
         "pytest",
         "--cov",
         "--cov-config",
         "pyproject.toml",
+        "--cov-report",
+        "term",
+        "--cov-report",
+        "xml",
     )
