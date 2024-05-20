@@ -14,7 +14,8 @@ from .cases import TEST_CASES
     [
         *[(test_case.reference.doi, test_case.reference) for test_case in TEST_CASES],
         *[
-            (test_case.pmid, test_case.reference)
+            # from_identifier accept str
+            (str(test_case.pmid), test_case.reference)
             for test_case in TEST_CASES
             if test_case.pmid is not None
         ],

@@ -105,7 +105,7 @@ class Pubmed(Feeder):
         if pmid is None:
             # not found
             return None
-        return self.from_pmid(pmid)
+        return self._from_pmid(pmid, validate_doi=doi)
 
     def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PMID."""
