@@ -116,9 +116,9 @@ class Reference:
                     )
                 )
                 if key == "title":
-                    valuestr = "{{%s}}" % valuestr
+                    valuestr = f"{{{{{valuestr}}}}}"
                 else:
-                    valuestr = "{%s}" % valuestr
+                    valuestr = f"{{{valuestr}}}"
             valuestr += ","
             keystr = " " * 4 + (key + " =").ljust(11, " ")
             items.append(keystr + valuestr)
