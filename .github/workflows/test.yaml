@@ -21,3 +21,7 @@ jobs:
         run: python -m uv pip install --system nox[uv]
       - name: Test with pytest
         run: nox -db uv
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
