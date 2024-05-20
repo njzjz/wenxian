@@ -14,6 +14,12 @@ def from_doi(doi: str) -> Reference | None:
     return Reference() | Pubmed().from_doi(doi) | Crossref().from_doi(doi)
 
 
+def from_pmid(pmid: str | int) -> Reference | None:
+    """Fetch a reference from a PMID."""
+    # no need to fetch from crossref - pubmed usually has all information
+    return Reference() | Pubmed().from_pmid(pmid)
+
+
 def from_identifier(identifier: str) -> Reference | None:
     """Fetch a reference from an identifier."""
     identifier_type = get_identifier_type(identifier)
@@ -22,7 +28,7 @@ def from_identifier(identifier: str) -> Reference | None:
     elif identifier_type == Identifier.DOI:
         return from_doi(identifier)
     elif identifier_type == Identifier.PMID:
-        raise NotImplementedError("PMID is not supported yet.")
+        return from_pmid(identifier)
     elif identifier_type == Identifier.ARXIV:
         raise NotImplementedError("arXiv is not supported yet.")
     else:

@@ -105,19 +105,28 @@ class Pubmed(Feeder):
         if pmid is None:
             # not found
             return None
+        return self.from_pmid(pmid)
+
+    def from_pmid(self, pmid: str | int) -> Reference | None:
+        """Fetch a reference from a PMID."""
+        return self._from_pmid(pmid)
+
+    def _from_pmid(
+        self, pmid: str | int, validate_doi: str | None = None
+    ) -> Reference | None:
         r = SESSION.get(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
             params={
                 "tool": __tool__,
                 "email": __email__,
                 "db": "pubmed",
-                "id": pmid,
+                "id": str(pmid),
                 "format": "xml",
             },
         )
         tree = ElementTree.fromstring(r.content)
         fetched_doi = self._text(tree.find(self.PUBMED_PATH["doi"]))
-        if fetched_doi != doi:
+        if validate_doi is not None and fetched_doi != validate_doi:
             # DOI not match, ignore
             return None
         rets = {}
@@ -153,5 +162,5 @@ class Pubmed(Feeder):
             issue=self._int(rets["issue"]),
             pages=self._pages(rets["pages"]),
             annote=rets["abstract"],
-            doi=doi,
+            doi=fetched_doi,
         )
