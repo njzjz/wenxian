@@ -23,7 +23,13 @@ adapter_arxiv = LimiterAdapter(
 SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
 
 # retry logic
-retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[
+    429, # Too Many Requests
+    500, # Internal Server Error 
+    502, # bad gateway server error
+    503, # the server is currently unable to handle the incoming requests
+    504, # Gateway Timeout
+])
 SESSION.mount("https://", HTTPAdapter(max_retries=retries))
 
 __all__ = ["SESSION"]
