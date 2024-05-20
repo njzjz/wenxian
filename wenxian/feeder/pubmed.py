@@ -5,10 +5,9 @@ from __future__ import annotations
 from typing import ClassVar, overload
 from xml.etree import ElementTree
 
-import requests
-
 from wenxian import __email__, __tool__
 from wenxian.feeder.feeder import Feeder
+from wenxian.feeder.session import SESSION
 from wenxian.reference import Author, Reference
 
 
@@ -28,8 +27,8 @@ class Pubmed(Feeder):
         str | None
             A PMID string if found or None if not found.
         """
-        r = requests.get(
-            "http://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/",
+        r = SESSION.get(
+            "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/",
             params={"tool": __tool__, "email": __email__, "ids": doi, "format": "json"},
         )
         res = r.json()
@@ -57,7 +56,7 @@ class Pubmed(Feeder):
         str | None
             A PMID string if found or None if not found.
         """
-        r = requests.get(
+        r = SESSION.get(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
             params={
                 "tool": __tool__,
@@ -106,7 +105,7 @@ class Pubmed(Feeder):
         if pmid is None:
             # not found
             return None
-        r = requests.get(
+        r = SESSION.get(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
             params={
                 "tool": __tool__,

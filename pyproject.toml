@@ -26,6 +26,7 @@ dependencies = [
     "pylatexenc",
     "unidecode",
     "pyiso4",
+    "requests-ratelimiter",
 ]
 requires-python = ">=3.8"
 readme = "README.md"

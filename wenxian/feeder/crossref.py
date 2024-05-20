@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import requests
-
 from wenxian.feeder.feeder import Feeder
+from wenxian.feeder.session import SESSION
 from wenxian.reference import Author, Reference
 
 
@@ -13,7 +12,7 @@ class Crossref(Feeder):
 
     def from_doi(self, doi: str) -> Reference | None:
         """Fetch a reference from a DOI."""
-        r = requests.get(
+        r = SESSION.get(
             f"https://api.crossref.org/works/{doi}",
         )
         res = r.json()
