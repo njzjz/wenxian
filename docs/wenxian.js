@@ -1,18 +1,5 @@
 import { asyncRun } from "./pyworker.js";
 
-async function main() {
-  let pyodide = await loadPyodide();
-  await pyodide.loadPackage("micropip");
-  const micropip = pyodide.pyimport("micropip");
-  await micropip.install([
-    "pyrate-limiter==2.10.0",
-    "wenxian",
-    "pylatexenc==3.0a21",
-  ]);
-  await pyodide.loadPackage("sqlite3");
-  return pyodide;
-}
-
 async function from_identifier(identifier) {
   const { results, error } = await asyncRun(`
     import sys
