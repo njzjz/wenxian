@@ -30,7 +30,7 @@ jobs:
     needs:
       - release-build
     permissions:
-      id-token: writes
+      id-token: write
     steps:
       - name: Retrieve release distributions
         uses: actions/download-artifact@v4
