@@ -40,6 +40,7 @@ repository = "https://github.com/njzjz/wenxian"
 [project.optional-dependencies]
 test = [
     'pytest',
+    'pytest-cov',
 ]
 
 [tool.setuptools.packages.find]
@@ -70,3 +71,6 @@ convention = "numpy"
 
 [tool.ruff.lint.isort]
 required-imports = ["from __future__ import annotations"]
+
+[tool.coverage.report]
+include = ["wenxian/*"]

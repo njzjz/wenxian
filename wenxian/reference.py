@@ -14,8 +14,8 @@ abbreviator = Abbreviate.create()
 
 
 @dataclass
-class Name:
-    """Person name."""
+class Author:
+    """Author name."""
 
     first: str | None
     last: str | None
@@ -38,7 +38,7 @@ class Name:
 class Reference:
     """A reference to a scholarly article."""
 
-    author: list[Name] | None = None
+    author: list[Author] | None = None
     title: str | None = None
     journal: str | None = None
     year: int | None = None
