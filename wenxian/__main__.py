@@ -18,6 +18,8 @@ def cmd_from(
     references = []
     for identifier in IDENTIFIER:
         ref = from_identifier(identifier)
+        if ref is None:
+            raise ValueError(f"Failed to fetch reference from {identifier}")
         references.append(ref)
         buff.append(ref.bibtex)
     if output is None:

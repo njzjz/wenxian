@@ -39,6 +39,7 @@ class Pubmed(Feeder):
 
         if records and "pmid" in records[0]:
             return records[0]["pmid"]
+        return None
 
     def _doi2pmid_search(self, doi: str) -> str | None:
         """Convert DOI to PMID using PubMed search.
@@ -64,13 +65,14 @@ class Pubmed(Feeder):
                 "db": "pubmed",
                 "term": doi,
                 "retmode": "json",
-                "retmax": 1,
+                "retmax": "1",
             },
         )
         records = r.json()["esearchresult"]["idlist"]
 
         if records:
             return records[0]
+        return None
 
     @overload
     def _text(self, node: ElementTree.Element) -> str: ...
@@ -103,7 +105,7 @@ class Pubmed(Feeder):
             pmid = self._doi2pmid_search(doi)
         if pmid is None:
             # not found
-            return
+            return None
         r = requests.get(
             "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
             params={
@@ -118,18 +120,16 @@ class Pubmed(Feeder):
         fetched_doi = self._text(tree.find(self.PUBMED_PATH["doi"]))
         if fetched_doi != doi:
             # DOI not match, ignore
-            return
+            return None
         rets = {}
         for key, path in self.PUBMED_PATH.items():
-            if key in ("author",):
-                # require to find all
-                rets[key] = tree.findall(path)
-            else:
+            if key not in ("author",):
                 rets[key] = self._text(tree.find(path))
 
-        if rets["author"] is not None:
+        author_tree = tree.findall(self.PUBMED_PATH["author"])
+        if author_tree is not None:
             author = []
-            for aa in rets["author"]:
+            for aa in author_tree:
                 author.append(
                     Name(
                         first=self._text(aa.find("ForeName")),
@@ -141,7 +141,7 @@ class Pubmed(Feeder):
             author = None
         return Reference(
             author=author,
-            title=rets["title"].rstrip("."),
+            title=rets["title"].rstrip(".") if rets["title"] is not None else None,
             journal=rets["journal"],
             year=self._int(rets["year"]),
             volume=self._int(rets["volume"]),
