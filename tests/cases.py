@@ -14,6 +14,7 @@ class ReferenceCase:
 
     reference: Reference
     expected_bibtex: str
+    pmid: int | None = None
 
 
 TEST_CASES = [
@@ -98,6 +99,7 @@ TEST_CASES = [
                      highly attractive as a potential force field model for drug discovery.},
         }
     """).strip(),
+        pmid=36696673,
     ),
     # no records in PubMed, mainly from crossref
     ReferenceCase(

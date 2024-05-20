@@ -17,7 +17,7 @@ class Feeder:
     def from_arxiv(self, arxiv: str) -> Reference | None:
         """Fetch a reference from an arXiv identifier."""
 
-    def from_pmid(self, pmid: str) -> Reference | None:
+    def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PubMed identifier."""
 
     @overload

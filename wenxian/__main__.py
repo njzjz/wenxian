@@ -43,7 +43,7 @@ def main_parser() -> argparse.ArgumentParser:
         "from", help="Generate BibTeX from a identifier."
     )
     parser_from.add_argument(
-        "IDENTIFIER", type=str, nargs="+", help="Identifier. Only support DOI for now."
+        "IDENTIFIER", type=str, nargs="+", help="Identifier. Support DOI and PMID."
     )
     parser_from.add_argument(
         "-o",
