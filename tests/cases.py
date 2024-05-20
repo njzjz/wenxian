@@ -298,44 +298,44 @@ TEST_CASES = [
             .strip()
             .replace("\n", " "),
         ),
-        textwrap.dedent(r"""
-        @Article{Zeng_JChemPhys_2023_v159_p054801,
-            author =   {Jinzhe Zeng and Duo Zhang and Denghui Lu and Pinghui Mo and Zeyu Li
-                     and Yixiao Chen and Mari{\'a}n Rynik and Li'ang Huang and Ziyao Li and
-                     Shaochen Shi and Yingze Wang and Haotian Ye and Ping Tuo and Jiabin
-                     Yang and Ye Ding and Yifan Li and Davide Tisi and Qiyu Zeng and Han
-                     Bao and Yu Xia and Jiameng Huang and Koki Muraoka and Yibo Wang and
-                     Junhan Chang and Fengbo Yuan and Sigbj{\o}rn L{\o}land Bore and Chun
-                     Cai and Yinnian Lin and Bo Wang and Jiayan Xu and Jia-Xin Zhu and
-                     Chenxing Luo and Yuzhi Zhang and Rhys E. A. Goodall and Wenshuo Liang
-                     and Anurag Kumar Singh and Sikai Yao and Jingchao Zhang and Renata
-                     Wentzcovitch and Jiequn Han and Jie Liu and Weile Jia and Darrin M.
-                     York and Weinan E and Roberto Car and Linfeng Zhang and Han Wang},
-            title =    {{DeePMD-kit v2: A software package for deep potential models}},
-            journal =  {J. Chem. Phys.},
-            year =     2023,
-            volume =   159,
-            issue =    5,
-            pages =    054801,
-            doi =      {10.1063/5.0155600},
-            annote =   {DeePMD-kit is a powerful open-source software package that facilitates
-                     molecular dynamics simulations using machine learning potentials known
-                     as Deep Potential (DP) models. This package, which was released in
-                     2017, has been widely used in the fields of physics, chemistry,
-                     biology, and material science for studying atomistic systems. The
-                     current version of DeePMD-kit offers numerous advanced features, such
-                     as DeepPot-SE, attention-based and hybrid descriptors, the ability to
-                     fit tensile properties, type embedding, model deviation, DP-range
-                     correction, DP long range, graphics processing unit support for
-                     customized operators, model compression, non-von Neumann molecular
-                     dynamics, and improved usability, including documentation, compiled
-                     binary packages, graphical user interfaces, and application
-                     programming interfaces. This article presents an overview of the
-                     current major version of the DeePMD-kit package, highlighting its
-                     features and technical details. Additionally, this article presents a
-                     comprehensive procedure for conducting molecular dynamics as a
-                     representative application, benchmarks the accuracy and efficiency of
-                     different models, and discusses ongoing developments.},
-        }"""),
+        expected_bibtex=textwrap.dedent(r"""
+            @Article{Zeng_JChemPhys_2023_v159_p054801,
+                author =   {Jinzhe Zeng and Duo Zhang and Denghui Lu and Pinghui Mo and Zeyu Li
+                         and Yixiao Chen and Mari{\'a}n Rynik and Li'ang Huang and Ziyao Li and
+                         Shaochen Shi and Yingze Wang and Haotian Ye and Ping Tuo and Jiabin
+                         Yang and Ye Ding and Yifan Li and Davide Tisi and Qiyu Zeng and Han
+                         Bao and Yu Xia and Jiameng Huang and Koki Muraoka and Yibo Wang and
+                         Junhan Chang and Fengbo Yuan and Sigbj{\o}rn L{\o}land Bore and Chun
+                         Cai and Yinnian Lin and Bo Wang and Jiayan Xu and Jia-Xin Zhu and
+                         Chenxing Luo and Yuzhi Zhang and Rhys E. A. Goodall and Wenshuo Liang
+                         and Anurag Kumar Singh and Sikai Yao and Jingchao Zhang and Renata
+                         Wentzcovitch and Jiequn Han and Jie Liu and Weile Jia and Darrin M.
+                         York and Weinan E and Roberto Car and Linfeng Zhang and Han Wang},
+                title =    {{DeePMD-kit v2: A software package for deep potential models}},
+                journal =  {J. Chem. Phys.},
+                year =     2023,
+                volume =   159,
+                issue =    5,
+                pages =    054801,
+                doi =      {10.1063/5.0155600},
+                annote =   {DeePMD-kit is a powerful open-source software package that facilitates
+                         molecular dynamics simulations using machine learning potentials known
+                         as Deep Potential (DP) models. This package, which was released in
+                         2017, has been widely used in the fields of physics, chemistry,
+                         biology, and material science for studying atomistic systems. The
+                         current version of DeePMD-kit offers numerous advanced features, such
+                         as DeepPot-SE, attention-based and hybrid descriptors, the ability to
+                         fit tensile properties, type embedding, model deviation, DP-range
+                         correction, DP long range, graphics processing unit support for
+                         customized operators, model compression, non-von Neumann molecular
+                         dynamics, and improved usability, including documentation, compiled
+                         binary packages, graphical user interfaces, and application
+                         programming interfaces. This article presents an overview of the
+                         current major version of the DeePMD-kit package, highlighting its
+                         features and technical details. Additionally, this article presents a
+                         comprehensive procedure for conducting molecular dynamics as a
+                         representative application, benchmarks the accuracy and efficiency of
+                         different models, and discusses ongoing developments.},
+            }""").strip(),
     ),
 ]
