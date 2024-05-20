@@ -19,6 +19,11 @@ from .cases import TEST_CASES
             for test_case in TEST_CASES
             if test_case.pmid is not None
         ],
+        *[
+            (test_case.arxiv, test_case.reference)
+            for test_case in TEST_CASES
+            if test_case.arxiv is not None
+        ],
     ],
 )
 def test_from_identifier(identifier, expected):

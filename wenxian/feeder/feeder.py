@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, overload
 
 if TYPE_CHECKING:
+    from xml.etree import ElementTree
+
     from wenxian.reference import Reference
 
 
@@ -44,3 +46,13 @@ class Feeder:
         if len(page_list) == 1 or len(page_list) == 2:
             return page_list
         raise ValueError(f"Invalid page string: {string}")
+
+    @overload
+    def _text(self, node: ElementTree.Element) -> str: ...
+
+    @overload
+    def _text(self, node: None) -> None: ...
+
+    def _text(self, node: ElementTree.Element | None) -> str | None:
+        """Read text from XML node, return None if node is None."""
+        return "".join(node.itertext()).strip() if node is not None else None

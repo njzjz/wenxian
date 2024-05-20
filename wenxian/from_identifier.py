@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from wenxian.feeder.arxiv import Arxiv
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.pubmed import Pubmed
 from wenxian.identifier import Identifier, get_identifier_type
@@ -11,13 +12,23 @@ from wenxian.reference import Reference
 def from_doi(doi: str) -> Reference | None:
     """Fetch a reference from a DOI."""
     # pubmed is the most reliable source
-    return Reference() | Pubmed().from_doi(doi) | Crossref().from_doi(doi)
+    return (
+        Reference()
+        | Pubmed().from_doi(doi)
+        | Crossref().from_doi(doi)
+        | Arxiv().from_doi(doi)
+    )
 
 
 def from_pmid(pmid: str | int) -> Reference | None:
     """Fetch a reference from a PMID."""
     # no need to fetch from crossref - pubmed usually has all information
     return Reference() | Pubmed().from_pmid(pmid)
+
+
+def from_arxiv(arxiv: str) -> Reference | None:
+    """Fetch a reference from an arXiv identifier."""
+    return Reference() | Arxiv().from_arxiv(arxiv)
 
 
 def from_identifier(identifier: str) -> Reference | None:
@@ -30,6 +41,6 @@ def from_identifier(identifier: str) -> Reference | None:
     elif identifier_type == Identifier.PMID:
         return from_pmid(identifier)
     elif identifier_type == Identifier.ARXIV:
-        raise NotImplementedError("arXiv is not supported yet.")
+        return from_arxiv(identifier)
     else:
         raise RuntimeError("Unknown identifier type.")

@@ -15,6 +15,9 @@ class Crossref(Feeder):
         r = SESSION.get(
             f"https://api.crossref.org/works/{doi}",
         )
+        if r.status_code == 404:
+            # DOI not found
+            return None
         res = r.json()
 
         m = res["message"]
