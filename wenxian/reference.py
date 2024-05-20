@@ -24,7 +24,9 @@ class Name:
     def __str__(self) -> str:
         """Generate a name string."""
         if self.first is None or self.last is None:
-            raise ValueError(f"First name ({self.first}) or last name ({self.last}) is missing.")
+            raise ValueError(
+                f"First name ({self.first}) or last name ({self.last}) is missing."
+            )
         if self.suffix is not None:
             return f"{self.first} {{{self.last} {self.suffix}}}"
         elif " " in self.last:
@@ -82,7 +84,7 @@ class Reference:
             page_string = None
         else:
             page_string = "--".join(str(x) for x in self.pages)
-        
+
         data = {
             "author": author_string,
             "title": self.title,
