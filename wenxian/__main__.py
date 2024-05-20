@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import sys
 
 from wenxian.from_identifier import from_identifier
 
@@ -23,6 +24,7 @@ def cmd_from(
         references.append(ref)
         buff.append(ref.bibtex)
     if output is None:
+        sys.stdout.write("\n".join(buff))
         return
     if output == 0:
         if len(references) == 1:
