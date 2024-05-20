@@ -20,3 +20,10 @@ repos:
     - id: ruff
       args: ["--fix"]
     - id: ruff-format
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.10.0'
+    hooks:
+    - id: mypy
+      additional_dependencies:
+      - types-requests==2.31.0.20240406
+      - unidecode==1.3.8

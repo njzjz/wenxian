@@ -39,5 +39,8 @@ class Feeder:
     def _pages(self, string: str | None) -> tuple[int] | tuple[int, int] | None:
         """Convert a page string to a tuple of integers."""
         if string is None:
-            return
-        return tuple(map(int, string.split("-")))
+            return None
+        page_list = tuple(map(int, string.split("-")))
+        if len(page_list) == 1 or len(page_list) == 2:
+            return page_list
+        raise ValueError(f"Invalid page string: {string}")

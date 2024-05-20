@@ -24,7 +24,6 @@ classifiers = [
 dependencies = [
     "requests",
     "pylatexenc",
-    "metapub",
     "unidecode",
     "pyiso4",
 ]

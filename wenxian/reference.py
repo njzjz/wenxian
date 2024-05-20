@@ -17,12 +17,14 @@ abbreviator = Abbreviate.create()
 class Name:
     """Person name."""
 
-    first: str
-    last: str
+    first: str | None
+    last: str | None
     suffix: str | None = None
 
     def __str__(self) -> str:
         """Generate a name string."""
+        if self.first is None or self.last is None:
+            raise ValueError(f"First name ({self.first}) or last name ({self.last}) is missing.")
         if self.suffix is not None:
             return f"{self.first} {{{self.last} {self.suffix}}}"
         elif " " in self.last:
@@ -45,16 +47,25 @@ class Reference:
     doi: str | None = None
 
     @property
-    def journal_abbr(self) -> str:
+    def journal_abbr(self) -> str | None:
         """Abbreviated journal name."""
+        if self.journal is None:
+            return None
         return abbreviator(self.journal.title(), remove_part=True)
 
     @property
     def key(self) -> str:
         """Generate a BibTeX key."""
+        if self.author is None or len(self.author) == 0:
+            raise ValueError("No author is found.")
+        if self.author[0].last is None:
+            raise ValueError("The first author has no last name.")
+        journal_abbr = self.journal_abbr
+        if journal_abbr is None:
+            raise ValueError("No journal is found.")
         return "{last}_{journal}_{year}_v{volume}_p{page}".format(
             last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
-            journal=re.sub(r"[\ \-\.]", "", self.journal_abbr),
+            journal=re.sub(r"[\ \-\.]", "", journal_abbr),
             year=self.year,
             volume=self.volume,
             page=self.pages[0] if self.pages is not None else None,
@@ -63,14 +74,23 @@ class Reference:
     @property
     def bibtex(self) -> str:
         """Generate a BibTeX entry."""
+        if self.author is None:
+            author_string = None
+        else:
+            author_string = " and ".join(str(aa) for aa in self.author)
+        if self.pages is None:
+            page_string = None
+        else:
+            page_string = "--".join(str(x) for x in self.pages)
+        
         data = {
-            "author": " and ".join(str(aa) for aa in self.author),
+            "author": author_string,
             "title": self.title,
             "journal": self.journal_abbr,
             "year": self.year,
             "volume": self.volume,
             "issue": self.issue,
-            "pages": "--".join(str(x) for x in self.pages),
+            "pages": page_string,
             "doi": self.doi,
             "annote": self.annote,
         }
