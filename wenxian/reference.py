@@ -53,6 +53,9 @@ class Reference:
         """Abbreviated journal name."""
         if self.journal is None:
             return None
+        if self.journal == "arXiv":
+            # special case
+            return "arXiv"
         return abbreviator(self.journal.title(), remove_part=True)
 
     @property
@@ -76,7 +79,7 @@ class Reference:
             journal=re.sub(r"[\ \-\.]", "", journal_abbr),
         )
         if self.year is not None:
-            key += f"self_{self.year}"
+            key += f"_{self.year}"
         if self.volume is not None:
             key += f"_v{self.volume}"
         if first_page is not None:
