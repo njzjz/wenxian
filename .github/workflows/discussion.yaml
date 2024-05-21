@@ -1,6 +1,6 @@
-name: Reply to Discussion comments
+name: Reply to issue comments
 on:
-  discussion_comment:
+  issue_comment:
     types: [created]
 jobs:
   reply:
@@ -11,20 +11,26 @@ jobs:
       - name: Extract identifiers
         id: extract-identifiers
         run: |
-          echo identifiers=$(echo "${{ github.event.comment.body }}" | grep -oE '@njzjz-bot .*' | head -n1 | cut -c12-) >> $GITHUB_OUTPUT
+          echo identifiers=$(echo "${{ github.event.comment.body }}" | grep -oE '@njzjz-bot .*' | head -n1 | cut -c12- | xargs) >> $GITHUB_OUTPUT
       - name: Run wenxian
         id: wenxian
         uses: ./
         with:
           id: ${{ steps.extract-identifiers.outputs.identifiers }}
-      - name: Run create-discussion-comment
-        uses: wesleyscholl/create-discussion-comment@v1.0.18
-        id: create-comment
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: |
-            ```bib
-            ${{ steps.wenxian.outputs.bibtex }}
+      - name: Prepare the comment body
+        id: prepare-comment
+        run: |
+          {
+            echo 'comment<<EOF'
+            @${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:
+
+            ```bibtex
+            ${{ steps.wenxian.outputs.bibtex}}
             ```
-          discussion-id: ${{ github.event.comment.discussion_id }}
-          replyToId: ${{ github.event.comment.id }}
+            echo EOF
+          } >> $GITHUB_OUTPUT
+      - name: Post comment
+        run: |
+          echo "${{ steps.prepare-comment.outputs.comment }}" | xargs | gh issue comment ${{ github.event.issue.number }} --body -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
