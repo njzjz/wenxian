@@ -1,0 +1,30 @@
+Name: Reply to Discussion comments
+on:
+  discussion_comment:
+    types: [created]
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '@njzjz-bot')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract identifiers
+        id: extract-identifiers
+        run: |
+          echo identifiers=$(echo "${{ github.event.comment.body }}" | grep -oE '@njzjz-bot .*' | head -n1 | cut -c12-) >> $GITHUB_OUTPUT
+      - name: Run wenxian
+        id: wenxian
+        uses: ./
+        with:
+          id: ${{ steps.extract-identifiers.outputs.identifiers }}
+      - name: Run create-discussion-comment
+        uses: wesleyscholl/create-discussion-comment@v1.0.x
+        id: create-comment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            ```bib
+            ${{ steps.wenxian.outputs.bibtex }}
+            ```
+          discussion-id: ${{ github.event.comment.discussion_id }}
+          replyToId: ${{ github.event.comment.id }}
