@@ -1,4 +1,4 @@
-# wenxian
+# <img src="docs/logo.svg" title="Logo" width="100px" height="100px" style="margin-bottom: -1em;"> wenxian
 
 ![PyPI - Version](https://img.shields.io/pypi/v/wenxian)
 ![Pepy Total Downlods](https://img.shields.io/pepy/dt/wenxian)
