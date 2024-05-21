@@ -1,4 +1,4 @@
-Name: Reply to Discussion comments
+name: Reply to Discussion comments
 on:
   discussion_comment:
     types: [created]
