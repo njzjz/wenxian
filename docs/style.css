@@ -108,14 +108,16 @@ input:focus {
   overflow: auto;
 
   /* make space  */
-  margin: 1.5em 0;
-  padding: 1.75rem 0 1.75rem 1rem;
+  margin: 0 0;
+  padding: 3rem 0 1.75rem 1rem;
   border-radius: 10px;
 }
 
 .output .copy-button {
   position: absolute;
-  right: 1.5em;
+  right: 1.5rem;
+  margin: 1rem 0;
+  z-index: 100;
 }
 
 .output .copy-button button:hover {
@@ -125,4 +127,5 @@ input:focus {
 
 .output {
   max-width: 100%;
+  position: relative;
 }
