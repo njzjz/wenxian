@@ -39,10 +39,10 @@ class Semanticscholar(Feeder):
         """Fetch a reference from a DOI."""
         return self._from_identifier(doi)
 
-    def from_pmid(self, pmid: str) -> Reference | None:
+    def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PMID."""
-        return self._from_identifier(f"pmid:{pmid}")
+        return self._from_identifier(f"PMID:{pmid}")
 
     def from_arxiv(self, arxiv: str) -> Reference | None:
         """Fetch a reference from an arXiv ID."""
-        return self._from_identifier(f"arxiv:{arxiv}")
+        return self._from_identifier(f"ARXIV:{arxiv}")
