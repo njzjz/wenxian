@@ -32,6 +32,6 @@ jobs:
           } >> $GITHUB_OUTPUT
       - name: Post comment
         run: |
-          echo '${{ steps.prepare-comment.outputs.comment }}' | xargs | gh issue comment ${{ github.event.issue.number }} --body -
+          echo '${{ steps.prepare-comment.outputs.comment }}' | xargs | gh issue comment ${{ github.event.issue.number }} --body-file -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
