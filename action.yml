@@ -1,0 +1,28 @@
+name: "wenxian"
+description: "Generate BibTeX files from given identifiers (DOI, PMID, or arXiv ID)"
+inputs:
+  id:
+    description: "DOI, PMID, or arXiv ID. Use space to separate multiple identifiers."
+    required: true
+outputs:
+  bibtex:
+    description: "Generated BibTeX entry"
+    value: ${{ steps.run-wenxian.outputs.bibtex }}
+runs:
+  using: composite
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.8 - 3.12"
+    - name: Run wenxian
+      id: run-wenxian
+      run: |
+        {
+          echo 'bibtex<<EOF'
+          pipx run --spec ${{ github.action_path }} wenxian $INPUT_IDENTIFIER
+          echo EOF
+        } >> "$GITHUB_ENV"
+      shell: bash
+      env:
+        INPUT_IDENTIFIER: ${{ inputs.identifier }}
