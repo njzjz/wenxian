@@ -20,7 +20,7 @@ runs:
       run: |
         {
           echo 'bibtex<<EOF'
-          pipx run --spec ${{ github.action_path }} wenxian $INPUT_IDENTIFIER
+          pipx run --spec ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
           echo EOF
         } >> "$GITHUB_ENV"
       shell: bash
