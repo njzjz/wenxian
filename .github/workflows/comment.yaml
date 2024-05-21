@@ -2,6 +2,8 @@ name: Reply to issue comments
 on:
   issue_comment:
     types: [created]
+permissions:
+  issues: write
 jobs:
   reply:
     runs-on: ubuntu-latest
