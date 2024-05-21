@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run wenxian
+        id: run-wenxian
         uses: ./
         with:
           id: 1512.03385
