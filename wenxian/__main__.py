@@ -18,7 +18,7 @@ def cmd_from(
     buff = []
     references = []
     for identifier in IDENTIFIER:
-        ref = from_identifier(identifier)
+        ref = from_identifier(identifier.strip())
         if ref is None or ref.is_empty():
             raise ValueError(f"Failed to fetch reference from {identifier}")
         references.append(ref)
