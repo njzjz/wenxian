@@ -56,8 +56,11 @@
         <li><a href="javascript:run_example('2304.09409')">2304.09409</a></li>
       </ul>
     </div>
-    <div id="output" style="display: none">
-      <pre><code class="language-bib" id="bibtex"></code><div class="tooltip"><button id="copy_button" onclick="copy_bibtex()">Copy BibTeX</button></div></pre>
+    <div id="output" class="output" style="display: none">
+      <button id="copy_button" onclick="copy_bibtex()" class="copy-button">
+        Copy BibTeX
+      </button>
+      <pre><code class="language-bib" id="bibtex"></code></pre>
     </div>
     <p style="position: sticky; top: calc(100% - 2.5em)">
       Powered by

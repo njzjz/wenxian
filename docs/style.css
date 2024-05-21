@@ -103,23 +103,26 @@ input:focus {
   color: #7b7b7b;
 }
 
-pre[class*="language-"] {
+.output pre[class*="language-"] {
   position: relative;
   overflow: auto;
 
   /* make space  */
-  margin: 5px 0;
+  margin: 1.5em 0;
   padding: 1.75rem 0 1.75rem 1rem;
   border-radius: 10px;
 }
 
-pre[class*="language-"] button {
+.output .copy-button {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  right: 1.5em;
 }
 
-pre[class*="language-"] button:hover {
+.output .copy-button button:hover {
   cursor: pointer;
   background-color: #bcbabb;
+}
+
+.output {
+  max-width: 100%;
 }
