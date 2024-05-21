@@ -12,7 +12,7 @@ runs:
   using: composite
   steps:
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: "3.8 - 3.12"
     - name: Run wenxian
@@ -22,7 +22,7 @@ runs:
           echo 'bibtex<<EOF'
           pipx run --spec ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
           echo EOF
-        } >> "$GITHUB_ENV"
+        } >> "$GITHUB_OUTPUT"
       shell: bash
       env:
         INPUT_IDENTIFIER: ${{ inputs.id }}
