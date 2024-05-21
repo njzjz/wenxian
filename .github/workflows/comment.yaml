@@ -21,14 +21,11 @@ jobs:
         id: prepare-comment
         run: |
           {
-            cat << EOF
-            comment<<EOF
-            @${{ github.event.comment.user.login }} Here is the BibTeX entry for \`${{ steps.extract-identifiers.outputs.identifiers }}\`:
-
-            \`\`\`bibtex
-            ${{ steps.wenxian.outputs.bibtex}}
-            \`\`\`
-            EOF
+            echo 'comment<<EOF'
+            echo '@${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:'
+            echo '```bibtex'
+            echo '${{ steps.wenxian.outputs.bibtex}}'
+            echo '```'
             echo EOF
           } >> $GITHUB_OUTPUT
       - name: Post comment
