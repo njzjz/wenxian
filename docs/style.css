@@ -129,3 +129,7 @@ input:focus {
   max-width: 100%;
   position: relative;
 }
+
+.github-fork-ribbon:before {
+  background-color: #333;
+}
