@@ -25,4 +25,4 @@ runs:
         } >> "$GITHUB_ENV"
       shell: bash
       env:
-        INPUT_IDENTIFIER: ${{ inputs.identifier }}
+        INPUT_IDENTIFIER: ${{ inputs.id }}
