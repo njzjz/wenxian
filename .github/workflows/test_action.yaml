@@ -18,7 +18,7 @@ jobs:
           id: 1512.03385
       - name: Test output is expected
         run: |
-          echo "$EXPECTED_BIBTEX" | diff - <(echo "${{ steps.run-wenxian.outputs.bibtex }}")
+          echo "$EXPECTED_BIBTEX" | xargs | diff - <(echo "${{ steps.run-wenxian.outputs.bibtex }}" | xargs)
         env:
           EXPECTED_BIBTEX: |
             @Article{He_arXiv_2015_p1512.03385,
