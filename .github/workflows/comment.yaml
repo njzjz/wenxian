@@ -1,0 +1,37 @@
+name: Reply to issue comments
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  issues: write
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '@njzjz-bot')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract identifiers
+        id: extract-identifiers
+        run: |
+          echo identifiers=$(echo "${{ github.event.comment.body }}" | grep -oE '@njzjz-bot .*' | head -n1 | cut -c12- | xargs) >> $GITHUB_OUTPUT
+      - name: Run wenxian
+        id: wenxian
+        uses: ./
+        with:
+          id: ${{ steps.extract-identifiers.outputs.identifiers }}
+      - name: Prepare the comment body
+        id: prepare-comment
+        run: |
+          {
+            echo 'comment<<EOF'
+            echo '@${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:'
+            echo '```bibtex'
+            echo '${{ steps.wenxian.outputs.bibtex}}'
+            echo '```'
+            echo EOF
+          } >> $GITHUB_OUTPUT
+      - name: Post comment
+        run: |
+          echo '${{ steps.prepare-comment.outputs.comment }}' | gh issue comment ${{ github.event.issue.number }} --body-file -
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

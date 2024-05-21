@@ -1,4 +1,4 @@
-name: "wenxian"
+name: "run-wenxian"
 description: "Generate BibTeX files from given identifiers (DOI, PMID, or arXiv ID)"
 inputs:
   id:

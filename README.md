@@ -42,3 +42,8 @@ You can use `wenxian` in a GitHub Actions workflow, as a bridge between the inpu
 - name: Furthur uses (an example)
   run: echo "${{ steps.wenxian.outputs.bibtex }}"
 ```
+
+### Use wenxian in a GitHub issue of this repository
+
+You can use wenxian in a GitHub issue of this repository.
+Comment `@njzjz-bot 2312.15492` in [#23](https://github.com/njzjz/wenxian/issues/23), and the GitHub Actions will reply with the output ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entries.
