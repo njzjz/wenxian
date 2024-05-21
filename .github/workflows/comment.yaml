@@ -23,11 +23,11 @@ jobs:
           {
             cat << EOF
             comment<<EOF
-            @${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:
+            @${{ github.event.comment.user.login }} Here is the BibTeX entry for \`${{ steps.extract-identifiers.outputs.identifiers }}\`:
 
-            ```bibtex
+            \`\`\`bibtex
             ${{ steps.wenxian.outputs.bibtex}}
-            ```
+            \`\`\`
             EOF
             echo EOF
           } >> $GITHUB_OUTPUT
