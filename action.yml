@@ -15,12 +15,14 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: "3.8 - 3.12"
+    - name: Setup uv
+      run: pipx install uv
     - name: Run wenxian
       id: run-wenxian
       run: |
         {
           echo 'bibtex<<EOF'
-          pipx run uv tool run --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
+          uv tool run --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
           echo EOF
         } >> "$GITHUB_OUTPUT"
       shell: bash
