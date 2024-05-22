@@ -20,7 +20,7 @@ runs:
       run: |
         {
           echo 'bibtex<<EOF'
-          pipx run uv run --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
+          pipx run uv tool run --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
           echo EOF
         } >> "$GITHUB_OUTPUT"
       shell: bash
