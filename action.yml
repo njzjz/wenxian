@@ -17,6 +17,7 @@ runs:
         python-version: "3.8 - 3.12"
     - name: Setup uv
       run: pipx install uv
+      shell: bash
     - name: Run wenxian
       id: run-wenxian
       run: |
