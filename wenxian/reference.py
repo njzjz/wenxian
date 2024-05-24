@@ -100,16 +100,17 @@ class Reference:
         else:
             page_string = str(self.pages)
 
+        # See https://us.mirrors.cicku.me/ctan/macros/latex/contrib/biblatex/doc/biblatex.pdf
         data = {
             "author": author_string,
             "title": self.title,
             "journal": self.journal_abbr,
             "year": self.year,
             "volume": self.volume,
-            "issue": self.issue,
+            "number": self.issue,
             "pages": page_string,
             "doi": self.doi,
-            "annote": self.annote,
+            "abstract": self.annote,
         }
         start = f"@Article{{{self.key},"
         end = "}\n"
