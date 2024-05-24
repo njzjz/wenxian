@@ -71,10 +71,10 @@ TEST_CASES = [
             journal =  {J. Chem. Theory Comput.},
             year =     2023,
             volume =   19,
-            issue =    4,
+            number =   4,
             pages =    {1261--1275},
             doi =      {10.1021/acs.jctc.2c01172},
-            annote =   {We report QD{\ensuremath{\pi}}-v1.0 for modeling the internal energy
+            abstract = {We report QD{\ensuremath{\pi}}-v1.0 for modeling the internal energy
                      of drug molecules containing H, C, N, and O atoms. The
                      QD{\ensuremath{\pi}} model is in the form of a quantum
                      mechanical/machine learning potential correction
@@ -188,7 +188,7 @@ TEST_CASES = [
                 year =     2019,
                 pages =    {1910.12690},
                 doi =      {10.48550/arXiv.1910.12690},
-                annote =   {In recent years, promising deep learning based interatomic potential
+                abstract = {In recent years, promising deep learning based interatomic potential
                          energy surface (PES) models have been proposed that can potentially
                          allow us to perform molecular dynamics simulations for large scale
                          systems with quantum accuracy. However, making these models truly
@@ -315,10 +315,10 @@ TEST_CASES = [
                 journal =  {J. Chem. Phys.},
                 year =     2023,
                 volume =   159,
-                issue =    5,
+                number =   5,
                 pages =    054801,
                 doi =      {10.1063/5.0155600},
-                annote =   {DeePMD-kit is a powerful open-source software package that facilitates
+                abstract = {DeePMD-kit is a powerful open-source software package that facilitates
                          molecular dynamics simulations using machine learning potentials known
                          as Deep Potential (DP) models. This package, which was released in
                          2017, has been widely used in the fields of physics, chemistry,
@@ -369,10 +369,10 @@ TEST_CASES = [
                 journal =  {Energy Fuels},
                 year =     2021,
                 volume =   35,
-                issue =    1,
+                number =   1,
                 pages =    {762--769},
                 doi =      {10.1021/acs.energyfuels.0c03211},
-                annote =   {Reactive molecular dynamics (MD) simulation is a powerful tool to
+                abstract = {Reactive molecular dynamics (MD) simulation is a powerful tool to
                          study the reaction mechanism of complex chemical systems. Central to
                          the method is the potential energy surface (PES) that can desc...},
             }""").strip(),
