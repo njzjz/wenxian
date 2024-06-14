@@ -26,7 +26,7 @@ jobs:
             echo 'comment<<EOF'
             echo '@${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:'
             echo '```bibtex'
-            echo ${OUTPUT_BIBTEX}
+            echo "${OUTPUT_BIBTEX}"
             echo '```'
             echo EOF
           } >> $GITHUB_OUTPUT
