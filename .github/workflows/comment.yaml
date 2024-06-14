@@ -34,6 +34,7 @@ jobs:
           OUTPUT_BIBTEX: ${{ steps.wenxian.outputs.bibtex }}
       - name: Post comment
         run: |
-          echo '${{ steps.prepare-comment.outputs.comment }}' | gh issue comment ${{ github.event.issue.number }} --body-file -
+          echo "${OUTPUT_COMMENT}" | gh issue comment ${{ github.event.issue.number }} --body-file -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_COMMENT: ${{ steps.prepare-comment.outputs.comment }}
