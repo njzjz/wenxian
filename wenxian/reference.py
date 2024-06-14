@@ -123,10 +123,12 @@ class Reference:
             else:
                 valuestr = ("\n" + " " * 13).join(
                     textwrap.wrap(
-                        unicode_to_latex(
-                            value,
-                            non_ascii_only=True,
-                            replacement_latex_protection="braces-all",
+                        unidecode.unidecode(
+                            unicode_to_latex(
+                                value,
+                                non_ascii_only=True,
+                                replacement_latex_protection="braces-all",
+                            )
                         ),
                         70,
                     )
