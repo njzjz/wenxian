@@ -26,12 +26,15 @@ jobs:
             echo 'comment<<EOF'
             echo '@${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:'
             echo '```bibtex'
-            echo '${{ steps.wenxian.outputs.bibtex}}'
+            echo "${OUTPUT_BIBTEX}"
             echo '```'
             echo EOF
           } >> $GITHUB_OUTPUT
+        env:
+          OUTPUT_BIBTEX: ${{ steps.wenxian.outputs.bibtex }}
       - name: Post comment
         run: |
-          echo '${{ steps.prepare-comment.outputs.comment }}' | gh issue comment ${{ github.event.issue.number }} --body-file -
+          echo "${OUTPUT_COMMENT}" | gh issue comment ${{ github.event.issue.number }} --body-file -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OUTPUT_COMMENT: ${{ steps.prepare-comment.outputs.comment }}
