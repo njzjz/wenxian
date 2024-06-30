@@ -125,6 +125,11 @@ class Pubmed(Feeder):
             if key not in ("author",):
                 rets[key] = self._text(tree.find(path))
 
+        # specially handle Physical chemistry chemical physics : PCCP
+        # DOI: 10.1039/d4cp00997e
+        if rets["journal"] == "Physical chemistry chemical physics : PCCP":
+            rets["journal"] = "Physical chemistry chemical physics"
+
         author_tree = tree.findall(self.PUBMED_PATH["author"])
         if author_tree is not None:
             author = []
