@@ -6,21 +6,36 @@ import argparse
 import sys
 
 from wenxian.from_identifier import from_identifier
+from wenxian.logger import logger
 
 
 def cmd_from(
     *,
     IDENTIFIER: list[str],
     output: str | None = None,
+    ignore_errors: bool = False,
     **kwargs,
 ):
     """Generate BibTeX from a identifier."""
     buff = []
     references = []
     for identifier in IDENTIFIER:
-        ref = from_identifier(identifier.strip())
+        try:
+            ref = from_identifier(identifier.strip())
+        except Exception as e:
+            msg = f"Failed to fetch reference from {identifier}: {e}"
+            if ignore_errors:
+                logger.exception(msg)
+                continue
+            else:
+                raise ValueError(msg) from e
         if ref is None or ref.is_empty():
-            raise ValueError(f"Failed to fetch reference from {identifier}")
+            msg = f"Failed to fetch reference from {identifier}"
+            if ignore_errors:
+                logger.error(msg)
+                continue
+            else:
+                raise ValueError(msg)
         references.append(ref)
         buff.append(ref.bibtex)
     if output is None:
@@ -59,6 +74,11 @@ def main_parser() -> argparse.ArgumentParser:
             "Output file. If not specified, print to stdout. If specified without a value, print"
             " to a file with item key (for a single entry) or references.bib (for multiple entries)."
         ),
+    )
+    parser_from.add_argument(
+        "--ignore-errors",
+        action="store_true",
+        help="Ignore errors and continue processing the rest identifiers.",
     )
     parser_from.set_defaults(func=cmd_from)
     return parser
