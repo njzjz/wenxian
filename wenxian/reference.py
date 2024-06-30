@@ -56,12 +56,15 @@ class Reference:
         if self.journal == "arXiv":
             # special case
             return "arXiv"
-        if "." in self.journal.title():
+        abbr = abbreviator(self.journal.title(), remove_part=True)
+        if abbr.replace(",", ".") == self.journal.title():
             # assume it is already abbreviated, cannot handle cases like "J. Chem. Phys."
             # https://github.com/pierre-24/pyiso4/issues/11
             # Example: 10.1021/acs.jpcc.3c05522
+            # when it contains ., it may not be abbreviated
+            # Example: 10.1021/acs.jpcb.3c05928
             return self.journal.title()
-        return abbreviator(self.journal.title(), remove_part=True)
+        return abbr
 
     @property
     def key(self) -> str:
@@ -81,7 +84,7 @@ class Reference:
             first_page = self.pages
         key = "{last}_{journal}".format(
             last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
-            journal=re.sub(r"[\ \-\.:]", "", journal_abbr),
+            journal=re.sub(r"[\ \-\.:,]", "", journal_abbr),
         )
         if self.year is not None:
             key += f"_{self.year}"
