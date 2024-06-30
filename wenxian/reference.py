@@ -139,7 +139,7 @@ class Reference:
                         unidecode.unidecode(
                             unicode_to_latex(
                                 value,
-                                non_ascii_only=True,
+                                non_ascii_only=False,
                                 replacement_latex_protection="braces-all",
                             )
                         ),
