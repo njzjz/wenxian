@@ -144,11 +144,14 @@ class Pubmed(Feeder):
                 )
         else:
             author = None
+        year = self._int(rets["year"])
+        if year is not None:
+            assert isinstance(year, int)
         return Reference(
             author=author,
             title=rets["title"].rstrip(".") if rets["title"] is not None else None,
             journal=rets["journal"],
-            year=self._int(rets["year"]),
+            year=year,
             volume=self._int(rets["volume"]),
             issue=self._int(rets["issue"]),
             pages=self._pages(rets["pages"]) or rets["pii"],
