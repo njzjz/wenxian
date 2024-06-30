@@ -81,7 +81,7 @@ class Reference:
             first_page = self.pages
         key = "{last}_{journal}".format(
             last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
-            journal=re.sub(r"[\ \-\.]", "", journal_abbr),
+            journal=re.sub(r"[\ \-\.:]", "", journal_abbr),
         )
         if self.year is not None:
             key += f"_{self.year}"
