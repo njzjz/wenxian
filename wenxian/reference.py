@@ -56,6 +56,11 @@ class Reference:
         if self.journal == "arXiv":
             # special case
             return "arXiv"
+        if "." in self.journal.title():
+            # assume it is already abbreviated, cannot handle cases like "J. Chem. Phys."
+            # https://github.com/pierre-24/pyiso4/issues/11
+            # Example: 10.1021/acs.jpcc.3c05522
+            return self.journal.title()
         return abbreviator(self.journal.title(), remove_part=True)
 
     @property
