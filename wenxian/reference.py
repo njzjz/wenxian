@@ -57,6 +57,11 @@ class Reference:
             # special case
             return "arXiv"
         abbr = abbreviator(self.journal.title(), remove_part=True)
+        # workaround to fix the missing E, e.g. Phys. Rev. E
+        # https://github.com/pierre-24/pyiso4/issues/13
+        # Example: 10.1103/PhysRevE.108.055310
+        if self.journal.title().endswith(" E") and not abbr.endswith(" E"):
+            abbr += " E"
         if abbr.replace(",", ".") == self.journal.title():
             # assume it is already abbreviated, cannot handle cases like "J. Chem. Phys."
             # https://github.com/pierre-24/pyiso4/issues/11
