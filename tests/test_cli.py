@@ -28,3 +28,25 @@ def test_cli_from_to_file():
         )
         f.seek(0)
         assert f.read().strip() == case.expected_bibtex.strip()
+
+
+def test_cli_ignore_errors():
+    """Test wenxian from DOI to stdout."""
+    # expected success
+    subprocess.check_call(
+        [
+            sys.executable,
+            "-m",
+            "wenxian",
+            "from",
+            "this_is_not_an_identifier",
+            "--ignore-errors",
+        ],
+        text=True,
+    )
+    # expected failure
+    retcode = subprocess.call(
+        [sys.executable, "-m", "wenxian", "from", "this_is_not_an_identifier"],
+        text=True,
+    )
+    assert retcode == 1
