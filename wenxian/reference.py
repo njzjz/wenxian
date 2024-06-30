@@ -42,8 +42,8 @@ class Reference:
     title: str | None = None
     journal: str | None = None
     year: int | None = None
-    volume: int | None = None
-    issue: int | None = None
+    volume: int | str | None = None
+    issue: int | str | None = None
     pages: tuple[int] | tuple[int, int] | str | None = None
     annote: str | None = None
     doi: str | None = None

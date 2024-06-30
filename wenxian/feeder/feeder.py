@@ -23,14 +23,23 @@ class Feeder:
         """Fetch a reference from a PubMed identifier."""
 
     @overload
-    def _int(self, string: str) -> int: ...
+    def _int(self, string: int) -> int: ...
+
+    @overload
+    def _int(self, string: str) -> int | str: ...
 
     @overload
     def _int(self, string: None) -> None: ...
 
-    def _int(self, string: str | None) -> int | None:
-        """Convert string to int, return None if string is None."""
-        return int(string) if string is not None else None
+    def _int(self, string: str | int | None) -> int | str | None:
+        """Convert string to int if it is a digit, return None if string is None."""
+        if string is None:
+            return None
+        elif isinstance(string, int):
+            return string
+        elif isinstance(string, str):
+            return int(string) if string.isdigit() else string
+        raise ValueError(f"Invalid string: {string}")
 
     @overload
     def _pages(self, string: str) -> tuple[int]: ...
@@ -38,11 +47,13 @@ class Feeder:
     @overload
     def _pages(self, string: None) -> None: ...
 
-    def _pages(self, string: str | None) -> tuple[int] | tuple[int, int] | None:
+    def _pages(
+        self, string: str | None
+    ) -> tuple[int | str] | tuple[int | str, int | str] | None:
         """Convert a page string to a tuple of integers."""
         if string is None:
             return None
-        page_list = tuple(map(int, string.split("-")))
+        page_list = tuple(self._int(s) for s in string.split("-"))
         if len(page_list) == 1 or len(page_list) == 2:
             return page_list
         raise ValueError(f"Invalid page string: {string}")
