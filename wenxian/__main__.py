@@ -20,7 +20,15 @@ def cmd_from(
     buff = []
     references = []
     for identifier in IDENTIFIER:
-        ref = from_identifier(identifier.strip())
+        try:
+            ref = from_identifier(identifier.strip())
+        except Exception as e:
+            msg = f"Failed to fetch reference from {identifier}: {e}"
+            if ignore_errors:
+                logger.exception(msg)
+                continue
+            else:
+                raise ValueError(msg) from e
         if ref is None or ref.is_empty():
             msg = f"Failed to fetch reference from {identifier}"
             if ignore_errors:
