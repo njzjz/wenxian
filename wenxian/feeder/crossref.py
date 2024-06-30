@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import html
+
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
 from wenxian.reference import Author, Reference
@@ -56,6 +58,9 @@ class Crossref(Feeder):
         # journal
         if m.get("short-container-title"):
             journal = m["short-container-title"][0]
+            # while not documented, the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
+            # https://api.crossref.org/works/10.1016/j.jmst.2023.09.059
+            journal = html.unescape(journal)
         else:
             journal = None
         return Reference(

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import html
+
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
 from wenxian.reference import Author, Reference
@@ -30,6 +32,9 @@ class Semanticscholar(Feeder):
         # https://api.semanticscholar.org/graph/v1/paper/10.1103/PhysRevB.109.174106?fields=title,year,abstract,authors.name,journal,externalIds
         if res["journal"] is not None:
             journal = res["journal"]["name"]
+            # the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
+            # https://api.semanticscholar.org/graph/v1/paper/10.1016/j.jmst.2023.09.059?fields=title,year,abstract,authors.name,journal,externalIds
+            journal = html.unescape(journal)
         else:
             journal = None
         return Reference(
