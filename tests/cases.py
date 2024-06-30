@@ -196,7 +196,7 @@ TEST_CASES = [
                          key component in this task is the generation of datasets used in model
                          training. In this paper, we introduce the Deep Potential GENerator
                          (DP-GEN), an open-source software platform that implements the
-                         recently proposed "on-the-fly" learning procedure [Phys. Rev.
+                         recently proposed {''}on-the-fly{''} learning procedure [Phys. Rev.
                          Materials 3, 023804] and is capable of generating uniformly accurate
                          deep learning based PES models in a way that minimizes human
                          intervention and the computational cost for data generation and model
