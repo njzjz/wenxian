@@ -26,10 +26,16 @@ class Semanticscholar(Feeder):
             last = name.split(" ")[-1]
             first = " ".join(name.split(" ")[:-1])
             authors.append(Author(first=first, last=last))
+        # journal may be null, e.g.,
+        # https://api.semanticscholar.org/graph/v1/paper/10.1103/PhysRevB.109.174106?fields=title,year,abstract,authors.name,journal,externalIds
+        if res["journal"] is not None:
+            journal = res["journal"]["name"]
+        else:
+            journal = None
         return Reference(
             author=authors,
             title=res["title"],
-            journal=res["journal"]["name"],
+            journal=journal,
             year=res["year"],
             annote=res["abstract"],
             doi=res["externalIds"]["DOI"],
