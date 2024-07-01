@@ -97,6 +97,9 @@ class Reference:
             key += f"_v{self.volume}"
         if first_page is not None:
             key += f"_p{first_page}"
+        # special characters are not allowed anywhere in the key, not only in journal
+        # https://tex.stackexchange.com/a/96918/262109
+        key = re.sub(r"""[\ "#%'\(\),\=\{\}]""", "", key)
         return key
 
     @property
