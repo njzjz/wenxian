@@ -89,7 +89,7 @@ class Reference:
             first_page = self.pages
         key = "{last}_{journal}".format(
             last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
-            journal=re.sub(r"[\ \-\.:,\(\)]", "", journal_abbr),
+            journal=journal_abbr,
         )
         if self.year is not None:
             key += f"_{self.year}"
@@ -97,6 +97,8 @@ class Reference:
             key += f"_v{self.volume}"
         if first_page is not None:
             key += f"_p{first_page}"
+        # special characters are not allowed anywhere in the key, not only in journal
+        key = re.sub(r"[\ \-\.:,\(\)]", "", key)
         return key
 
     @property
