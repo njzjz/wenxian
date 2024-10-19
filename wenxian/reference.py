@@ -11,6 +11,24 @@ from pyiso4.ltwa import Abbreviate
 from pylatexenc.latexencode import unicode_to_latex
 
 abbreviator = Abbreviate.create()
+XML_CLEANER = re.compile(r"<\/?[^<>]+>")
+"""Regex to remove XML tags."""
+
+
+def remove_xml_tags(text: str) -> str:
+    """Remove XML tags.
+
+    Parameters
+    ----------
+    text : str
+        A text string.
+
+    Returns
+    -------
+    str
+        A text string without XML tags.
+    """
+    return XML_CLEANER.sub("", text)
 
 
 @dataclass
@@ -141,7 +159,7 @@ class Reference:
                     textwrap.wrap(
                         unidecode.unidecode(
                             unicode_to_latex(
-                                value,
+                                remove_xml_tags(value),
                                 non_ascii_only=False,
                                 replacement_latex_protection="braces-all",
                             )
