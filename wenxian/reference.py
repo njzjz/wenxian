@@ -53,9 +53,9 @@ class Reference:
         """Abbreviated journal name."""
         if self.journal is None:
             return None
-        if self.journal == "arXiv":
+        if self.journal in {"arXiv", "ChemRxiv"}:
             # special case
-            return "arXiv"
+            return self.journal
         abbr = abbreviator(self.journal.title(), remove_part=True)
         # workaround to fix the missing E, e.g. Phys. Rev. E
         # https://github.com/pierre-24/pyiso4/issues/13

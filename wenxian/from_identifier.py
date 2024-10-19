@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from wenxian.feeder.arxiv import Arxiv
+from wenxian.feeder.chemrxiv import Chemrxiv
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.pubmed import Pubmed
 from wenxian.feeder.semanticscholar import Semanticscholar
@@ -18,6 +19,7 @@ def from_doi(doi: str) -> Reference | None:
         | Pubmed().from_doi(doi)
         | Crossref().from_doi(doi)
         | Arxiv().from_doi(doi)
+        | Chemrxiv().from_doi(doi)
         | Semanticscholar().from_doi(doi)
     )
 
