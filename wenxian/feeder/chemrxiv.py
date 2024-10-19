@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sys
 from datetime import datetime
 
 from wenxian.feeder.feeder import Feeder
@@ -27,7 +28,11 @@ class Chemrxiv(Feeder):
             # DOI not found
             return None
         res = r.json()
-        publish_time = datetime.fromisoformat(res["publishedDate"])
+        publish_time_str = res["publishedDate"]
+        if sys.version_info < (3, 11) and publish_time_str.endswith("Z"):
+            # Z support added in https://github.com/python/cpython/issues/80010
+            publish_time_str = publish_time_str[:-1] + "+00:00"
+        publish_time = datetime.fromisoformat(publish_time_str)
         year = publish_time.year
         authors = []
         for aa in res["authors"]:
