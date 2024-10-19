@@ -429,29 +429,28 @@ TEST_CASES = [
                 journal =  {ChemRxiv},
                 year =     2024,
                 doi =      {10.26434/chemrxiv-2024-sq8nh},
-                abstract = {{\ensuremath{<}}jats:p{\ensuremath{>}}The advent of machine learning
-                         (ML) in computational chemistry heralds a transformative approach to
-                         one of the quintessential challenges in computer-aided drug design
-                         (CADD): the accurate and cost-effective calculation of atomic
-                         interactions. By leveraging a neural network (NN) potential, we
-                         address this balance and push the boundaries of the NN potential's
-                         representational capacity. Our work details the development of a
-                         robust general-purpose NN potential, architected on the framework of
-                         DPA-2, a deep learning potential with attention, which demonstrates
-                         remarkable fidelity in replicating the interatomic potential energy
-                         surface for drug-like molecules comprising eight critical chemical
-                         elements: H, C, N, O, F, S, Cl, and P. We employed state-of-the-art
-                         molecular dynamic techniques, including temperature acceleration and
-                         enhanced sampling, to construct a comprehensive dataset to ensure
-                         exhaustive coverage of relevant configurational spaces. Our rigorous
-                         testing protocols, including torsion scanning, global minimum
-                         searches, and high-temperature MD simulations across various organic
-                         molecules, have culminated in an NN model that achieves chemical
-                         precision commensurate with the highly regarded DFT model, while
-                         significantly outstripping the accuracy of prevalent semi-empirical
-                         methods. This study presents a leap forward in the predictive
-                         modelling of molecular interactions, offering extensive applications
-                         in drug development and beyond.{\ensuremath{<}}/jats:p{\ensuremath{>}}},
+                abstract = {The advent of machine learning (ML) in computational chemistry heralds
+                         a transformative approach to one of the quintessential challenges in
+                         computer-aided drug design (CADD): the accurate and cost-effective
+                         calculation of atomic interactions. By leveraging a neural network
+                         (NN) potential, we address this balance and push the boundaries of the
+                         NN potential's representational capacity. Our work details the
+                         development of a robust general-purpose NN potential, architected on
+                         the framework of DPA-2, a deep learning potential with attention,
+                         which demonstrates remarkable fidelity in replicating the interatomic
+                         potential energy surface for drug-like molecules comprising eight
+                         critical chemical elements: H, C, N, O, F, S, Cl, and P. We employed
+                         state-of-the-art molecular dynamic techniques, including temperature
+                         acceleration and enhanced sampling, to construct a comprehensive
+                         dataset to ensure exhaustive coverage of relevant configurational
+                         spaces. Our rigorous testing protocols, including torsion scanning,
+                         global minimum searches, and high-temperature MD simulations across
+                         various organic molecules, have culminated in an NN model that
+                         achieves chemical precision commensurate with the highly regarded DFT
+                         model, while significantly outstripping the accuracy of prevalent
+                         semi-empirical methods. This study presents a leap forward in the
+                         predictive modelling of molecular interactions, offering extensive
+                         applications in drug development and beyond.},
             }""").strip(),
     ),
 ]
