@@ -99,7 +99,7 @@ class Reference:
         if self.author is None or len(self.author) == 0:
             # 10.1126/science.288.5473.1950
             last = "NoAuthor"
-        if self.author[0].last is None:
+        elif self.author[0].last is None:
             last = "NoLastName"
         else:
             last = unidecode.unidecode(self.author[0].last).replace(" ", "")
