@@ -97,9 +97,12 @@ class Reference:
     def key(self) -> str:
         """Generate a BibTeX key."""
         if self.author is None or len(self.author) == 0:
-            raise ValueError("No author is found.")
-        if self.author[0].last is None:
-            raise ValueError("The first author has no last name.")
+            # 10.1126/science.288.5473.1950
+            last = "NoAuthor"
+        elif self.author[0].last is None:
+            last = "NoLastName"
+        else:
+            last = unidecode.unidecode(self.author[0].last).replace(" ", "")
         journal_abbr = self.journal_abbr
         if journal_abbr is None:
             raise ValueError("No journal is found.")
@@ -110,7 +113,7 @@ class Reference:
         else:
             first_page = self.pages
         key = "{last}_{journal}".format(
-            last=unidecode.unidecode(self.author[0].last).replace(" ", ""),
+            last=last,
             journal=re.sub(r"[\ \-\.:,]", "", journal_abbr),
         )
         if self.year is not None:
