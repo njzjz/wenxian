@@ -15,16 +15,16 @@ Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to use wenxian in the brows
 
 ### Command line interface
 
-`wenxian` requires Python 3.8. It's suggested to install [`pipx`](https://github.com/pypa/pipx) first:
+`wenxian` requires Python 3.8. It's suggested to install [`uv`](https://github.com/astral-sh/uv) first:
 
 ```sh
-pip install pipx
+pip install uv
 ```
 
-Then use `pipx` to run `wenxian`:
+Then use `uvx` to run `wenxian`:
 
 ```sh
-pipx run wenxian from 10.1063/5.0155600
+uvx wenxian from 10.1063/5.0155600
 ```
 
 It is expected to see a ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entry printed into the standard output.
