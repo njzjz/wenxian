@@ -11,12 +11,14 @@ outputs:
 runs:
   using: composite
   steps:
+    - name: Install the latest version of uv
+      uses: astral-sh/setup-uv@v4
     - name: Run wenxian
       id: run-wenxian
       run: |
         {
           echo 'bibtex<<EOF'
-          pipx run uv tool run --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
+          uvx --from ${{ github.action_path }} wenxian from $INPUT_IDENTIFIER
           echo EOF
         } >> "$GITHUB_OUTPUT"
       shell: bash
