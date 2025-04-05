@@ -174,6 +174,10 @@ class Reference:
                         70,
                     )
                 )
+                if key == "author":
+                    # prevent {} in author that is used to split first and last name
+                    # be escaped
+                    valuestr = valuestr.replace(r"{\{}", r"{").replace(r"{\}}", r"}")
                 if key == "title":
                     valuestr = f"{{{{{valuestr}}}}}"
                 else:
