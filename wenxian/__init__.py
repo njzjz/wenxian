@@ -3,4 +3,4 @@
 from __future__ import annotations
 
 __tool__ = "wenxian"
-__email__ = "jinzhe.zeng@rutgers.edu"
+__email__ = "jinzhe.zeng@ustc.edu.cn"
