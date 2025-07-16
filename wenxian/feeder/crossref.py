@@ -32,7 +32,10 @@ class Crossref(Feeder):
         if "author" in m:
             author = []
             for aa in m["author"]:
-                author.append(Author(first=aa["given"], last=aa["family"]))
+                if "name" in aa:
+                    author.append(Author(first="", last=aa["name"]))
+                else:
+                    author.append(Author(first=aa["given"], last=aa["family"]))
         else:
             author = None
         # volume & issue
