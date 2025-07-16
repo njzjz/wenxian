@@ -134,6 +134,15 @@ class Pubmed(Feeder):
         if author_tree is not None:
             author = []
             for aa in author_tree:
+                collective = self._text(aa.find("CollectiveName"))
+                if collective is not None:
+                    author.append(
+                        Author(
+                            first="",
+                            last=collective,
+                        )
+                    )
+                    continue
                 first = self._text(aa.find("ForeName"))
                 if first is not None:
                     # add period if it is a single letter, e.g., Darrin M -> Darrin M.
