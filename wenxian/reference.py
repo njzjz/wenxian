@@ -188,6 +188,38 @@ class Reference:
         items.append(end)
         return "\n".join(items)
 
+    @property
+    def markdown(self) -> str:
+        """Generate a Markdown for this reference."""
+        if self.author is None:
+            author_string = "Unknown Author"
+        else:
+            author_string = ", ".join(str(aa) for aa in self.author)
+
+        if self.pages is None:
+            page_string = None
+        elif isinstance(self.pages, tuple):
+            page_string = "-".join(str(x) for x in self.pages)
+        else:
+            page_string = str(self.pages)
+
+        return ", ".join(
+            str(ss)
+            for ss in (
+                author_string,
+                self.title,
+                f"*{self.journal_abbr}*",
+                self.year,
+                self.volume,
+                page_string,
+                f"DOI: [{self.doi}](https://doi.org/{self.doi})",
+            )
+            if ss is not None
+        ) + (
+            f". [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
+            "\n"
+        )
+
     def __or__(self, other: Reference | None) -> Reference:
         """Combine two references."""
         if other is None:
