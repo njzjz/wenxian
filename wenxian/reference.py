@@ -212,7 +212,9 @@ class Reference:
                 self.year,
                 self.volume,
                 page_string,
-                f"DOI: [{self.doi}](https://doi.org/{self.doi})" if self.doi is not None else None,
+                f"DOI: [{self.doi}](https://doi.org/{self.doi})"
+                if self.doi is not None
+                else None,
             )
             if ss is not None
         ) + (
