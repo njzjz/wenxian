@@ -203,23 +203,30 @@ class Reference:
         else:
             page_string = str(self.pages)
 
-        return ", ".join(
-            str(ss)
-            for ss in (
-                author_string,
-                self.title,
-                f"*{self.journal_abbr}*" if self.journal_abbr is not None else None,
-                self.year,
-                self.volume,
-                page_string,
-                f"DOI: [{self.doi}](https://doi.org/{self.doi})"
-                if self.doi is not None
-                else None,
+        return (
+            ", ".join(
+                str(ss)
+                for ss in (
+                    author_string,
+                    self.title,
+                    f"*{self.journal_abbr}*" if self.journal_abbr is not None else None,
+                    self.year,
+                    self.volume,
+                    page_string,
+                    f"DOI: [{self.doi}](https://doi.org/{self.doi})"
+                    if self.doi is not None
+                    else None,
+                )
+                if ss is not None
             )
-            if ss is not None
-        ) + "." + (
-            " [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})" if self.doi is not None else ""
-        ) + "\n"
+            + "."
+            + (
+                " [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
+                if self.doi is not None
+                else ""
+            )
+            + "\n"
+        )
 
     def __or__(self, other: Reference | None) -> Reference:
         """Combine two references."""
