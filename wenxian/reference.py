@@ -217,10 +217,9 @@ class Reference:
                 else None,
             )
             if ss is not None
-        ) + (
-            f". [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
-            "\n"
-        )
+        ) + "." + (
+            " [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})" if self.doi is not None else ""
+        ) + "\n"
 
     def __or__(self, other: Reference | None) -> Reference:
         """Combine two references."""
