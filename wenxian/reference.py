@@ -208,7 +208,7 @@ class Reference:
             for ss in (
                 author_string,
                 self.title,
-                f"*{self.journal_abbr}*",
+                f"*{self.journal_abbr}*" if self.journal_abbr is not None else None,
                 self.year,
                 self.volume,
                 page_string,
