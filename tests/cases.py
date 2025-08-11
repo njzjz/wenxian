@@ -378,79 +378,79 @@ TEST_CASES = [
             }""").strip(),
     ),
     # ChemRxiv
-    # ReferenceCase(
-    #     reference=Reference(
-    #         author=[
-    #             Author(first="Manyi", last="Yang"),
-    #             Author(first="Duo", last="Zhang"),
-    #             Author(first="Xinyan", last="Wang"),
-    #             # why not Linfeng???
-    #             Author(first="Lingfeng", last="Zhang"),
-    #             Author(first="Tong", last="Zhu"),
-    #             Author(first="Han", last="Wang"),
-    #         ],
-    #         title="Ab initio Accuracy Neural Network Potential for Drug-like Molecules",
-    #         journal="ChemRxiv",
-    #         year=2024,
-    #         annote=textwrap.dedent("""\
-    #             <jats:p>The advent of machine learning
-    #             (ML) in computational chemistry heralds a transformative approach to
-    #             one of the quintessential challenges in computer-aided drug design
-    #             (CADD): the accurate and cost-effective calculation of atomic
-    #             interactions. By leveraging a neural network (NN) potential, we
-    #             address this balance and push the boundaries of the NN potential's
-    #             representational capacity. Our work details the development of a
-    #             robust general-purpose NN potential, architected on the framework of
-    #             DPA-2, a deep learning potential with attention, which demonstrates
-    #             remarkable fidelity in replicating the interatomic potential energy
-    #             surface for drug-like molecules comprising eight critical chemical
-    #             elements: H, C, N, O, F, S, Cl, and P. We employed state-of-the-art
-    #             molecular dynamic techniques, including temperature acceleration and
-    #             enhanced sampling, to construct a comprehensive dataset to ensure
-    #             exhaustive coverage of relevant configurational spaces. Our rigorous
-    #             testing protocols, including torsion scanning, global minimum
-    #             searches, and high-temperature MD simulations across various organic
-    #             molecules, have culminated in an NN model that achieves chemical
-    #             precision commensurate with the highly regarded DFT model, while
-    #             significantly outstripping the accuracy of prevalent semi-empirical
-    #             methods. This study presents a leap forward in the predictive
-    #             modelling of molecular interactions, offering extensive applications
-    #             in drug development and beyond.</jats:p>
-    #                                """)
-    #         .strip()
-    #         .replace("\n", " "),
-    #         doi="10.26434/chemrxiv-2024-sq8nh",
-    #     ),
-    #     expected_bibtex=textwrap.dedent(r"""
-    #         @Article{Yang_ChemRxiv_2024,
-    #             author =   {Manyi Yang and Duo Zhang and Xinyan Wang and Lingfeng Zhang and Tong
-    #                      Zhu and Han Wang},
-    #             title =    {{Ab initio Accuracy Neural Network Potential for Drug-like Molecules}},
-    #             journal =  {ChemRxiv},
-    #             year =     2024,
-    #             doi =      {10.26434/chemrxiv-2024-sq8nh},
-    #             abstract = {The advent of machine learning (ML) in computational chemistry heralds
-    #                      a transformative approach to one of the quintessential challenges in
-    #                      computer-aided drug design (CADD): the accurate and cost-effective
-    #                      calculation of atomic interactions. By leveraging a neural network
-    #                      (NN) potential, we address this balance and push the boundaries of the
-    #                      NN potential's representational capacity. Our work details the
-    #                      development of a robust general-purpose NN potential, architected on
-    #                      the framework of DPA-2, a deep learning potential with attention,
-    #                      which demonstrates remarkable fidelity in replicating the interatomic
-    #                      potential energy surface for drug-like molecules comprising eight
-    #                      critical chemical elements: H, C, N, O, F, S, Cl, and P. We employed
-    #                      state-of-the-art molecular dynamic techniques, including temperature
-    #                      acceleration and enhanced sampling, to construct a comprehensive
-    #                      dataset to ensure exhaustive coverage of relevant configurational
-    #                      spaces. Our rigorous testing protocols, including torsion scanning,
-    #                      global minimum searches, and high-temperature MD simulations across
-    #                      various organic molecules, have culminated in an NN model that
-    #                      achieves chemical precision commensurate with the highly regarded DFT
-    #                      model, while significantly outstripping the accuracy of prevalent
-    #                      semi-empirical methods. This study presents a leap forward in the
-    #                      predictive modelling of molecular interactions, offering extensive
-    #                      applications in drug development and beyond.},
-    #         }""").strip(),
-    # ),
+    ReferenceCase(
+        reference=Reference(
+            author=[
+                Author(first="Manyi", last="Yang"),
+                Author(first="Duo", last="Zhang"),
+                Author(first="Xinyan", last="Wang"),
+                # why not Linfeng???
+                Author(first="Lingfeng", last="Zhang"),
+                Author(first="Tong", last="Zhu"),
+                Author(first="Han", last="Wang"),
+            ],
+            title="Ab initio Accuracy Neural Network Potential for Drug-like Molecules",
+            journal="ChemRxiv",
+            year=2024,
+            annote=textwrap.dedent("""\
+                <jats:p>The advent of machine learning
+                (ML) in computational chemistry heralds a transformative approach to
+                one of the quintessential challenges in computer-aided drug design
+                (CADD): the accurate and cost-effective calculation of atomic
+                interactions. By leveraging a neural network (NN) potential, we
+                address this balance and push the boundaries of the NN potential's
+                representational capacity. Our work details the development of a
+                robust general-purpose NN potential, architected on the framework of
+                DPA-2, a deep learning potential with attention, which demonstrates
+                remarkable fidelity in replicating the interatomic potential energy
+                surface for drug-like molecules comprising eight critical chemical
+                elements: H, C, N, O, F, S, Cl, and P. We employed state-of-the-art
+                molecular dynamic techniques, including temperature acceleration and
+                enhanced sampling, to construct a comprehensive dataset to ensure
+                exhaustive coverage of relevant configurational spaces. Our rigorous
+                testing protocols, including torsion scanning, global minimum
+                searches, and high-temperature MD simulations across various organic
+                molecules, have culminated in an NN model that achieves chemical
+                precision commensurate with the highly regarded DFT model, while
+                significantly outstripping the accuracy of prevalent semi-empirical
+                methods. This study presents a leap forward in the predictive
+                modelling of molecular interactions, offering extensive applications
+                in drug development and beyond.</jats:p>
+                                   """)
+            .strip()
+            .replace("\n", " "),
+            doi="10.26434/chemrxiv-2024-sq8nh",
+        ),
+        expected_bibtex=textwrap.dedent(r"""
+            @Article{Yang_ChemRxiv_2024,
+                author =   {Manyi Yang and Duo Zhang and Xinyan Wang and Lingfeng Zhang and Tong
+                         Zhu and Han Wang},
+                title =    {{Ab initio Accuracy Neural Network Potential for Drug-like Molecules}},
+                journal =  {ChemRxiv},
+                year =     2024,
+                doi =      {10.26434/chemrxiv-2024-sq8nh},
+                abstract = {The advent of machine learning (ML) in computational chemistry heralds
+                         a transformative approach to one of the quintessential challenges in
+                         computer-aided drug design (CADD): the accurate and cost-effective
+                         calculation of atomic interactions. By leveraging a neural network
+                         (NN) potential, we address this balance and push the boundaries of the
+                         NN potential's representational capacity. Our work details the
+                         development of a robust general-purpose NN potential, architected on
+                         the framework of DPA-2, a deep learning potential with attention,
+                         which demonstrates remarkable fidelity in replicating the interatomic
+                         potential energy surface for drug-like molecules comprising eight
+                         critical chemical elements: H, C, N, O, F, S, Cl, and P. We employed
+                         state-of-the-art molecular dynamic techniques, including temperature
+                         acceleration and enhanced sampling, to construct a comprehensive
+                         dataset to ensure exhaustive coverage of relevant configurational
+                         spaces. Our rigorous testing protocols, including torsion scanning,
+                         global minimum searches, and high-temperature MD simulations across
+                         various organic molecules, have culminated in an NN model that
+                         achieves chemical precision commensurate with the highly regarded DFT
+                         model, while significantly outstripping the accuracy of prevalent
+                         semi-empirical methods. This study presents a leap forward in the
+                         predictive modelling of molecular interactions, offering extensive
+                         applications in drug development and beyond.},
+            }""").strip(),
+    ),
 ]
