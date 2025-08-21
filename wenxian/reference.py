@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 import textwrap
 from dataclasses import dataclass
+from enum import IntEnum
 
 import unidecode
 from pyiso4.ltwa import Abbreviate
@@ -52,6 +53,25 @@ class Author:
         return f"{self.first} {self.last}"
 
 
+class BibtexType(IntEnum):
+    """BibTeX entry types."""
+
+    article = 0
+    book = 1
+    booklet = 2
+    conference = 3
+    inbook = 4
+    incollection = 5
+    inproceedings = 6
+    manual = 7
+    mastersthesis = 8
+    misc = 9
+    phdthesis = 10
+    proceedings = 11
+    techreport = 12
+    unpublished = 13
+
+
 @dataclass
 class Reference:
     """A reference to a scholarly article."""
@@ -65,6 +85,7 @@ class Reference:
     pages: tuple[int] | tuple[int, int] | str | None = None
     annote: str | None = None
     doi: str | None = None
+    type: BibtexType = BibtexType.article
 
     @property
     def journal_abbr(self) -> str | None:
@@ -153,7 +174,11 @@ class Reference:
             "doi": self.doi,
             "abstract": self.annote,
         }
-        start = f"@Article{{{self.key},"
+        if self.type in (BibtexType.inbook,):
+            data.pop("journal")
+            # usually book title should not use abbr
+            data["booktitle"] = self.journal
+        start = f"@{self.type.name.capitalize()}{{{self.key},"
         end = "}\n"
         items = [start]
         for key, value in data.items():
@@ -202,6 +227,7 @@ class Reference:
             pages=self.pages or other.pages,
             annote=self.annote or other.annote,
             doi=self.doi or other.doi,
+            type=self.type or other.type,
         )
 
     def is_empty(self) -> bool:

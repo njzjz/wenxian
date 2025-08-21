@@ -5,7 +5,7 @@ from __future__ import annotations
 import textwrap
 from dataclasses import dataclass
 
-from wenxian.reference import Author, Reference
+from wenxian.reference import Author, BibtexType, Reference
 
 
 @dataclass
@@ -451,6 +451,27 @@ TEST_CASES = [
                          semi-empirical methods. This study presents a leap forward in the
                          predictive modelling of molecular interactions, offering extensive
                          applications in drug development and beyond.},
+            }""").strip(),
+    ),
+    # chapter
+    ReferenceCase(
+        reference=Reference(
+            author=[Author(first="James Patton", last="Jones")],
+            title="PBS: Portable Batch System",
+            year=2001,
+            pages=(369, 390),
+            doi="10.7551/mitpress/1556.003.0021",
+            journal="Beowulf Cluster Computing with Linux",
+            type=BibtexType.inbook,
+        ),
+        expected_bibtex=textwrap.dedent(r"""
+            @Inbook{Jones_BeowulfClustComputLinux_2001_p369,
+                author =   {James Patton Jones},
+                title =    {{PBS: Portable Batch System}},
+                year =     2001,
+                pages =    {369--390},
+                doi =      {10.7551/mitpress/1556.003.0021},
+                booktitle ={Beowulf Cluster Computing with Linux},
             }""").strip(),
     ),
 ]
