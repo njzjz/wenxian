@@ -174,7 +174,11 @@ class Reference:
             "doi": self.doi,
             "abstract": self.annote,
         }
-        if self.type in (BibtexType.inbook,):
+        if self.type in (
+            BibtexType.inbook,
+            BibtexType.inproceedings,
+            BibtexType.incollection,
+        ):
             data.pop("journal")
             # usually book title should not use abbr
             data["booktitle"] = self.journal
