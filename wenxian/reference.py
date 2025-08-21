@@ -250,7 +250,7 @@ class Reference:
             )
             + "."
             + (
-                " [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
+                f" [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
                 if self.doi is not None
                 else ""
             )
