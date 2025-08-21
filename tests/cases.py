@@ -14,6 +14,7 @@ class ReferenceCase:
 
     reference: Reference
     expected_bibtex: str
+    expected_markdown: str
     pmid: int | None = None
     arxiv: str | None = None
 
@@ -101,6 +102,7 @@ TEST_CASES = [
         }
     """).strip(),
         pmid=36696673,
+        expected_markdown=r"Jinzhe Zeng, Yujun Tao, Timothy J. Giese, Darrin M. York, QDπ: A Quantum Deep Potential Interaction Model for Drug Discovery, *J. Chem. Theory Comput.*, 2023, 19, 1261-1275, DOI: [10.1021/acs.jctc.2c01172](https://doi.org/10.1021/acs.jctc.2c01172). [![Citations](https://citations.njzjz.win/10.1021/acs.jctc.2c01172)](https://badge.dimensions.ai/details/doi/10.1021/acs.jctc.2c01172)",
     ),
     # no records in PubMed, mainly from crossref
     ReferenceCase(
@@ -133,6 +135,7 @@ TEST_CASES = [
                 pages =    107206,
                 doi =      {10.1016/j.cpc.2020.107206},
             }""").strip(),
+        expected_markdown=r"Yuzhi Zhang, Haidi Wang, Weijie Chen, Jinzhe Zeng, Linfeng Zhang, Han Wang, Weinan E, DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models, *Comput. Phys. Commun.*, 2020, 253, 107206, DOI: [10.1016/j.cpc.2020.107206](https://doi.org/10.1016/j.cpc.2020.107206). [![Citations](https://citations.njzjz.win/10.1016/j.cpc.2020.107206)](https://badge.dimensions.ai/details/doi/10.1016/j.cpc.2020.107206)",
     ),
     # arXiv
     ReferenceCase(
@@ -213,6 +216,7 @@ TEST_CASES = [
             }
             """).strip(),
         arxiv="1910.12690",
+        expected_markdown=r"Yuzhi Zhang, Haidi Wang, Weijie Chen, Jinzhe Zeng, Linfeng Zhang, Han Wang, Weinan E, DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models, *arXiv*, 2019, 1910.12690, DOI: [10.48550/arXiv.1910.12690](https://doi.org/10.48550/arXiv.1910.12690). [![Citations](https://citations.njzjz.win/10.48550/arXiv.1910.12690)](https://badge.dimensions.ai/details/doi/10.48550/arXiv.1910.12690)",
     ),
     # test pii
     ReferenceCase(
@@ -337,6 +341,7 @@ TEST_CASES = [
                          representative application, benchmarks the accuracy and efficiency of
                          different models, and discusses ongoing developments.},
             }""").strip(),
+        expected_markdown=r"Jinzhe Zeng, Duo Zhang, Denghui Lu, Pinghui Mo, Zeyu Li, Yixiao Chen, Marián Rynik, Li'ang Huang, Ziyao Li, Shaochen Shi, Yingze Wang, Haotian Ye, Ping Tuo, Jiabin Yang, Ye Ding, Yifan Li, Davide Tisi, Qiyu Zeng, Han Bao, Yu Xia, Jiameng Huang, Koki Muraoka, Yibo Wang, Junhan Chang, Fengbo Yuan, Sigbjørn Løland Bore, Chun Cai, Yinnian Lin, Bo Wang, Jiayan Xu, Jia-Xin Zhu, Chenxing Luo, Yuzhi Zhang, Rhys E. A. Goodall, Wenshuo Liang, Anurag Kumar Singh, Sikai Yao, Jingchao Zhang, Renata Wentzcovitch, Jiequn Han, Jie Liu, Weile Jia, Darrin M. York, Weinan E, Roberto Car, Linfeng Zhang, Han Wang, DeePMD-kit v2: A software package for deep potential models, *J. Chem. Phys.*, 2023, 159, 054801, DOI: [10.1063/5.0155600](https://doi.org/10.1063/5.0155600). [![Citations](https://citations.njzjz.win/10.1063/5.0155600)](https://badge.dimensions.ai/details/doi/10.1063/5.0155600)",
     ),
     # semanticscholar abstract
     ReferenceCase(
@@ -376,6 +381,7 @@ TEST_CASES = [
                          study the reaction mechanism of complex chemical systems. Central to
                          the method is the potential energy surface (PES) that can desc...},
             }""").strip(),
+        expected_markdown=r"Jinzhe Zeng, Linfeng Zhang, Han Wang, Tong Zhu, Exploring the Chemical Space of Linear Alkane Pyrolysis via Deep Potential GENerator, *Energy Fuels*, 2021, 35, 762-769, DOI: [10.1021/acs.energyfuels.0c03211](https://doi.org/10.1021/acs.energyfuels.0c03211). [![Citations](https://citations.njzjz.win/10.1021/acs.energyfuels.0c03211)](https://badge.dimensions.ai/details/doi/10.1021/acs.energyfuels.0c03211)",
     ),
     # ChemRxiv
     ReferenceCase(
@@ -452,6 +458,7 @@ TEST_CASES = [
                          predictive modelling of molecular interactions, offering extensive
                          applications in drug development and beyond.},
             }""").strip(),
+        expected_markdown=r"Manyi Yang, Duo Zhang, Xinyan Wang, Lingfeng Zhang, Tong Zhu, Han Wang, Ab initio Accuracy Neural Network Potential for Drug-like Molecules, *ChemRxiv*, 2024, DOI: [10.26434/chemrxiv-2024-sq8nh](https://doi.org/10.26434/chemrxiv-2024-sq8nh). [![Citations](https://citations.njzjz.win/10.26434/chemrxiv-2024-sq8nh)](https://badge.dimensions.ai/details/doi/10.26434/chemrxiv-2024-sq8nh)",
     ),
     # chapter
     ReferenceCase(
@@ -473,5 +480,6 @@ TEST_CASES = [
                 doi =      {10.7551/mitpress/1556.003.0021},
                 booktitle ={Beowulf Cluster Computing with Linux},
             }""").strip(),
+        expected_markdown=r"James Patton Jones, PBS: Portable Batch System, *Beowulf Clust. Comput. Linux*, 2001, 369-390, DOI: [10.7551/mitpress/1556.003.0021](https://doi.org/10.7551/mitpress/1556.003.0021). [![Citations](https://citations.njzjz.win/10.7551/mitpress/1556.003.0021)](https://badge.dimensions.ai/details/doi/10.7551/mitpress/1556.003.0021)",
     ),
 ]

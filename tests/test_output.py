@@ -1,4 +1,4 @@
-"""Tests for generating BibTeX entries from references."""
+"""Tests for generating outputs from references."""
 
 from __future__ import annotations
 
@@ -18,3 +18,11 @@ if TYPE_CHECKING:
 def test_bibtex(reference: Reference, expected):
     """Test generating BibTeX entries from references."""
     assert reference.bibtex.strip() == expected
+
+
+@pytest.mark.parametrize(
+    "reference, expected", [(cc.reference, cc.expected_markdown) for cc in TEST_CASES]
+)
+def test_markdown(reference: Reference, expected):
+    """Test generating Markdown from references."""
+    assert reference.markdown.strip() == expected
