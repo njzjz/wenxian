@@ -106,6 +106,10 @@ class Crossref(Feeder):
             "book-track",
         ):
             ref_type = BibtexType.inbook
+        elif cr_type in ("proceedings-article",):
+            ref_type = BibtexType.inproceedings
+        elif cr_type in ("proceedings",):
+            ref_type = BibtexType.proceedings
         else:
             ref_type = BibtexType.article
         return Reference(
