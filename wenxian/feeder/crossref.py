@@ -6,7 +6,7 @@ import html
 
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
-from wenxian.reference import Author, Reference
+from wenxian.reference import Author, BibtexType, Reference
 
 
 class Crossref(Feeder):
@@ -64,8 +64,54 @@ class Crossref(Feeder):
             # while not documented, the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
             # https://api.crossref.org/works/10.1016/j.jmst.2023.09.059
             journal = html.unescape(journal)
+        elif m.get("container-title"):
+            journal = m["container-title"][0]
+            journal = html.unescape(journal)
         else:
             journal = None
+        # journal-article
+        # journal-issue
+        # journal-volume
+        # journal
+        # proceedings-article
+        # proceedings
+        # dataset
+        # component
+        # report
+        # report-series
+        # standard
+        # standard-series
+        # edited-book
+        # monograph
+        # reference-book
+        # book
+        # book-series
+        # book-set
+        # book-chapter
+        # book-section
+        # book-part
+        # book-track
+        # reference-entry
+        # dissertation
+        # posted-content
+        # peer-review
+        # other
+        cr_type = m.get("type")
+        if cr_type in (
+            "book-series",
+            "book-set",
+            "book-chapter",
+            "book-section",
+            "book-part",
+            "book-track",
+        ):
+            ref_type = BibtexType.inbook
+        elif cr_type in ("proceedings-article",):
+            ref_type = BibtexType.inproceedings
+        elif cr_type in ("proceedings",):
+            ref_type = BibtexType.proceedings
+        else:
+            ref_type = BibtexType.article
         return Reference(
             author=author,
             title=title,
@@ -76,4 +122,5 @@ class Crossref(Feeder):
             pages=self._pages(page),
             annote=abstract,
             doi=doi,
+            type=ref_type,
         )
