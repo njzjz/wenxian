@@ -207,6 +207,10 @@ class Reference:
                     # prevent {} in author that is used to split first and last name
                     # be escaped
                     valuestr = valuestr.replace(r"{\{}", r"{").replace(r"{\}}", r"}")
+                if key == "doi":
+                    # for DOI, underscore should not be escaped
+                    # https://tex.stackexchange.com/questions/550123/underscore-in-doi-in-bibtex-file
+                    valuestr = valuestr.replace(r"{\_}", r"_")
                 if key == "title":
                     valuestr = f"{{{{{valuestr}}}}}"
                 else:

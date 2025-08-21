@@ -30,7 +30,7 @@ class Semanticscholar(Feeder):
             authors.append(Author(first=first, last=last))
         # journal may be null, e.g.,
         # https://api.semanticscholar.org/graph/v1/paper/10.1103/PhysRevB.109.174106?fields=title,year,abstract,authors.name,journal,externalIds
-        if res["journal"] is not None:
+        if res["journal"] is not None and "name" in res["journal"]:
             journal = res["journal"]["name"]
             # the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
             # https://api.semanticscholar.org/graph/v1/paper/10.1016/j.jmst.2023.09.059?fields=title,year,abstract,authors.name,journal,externalIds
