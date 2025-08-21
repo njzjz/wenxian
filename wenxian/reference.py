@@ -100,6 +100,8 @@ class Reference:
             # special case
             journal_title = journal_title.replace("Npj", "npj")
         abbr = abbreviator(journal_title, remove_part=True)
+        # remove slash in the abbr
+        abbr = abbr.replace("/", "")
         # workaround to fix the missing E, e.g. Phys. Rev. E
         # https://github.com/pierre-24/pyiso4/issues/13
         # Example: 10.1103/PhysRevE.108.055310
