@@ -12,7 +12,7 @@ runs:
   using: composite
   steps:
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@v6
+      uses: astral-sh/setup-uv@v7
     - name: Run wenxian
       id: run-wenxian
       run: |
