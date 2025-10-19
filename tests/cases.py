@@ -18,6 +18,12 @@ class ReferenceCase:
     pmid: int | None = None
     arxiv: str | None = None
 
+    @property
+    def expected_text(self) -> str:
+        """Expected text of the reference."""
+        # Currently, all texts can be infered from markdown.
+        return (self.expected_markdown.split(", DOI:")[0] + ".").replace("*", "")
+
 
 TEST_CASES = [
     # mainly from pubmed

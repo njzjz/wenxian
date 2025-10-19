@@ -226,6 +226,14 @@ class Reference:
     @property
     def markdown(self) -> str:
         """Generate a Markdown for this reference."""
+        return self._markdown_or_text(markdown=True)
+
+    @property
+    def text(self) -> str:
+        """Generate a plain text for this reference."""
+        return self._markdown_or_text(markdown=False)
+
+    def _markdown_or_text(self, markdown: bool) -> str:
         if self.author is None:
             author_string = "Unknown Author"
         else:
@@ -244,12 +252,14 @@ class Reference:
                 for ss in (
                     author_string,
                     self.title,
-                    f"*{self.journal_abbr}*" if self.journal_abbr is not None else None,
+                    (f"*{self.journal_abbr}*" if markdown else self.journal_abbr)
+                    if self.journal_abbr is not None
+                    else None,
                     self.year,
                     self.volume,
                     page_string,
                     f"DOI: [{self.doi}](https://doi.org/{self.doi})"
-                    if self.doi is not None
+                    if self.doi is not None and markdown
                     else None,
                 )
                 if ss is not None
@@ -257,7 +267,7 @@ class Reference:
             + "."
             + (
                 f" [![Citations](https://citations.njzjz.win/{self.doi})](https://badge.dimensions.ai/details/doi/{self.doi})"
-                if self.doi is not None
+                if self.doi is not None and markdown
                 else ""
             )
             + "\n"

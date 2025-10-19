@@ -26,3 +26,11 @@ def test_bibtex(reference: Reference, expected):
 def test_markdown(reference: Reference, expected):
     """Test generating Markdown from references."""
     assert reference.markdown.strip() == expected
+
+
+@pytest.mark.parametrize(
+    "reference, expected", [(cc.reference, cc.expected_text) for cc in TEST_CASES]
+)
+def test_text(reference: Reference, expected):
+    """Test generating text from references."""
+    assert reference.text.strip() == expected
