@@ -63,7 +63,7 @@ def test_cli_from_to_stdout_markdown():
     assert out.strip() == case.expected_markdown.strip()
 
 
-def test_cli_from_to_file_markdow():
+def test_cli_from_to_file_markdown():
     """Test wenxian from DOI to a certain file."""
     case = TEST_CASES[0]
     with tempfile.NamedTemporaryFile("w+") as f:
@@ -85,7 +85,7 @@ def test_cli_from_to_file_markdow():
         assert f.read().strip() == case.expected_markdown.strip()
 
 
-def test_cli_from_to_default_file_markdow():
+def test_cli_from_to_default_file_markdown():
     """Test wenxian from DOI to the default file."""
     case = TEST_CASES[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -106,6 +106,69 @@ def test_cli_from_to_default_file_markdow():
         with open(Path(tmpdirname) / (case.reference.key + ".md")) as f:
             # The default file is references.md
             assert f.read().strip() == case.expected_markdown.strip()
+
+
+def test_cli_from_to_stdout_text():
+    """Test wenxian from DOI to stdout."""
+    case = TEST_CASES[0]
+    out = subprocess.check_output(
+        [
+            sys.executable,
+            "-m",
+            "wenxian",
+            "from",
+            case.reference.doi,
+            "--type",
+            "text",
+        ],
+        text=True,
+    )
+    assert out.strip() == case.expected_text.strip()
+
+
+def test_cli_from_to_file_text():
+    """Test wenxian from DOI to a certain file."""
+    case = TEST_CASES[0]
+    with tempfile.NamedTemporaryFile("w+") as f:
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "wenxian",
+                "from",
+                case.reference.doi,
+                "-o",
+                f.name,
+                "--type",
+                "text",
+            ],
+            text=True,
+        )
+        f.seek(0)
+        assert f.read().strip() == case.expected_text.strip()
+
+
+def test_cli_from_to_default_file_text():
+    """Test wenxian from DOI to the default file."""
+    case = TEST_CASES[0]
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        subprocess.check_call(
+            [
+                sys.executable,
+                "-m",
+                "wenxian",
+                "from",
+                case.reference.doi,
+                "-o",
+                "--type",
+                "text",
+            ],
+            text=True,
+            cwd=tmpdirname,
+        )
+        with open(Path(tmpdirname) / (case.reference.key + ".txt")) as f:
+            # The default file is references.txt
+            assert f.read().strip() == case.expected_text.strip()
 
 
 def test_cli_ignore_errors():

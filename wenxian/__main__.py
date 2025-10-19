@@ -42,6 +42,8 @@ def cmd_from(
             buff.append(ref.bibtex)
         elif output_type == "markdown":
             buff.append(ref.markdown)
+        elif output_type == "text":
+            buff.append(ref.text)
         else:
             raise ValueError(f"Unknown output type: {output_type}")
     if output is None:
@@ -51,6 +53,7 @@ def cmd_from(
         extension = {
             "bibtex": ".bib",
             "markdown": ".md",
+            "text": ".txt",
         }.get(output_type)
         if extension is None:
             raise ValueError(f"Unknown output type: {output_type}")
@@ -102,6 +105,7 @@ def main_parser() -> argparse.ArgumentParser:
         choices=[
             "bibtex",
             "markdown",
+            "text",
         ],
         default="bibtex",
         help="Output type.",
