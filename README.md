@@ -9,7 +9,10 @@
 
 ## Usage
 
-### Use wenxian in the browser
+### Use wenxian in the browser (Deprecated)
+
+> [!CAUTION]
+> Deprecated, as several websites that serve the API have disabled CORS.
 
 Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to use wenxian in the browser.
 
