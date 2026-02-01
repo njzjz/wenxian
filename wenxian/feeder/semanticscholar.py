@@ -20,7 +20,7 @@ class Semanticscholar(Feeder):
         """
         r = SESSION.get(
             "https://api.semanticscholar.org/graph/v1/paper/search",
-            params={"query": title, "limit": 1, "fields": "externalIds"},
+            params={"query": title, "limit": "1", "fields": "externalIds"},
         )
         if r.status_code != 200:
             return None

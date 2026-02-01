@@ -20,7 +20,7 @@ class Crossref(Feeder):
         """
         r = SESSION.get(
             "https://api.crossref.org/works",
-            params={"query.title": title, "rows": 1},
+            params={"query.title": title, "rows": "1"},
         )
         if r.status_code != 200:
             return None
