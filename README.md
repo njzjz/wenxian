@@ -3,7 +3,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/wenxian)](https://pypi.org/p/wenxian)
 [![Pepy Total Downlods](https://img.shields.io/pepy/dt/wenxian)](https://www.pepy.tech/projects/wenxian)
 
-`wenxian` is a tool to generate ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ files from given identifiers (DOI, PMID, or arXiv ID).
+`wenxian` is a tool to generate ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ files from given identifiers (DOI, PMID, arXiv ID, or paper title).
 
 > 子曰:“夏礼，吾能言之，杞不足征也。殷礼，吾能言之，宋不足征也。<b>文献</b>不足故也。足，则吾能征之矣。”——《论语》
 
@@ -28,6 +28,12 @@ Then use `uvx` to run `wenxian`:
 
 ```sh
 uvx wenxian from 10.1063/5.0155600
+```
+
+You can also search by paper title:
+
+```sh
+uvx wenxian from "Attention is all you need"
 ```
 
 It is expected to see a ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entry printed into the standard output.

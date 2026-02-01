@@ -13,6 +13,7 @@ from wenxian.identifier import Identifier, get_identifier_type
         ("10.1063/5.0155600", Identifier.DOI),
         ("37526163", Identifier.PMID),
         ("2304.09409", Identifier.ARXIV),
+        ("Deep residual learning for image recognition", Identifier.TITLE),
     ],
 )
 def test_get_identifier_type(identifier, expected):

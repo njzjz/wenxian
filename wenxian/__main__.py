@@ -78,7 +78,7 @@ def main_parser() -> argparse.ArgumentParser:
         "IDENTIFIER",
         type=str,
         nargs="+",
-        help="Identifier. Support DOI, PMID, and arXiv ID.",
+        help="Identifier. Support DOI, PMID, arXiv ID, and paper title.",
     )
     parser_from.add_argument(
         "-o",

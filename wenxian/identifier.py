@@ -12,6 +12,7 @@ class Identifier(Enum):
     DOI = "DOI"
     PMID = "PMID"
     ARXIV = "arXiv"
+    TITLE = "TITLE"
 
 
 REGEX: dict[Identifier, re.Pattern] = {
@@ -27,4 +28,10 @@ def get_identifier_type(identifier: str) -> Identifier | None:
     for id_type, regex in REGEX.items():
         if regex.match(identifier):
             return id_type
+    # Check if it could be a reasonable paper title
+    # Title should have at least 3 words and be at least 10 characters
+    words = identifier.split()
+    if len(words) >= 3 and len(identifier) >= 10:
+        return Identifier.TITLE
+    # If it doesn't match any pattern and doesn't look like a title, return None
     return None

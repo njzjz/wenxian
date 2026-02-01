@@ -22,6 +22,9 @@ class Feeder:
     def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PubMed identifier."""
 
+    def from_title(self, title: str) -> str | None:
+        """Search for a paper by title and return its identifier."""
+
     @overload
     def _int(self, string: int) -> int: ...
 
