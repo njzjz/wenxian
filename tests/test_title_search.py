@@ -19,8 +19,8 @@ TEST_CASES = [
     (
         Semanticscholar,
         "Deep residual learning for image recognition",
-        Identifier.ARXIV,
-        "2304.09409",
+        Identifier.DOI,
+        "10.1109/cvpr.2016.90",
     ),
 ]
 
