@@ -40,9 +40,7 @@ def from_title(title: str) -> Reference | None:
     """Fetch a reference from a title."""
     # try crossref first, then semantic scholar
     return (
-        Reference()
-        | Crossref().from_title(title)
-        | Semanticscholar().from_title(title)
+        Reference() | Crossref().from_title(title) | Semanticscholar().from_title(title)
     )
 
 

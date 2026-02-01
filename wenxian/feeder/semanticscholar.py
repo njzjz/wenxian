@@ -20,17 +20,17 @@ class Semanticscholar(Feeder):
         )
         if r.status_code != 200:
             return None
-        
+
         res = r.json()
         data = res.get("data", [])
-        
+
         if not data:
             return None
-        
+
         # Get the first (best match) result
         paper = data[0]
         external_ids = paper.get("externalIds", {})
-        
+
         # Try to get DOI first, then PMID, then arXiv
         if external_ids.get("DOI"):
             return self.from_doi(external_ids["DOI"])
@@ -38,7 +38,7 @@ class Semanticscholar(Feeder):
             return self.from_pmid(external_ids["PubMed"])
         elif external_ids.get("ArXiv"):
             return self.from_arxiv(external_ids["ArXiv"])
-        
+
         return None
 
     def _from_identifier(self, identifier: str) -> Reference | None:
