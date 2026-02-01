@@ -13,7 +13,15 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.parametrize(
-    "reference, expected", [(cc.reference, cc.expected_bibtex) for cc in TEST_CASES]
+    "reference, expected",
+    [
+        pytest.param(
+            cc.reference,
+            cc.expected_bibtex,
+            marks=pytest.mark.skip(reason=cc.skip_reason) if cc.skip_reason else (),
+        )
+        for cc in TEST_CASES
+    ],
 )
 def test_bibtex(reference: Reference, expected):
     """Test generating BibTeX entries from references."""
@@ -21,7 +29,15 @@ def test_bibtex(reference: Reference, expected):
 
 
 @pytest.mark.parametrize(
-    "reference, expected", [(cc.reference, cc.expected_markdown) for cc in TEST_CASES]
+    "reference, expected",
+    [
+        pytest.param(
+            cc.reference,
+            cc.expected_markdown,
+            marks=pytest.mark.skip(reason=cc.skip_reason) if cc.skip_reason else (),
+        )
+        for cc in TEST_CASES
+    ],
 )
 def test_markdown(reference: Reference, expected):
     """Test generating Markdown from references."""
@@ -29,7 +45,15 @@ def test_markdown(reference: Reference, expected):
 
 
 @pytest.mark.parametrize(
-    "reference, expected", [(cc.reference, cc.expected_text) for cc in TEST_CASES]
+    "reference, expected",
+    [
+        pytest.param(
+            cc.reference,
+            cc.expected_text,
+            marks=pytest.mark.skip(reason=cc.skip_reason) if cc.skip_reason else (),
+        )
+        for cc in TEST_CASES
+    ],
 )
 def test_text(reference: Reference, expected):
     """Test generating text from references."""
