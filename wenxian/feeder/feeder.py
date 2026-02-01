@@ -4,11 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, overload
 
-from wenxian.identifier import Identifier
-
 if TYPE_CHECKING:
     from xml.etree import ElementTree
 
+    from wenxian.identifier import Identifier
     from wenxian.reference import Reference
 
 
