@@ -71,6 +71,8 @@ def from_title(title: str) -> Reference | None:
             logger.warning(
                 f"Title mismatch: input='{title}' vs output='{result.title}' (similarity: {similarity:.2f})"
             )
+            # Return an empty Reference to signal low-confidence/incorrect match
+            return Reference()
 
     return result
 
