@@ -61,22 +61,8 @@ def from_title(title: str) -> Reference | None:
         title
     )
 
-    if not identifier_info:
-        return Reference()
-
-    identifier_type, identifier_value = identifier_info
-
     # Fetch metadata using the full feeder chain based on identifier type
-    if identifier_type == Identifier.PMID:
-        result = from_pmid(identifier_value)
-    elif identifier_type == Identifier.ARXIV:
-        result = from_arxiv(identifier_value)
-    elif identifier_type == Identifier.DOI:
-        result = from_doi(identifier_value)
-    else:
-        raise RuntimeError(
-            f"Unknown identifier type {identifier_type} from title search."
-        )
+    result = from_identifier(identifier_info)
 
     # Validate that the returned title is similar to the input
     if result and result.title:

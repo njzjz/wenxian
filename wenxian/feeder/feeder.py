@@ -23,12 +23,8 @@ class Feeder:
     def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PubMed identifier."""
 
-    def from_title(self, title: str) -> tuple[Identifier, str] | None:
-        """Search for a paper by title and return its identifier.
-
-        Returns a tuple of (identifier_type, identifier_value) where identifier_type
-        is one of "DOI", "PMID", "ARXIV", or None if not found.
-        """
+    def from_title(self, title: str) -> str | None:
+        """Search for a paper by title and return its identifier."""
 
     @overload
     def _int(self, string: int) -> int: ...

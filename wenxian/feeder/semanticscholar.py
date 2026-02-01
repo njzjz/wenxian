@@ -13,7 +13,7 @@ from wenxian.reference import Author, Reference
 class Semanticscholar(Feeder):
     """Feeder for Semantic Scholar API."""
 
-    def from_title(self, title: str) -> tuple[Identifier, str] | None:
+    def from_title(self, title: str) -> str | None:
         """Search for a paper by title and return its identifier.
 
         Returns a tuple of (identifier_type, identifier_value) or None.
@@ -39,11 +39,11 @@ class Semanticscholar(Feeder):
         # Return identifier for the caller to fetch metadata
         # Try to get DOI first, then PMID, then arXiv
         if external_ids.get("DOI"):
-            return (Identifier.DOI, external_ids["DOI"])
+            return external_ids["DOI"]
         elif external_ids.get("PubMed"):
-            return (Identifier.PMID, external_ids["PubMed"])
+            return external_ids["PubMed"]
         elif external_ids.get("ArXiv"):
-            return (Identifier.ARXIV, external_ids["ArXiv"])
+            return external_ids["ArXiv"]
         return None
 
     def _from_identifier(self, identifier: str) -> Reference | None:
