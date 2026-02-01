@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from wenxian.feeder.crossref import Crossref
-from wenxian.feeder.semanticscholar import Semanticscholar
-from wenxian.from_identifier import from_identifier, from_title
-from wenxian.identifier import Identifier
-
 import pytest
 
+from wenxian.feeder.crossref import Crossref
+from wenxian.feeder.semanticscholar import Semanticscholar
+from wenxian.from_identifier import from_identifier
+from wenxian.identifier import Identifier
 
 TEST_CASES = [
     (
