@@ -60,6 +60,8 @@ def from_title(title: str) -> Reference | None:
     identifier_info = Crossref().from_title(title) or Semanticscholar().from_title(
         title
     )
+    if identifier_info is None:
+        return None
 
     # Fetch metadata using the full feeder chain based on identifier type
     result = from_identifier(identifier_info)
@@ -72,7 +74,7 @@ def from_title(title: str) -> Reference | None:
                 f"Title mismatch: input='{title}' vs output='{result.title}' (similarity: {similarity:.2f})"
             )
             # Return an empty Reference to signal low-confidence/incorrect match
-            return Reference()
+            return None
 
     return result
 
