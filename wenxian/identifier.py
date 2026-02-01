@@ -12,6 +12,7 @@ class Identifier(Enum):
     DOI = "DOI"
     PMID = "PMID"
     ARXIV = "arXiv"
+    TITLE = "TITLE"
 
 
 REGEX: dict[Identifier, re.Pattern] = {
@@ -27,4 +28,5 @@ def get_identifier_type(identifier: str) -> Identifier | None:
     for id_type, regex in REGEX.items():
         if regex.match(identifier):
             return id_type
-    return None
+    # If no specific identifier pattern matches, treat as a title
+    return Identifier.TITLE

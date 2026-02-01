@@ -36,6 +36,16 @@ def from_arxiv(arxiv: str) -> Reference | None:
     return Reference() | Arxiv().from_arxiv(arxiv)
 
 
+def from_title(title: str) -> Reference | None:
+    """Fetch a reference from a title."""
+    # try crossref first, then semantic scholar
+    return (
+        Reference()
+        | Crossref().from_title(title)
+        | Semanticscholar().from_title(title)
+    )
+
+
 def from_identifier(identifier: str) -> Reference | None:
     """Fetch a reference from an identifier."""
     identifier_type = get_identifier_type(identifier)
@@ -47,5 +57,7 @@ def from_identifier(identifier: str) -> Reference | None:
         return from_pmid(identifier)
     elif identifier_type == Identifier.ARXIV:
         return from_arxiv(identifier)
+    elif identifier_type == Identifier.TITLE:
+        return from_title(identifier)
     else:
         raise RuntimeError("Unknown identifier type.")

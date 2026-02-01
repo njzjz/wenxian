@@ -12,6 +12,35 @@ from wenxian.reference import Author, Reference
 class Semanticscholar(Feeder):
     """Feeder for Crossref API."""
 
+    def from_title(self, title: str) -> Reference | None:
+        """Fetch a reference from a title by searching Semantic Scholar."""
+        r = SESSION.get(
+            "https://api.semanticscholar.org/graph/v1/paper/search",
+            params={"query": title, "limit": 1, "fields": "externalIds"},
+        )
+        if r.status_code != 200:
+            return None
+        
+        res = r.json()
+        data = res.get("data", [])
+        
+        if not data:
+            return None
+        
+        # Get the first (best match) result
+        paper = data[0]
+        external_ids = paper.get("externalIds", {})
+        
+        # Try to get DOI first, then PMID, then arXiv
+        if external_ids.get("DOI"):
+            return self.from_doi(external_ids["DOI"])
+        elif external_ids.get("PubMed"):
+            return self.from_pmid(external_ids["PubMed"])
+        elif external_ids.get("ArXiv"):
+            return self.from_arxiv(external_ids["ArXiv"])
+        
+        return None
+
     def _from_identifier(self, identifier: str) -> Reference | None:
         """Fetch a reference from a identifier."""
         r = SESSION.get(

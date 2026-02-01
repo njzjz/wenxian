@@ -12,6 +12,31 @@ from wenxian.reference import Author, BibtexType, Reference
 class Crossref(Feeder):
     """Feeder for Crossref API."""
 
+    def from_title(self, title: str) -> Reference | None:
+        """Fetch a reference from a title by searching Crossref."""
+        r = SESSION.get(
+            "https://api.crossref.org/works",
+            params={"query.title": title, "rows": 1},
+        )
+        if r.status_code != 200:
+            return None
+        
+        res = r.json()
+        items = res.get("message", {}).get("items", [])
+        
+        if not items:
+            return None
+        
+        # Get the first (best match) result
+        m = items[0]
+        
+        # Extract DOI and use from_doi for consistency
+        if "DOI" in m:
+            doi = m["DOI"]
+            return self.from_doi(doi)
+        
+        return None
+
     def from_doi(self, doi: str) -> Reference | None:
         """Fetch a reference from a DOI."""
         r = SESSION.get(
