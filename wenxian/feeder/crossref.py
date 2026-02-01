@@ -12,11 +12,11 @@ from wenxian.reference import Author, BibtexType, Reference
 class Crossref(Feeder):
     """Feeder for Crossref API."""
 
-    def from_title(self, title: str) -> str | None:
-        """Search for a paper by title and return its DOI.
+    def from_title(self, title: str) -> tuple[str, str] | None:
+        """Search for a paper by title and return its identifier.
 
-        Returns the DOI string if found, None otherwise.
-        The caller should use from_doi() to get the full metadata.
+        Returns a tuple of (identifier_type, identifier_value) or None.
+        The caller should use the appropriate from_* method to get the full metadata.
         """
         r = SESSION.get(
             "https://api.crossref.org/works",
@@ -34,9 +34,9 @@ class Crossref(Feeder):
         # Get the first (best match) result
         m = items[0]
 
-        # Return DOI for the caller to fetch metadata
+        # Return identifier for the caller to fetch metadata
         if "DOI" in m:
-            return m["DOI"]
+            return ("DOI", m["DOI"])
 
         return None
 

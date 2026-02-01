@@ -44,31 +44,23 @@ def from_title(title: str) -> Reference | None:
     metadata from multiple sources for the best quality data.
     """
     # Try to find an identifier from search APIs
-    identifier = None
+    # Use 'and' for lazy evaluation - try Crossref first, then Semantic Scholar
+    identifier_info = Crossref().from_title(title) or Semanticscholar().from_title(
+        title
+    )
 
-    # Try Crossref first
-    crossref_result = Crossref().from_title(title)
-    if crossref_result:
-        identifier = crossref_result
-    else:
-        # Fall back to Semantic Scholar
-        ss_result = Semanticscholar().from_title(title)
-        if ss_result:
-            identifier = ss_result
-
-    if not identifier:
+    if not identifier_info:
         return Reference()
 
-    # Now fetch metadata using the full feeder chain based on identifier type
-    if identifier.startswith("PMID:"):
-        pmid = identifier[5:]  # Remove "PMID:" prefix
-        return from_pmid(pmid)
-    elif identifier.startswith("ARXIV:"):
-        arxiv_id = identifier[6:]  # Remove "ARXIV:" prefix
-        return from_arxiv(arxiv_id)
-    else:
-        # Assume it's a DOI
-        return from_doi(identifier)
+    identifier_type, identifier_value = identifier_info
+
+    # Fetch metadata using the full feeder chain based on identifier type
+    if identifier_type == "PMID":
+        return from_pmid(identifier_value)
+    elif identifier_type == "ARXIV":
+        return from_arxiv(identifier_value)
+    else:  # DOI
+        return from_doi(identifier_value)
 
 
 def from_identifier(identifier: str) -> Reference | None:
