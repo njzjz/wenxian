@@ -6,13 +6,14 @@ import html
 
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
+from wenxian.identifier import Identifier
 from wenxian.reference import Author, BibtexType, Reference
 
 
 class Crossref(Feeder):
     """Feeder for Crossref API."""
 
-    def from_title(self, title: str) -> tuple[str, str] | None:
+    def from_title(self, title: str) -> tuple[Identifier, str] | None:
         """Search for a paper by title and return its identifier.
 
         Returns a tuple of (identifier_type, identifier_value) or None.
@@ -36,7 +37,7 @@ class Crossref(Feeder):
 
         # Return identifier for the caller to fetch metadata
         if "DOI" in m:
-            return ("DOI", m["DOI"])
+            return (Identifier.DOI, m["DOI"])
 
         return None
 

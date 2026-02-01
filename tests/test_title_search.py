@@ -4,47 +4,35 @@ from __future__ import annotations
 
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.semanticscholar import Semanticscholar
-from wenxian.from_identifier import from_title
+from wenxian.from_identifier import from_identifier, from_title
+from wenxian.identifier import Identifier
+
+import pytest
 
 
-class TestCrossrefTitleSearch:
-    """Test Crossref title search with real API."""
-
-    def test_from_title_success(self):
-        """Test successful title search returns tuple."""
-        feeder = Crossref()
-        result = feeder.from_title("Deep residual learning for image recognition")
-
-        assert result is not None
-        assert isinstance(result, tuple)
-        assert len(result) == 2
-        assert result[0] == "DOI"
-        assert isinstance(result[1], str)
-
-
-class TestSemanticScholarTitleSearch:
-    """Test Semantic Scholar title search with real API."""
-
-    def test_from_title_with_doi(self):
-        """Test title search that returns a DOI."""
-        feeder = Semanticscholar()
-        result = feeder.from_title("Attention is all you need")
-
-        assert result is not None
-        assert isinstance(result, tuple)
-        assert len(result) == 2
-        # Should return DOI, PMID, or ARXIV
-        assert result[0] in ("DOI", "PMID", "ARXIV")
-        assert isinstance(result[1], str)
+TEST_CASES = [
+    (
+        Crossref,
+        "Deep residual learning for image recognition",
+        Identifier.DOI,
+        "10.1109/cvpr.2016.90",
+    ),
+    (
+        Semanticscholar,
+        "Deep residual learning for image recognition",
+        Identifier.ARXIV,
+        "2304.09409",
+    ),
+]
 
 
-class TestFromTitle:
-    """Test the from_title function with real API."""
+@pytest.mark.parametrize("feeder, title, itype, identifier", TEST_CASES)
+def test_feeder_from_title(feeder, title, itype, identifier):
+    """Test title search that returns a DOI."""
+    assert feeder().from_title(title) == (itype, identifier)
 
-    def test_from_title_real_api(self):
-        """Test from_title with real API calls."""
-        result = from_title("Deep residual learning for image recognition")
 
-        assert result is not None
-        assert not result.is_empty()
-        assert result.title is not None
+def test_from_identifier():
+    """Test from_identifier with real API calls."""
+    _, title, _, identifier = TEST_CASES[0]
+    assert from_identifier(title).doi == identifier
