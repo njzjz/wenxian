@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from .cases import ReferenceCase, TEST_CASES
+from .cases import TEST_CASES, ReferenceCase
 
 if TYPE_CHECKING:
     from wenxian.reference import Reference
