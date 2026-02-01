@@ -10,7 +10,7 @@ from wenxian.reference import Author, Reference
 
 
 class Semanticscholar(Feeder):
-    """Feeder for Semanticscholar API."""
+    """Feeder for Crossref API."""
 
     def _from_identifier(self, identifier: str) -> Reference | None:
         """Fetch a reference from a identifier."""

@@ -47,15 +47,14 @@ def from_title(title: str) -> Reference | None:
 
 
 def from_identifier(identifier: str) -> Reference | None:
-    """Fetch a reference from an identifier."""
+    """Fetch a reference from an identifier or title."""
     identifier_type = get_identifier_type(identifier)
-    if identifier_type is None:
-        raise ValueError(f"Unknown identifier: {identifier}")
-    elif identifier_type == Identifier.DOI:
+    if identifier_type == Identifier.DOI:
         return from_doi(identifier)
     elif identifier_type == Identifier.PMID:
         return from_pmid(identifier)
     elif identifier_type == Identifier.ARXIV:
         return from_arxiv(identifier)
     else:
-        raise RuntimeError("Unknown identifier type.")
+        # Fallback to title search for unknown identifiers
+        return from_title(identifier)
