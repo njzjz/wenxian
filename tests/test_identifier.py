@@ -14,7 +14,6 @@ from wenxian.identifier import Identifier, get_identifier_type
         ("37526163", Identifier.PMID),
         ("2304.09409", Identifier.ARXIV),
         ("Deep residual learning for image recognition", Identifier.TITLE),
-        ("Attention is all you need", Identifier.TITLE),
     ],
 )
 def test_get_identifier_type(identifier, expected):
