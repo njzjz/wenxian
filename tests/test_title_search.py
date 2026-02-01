@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.semanticscholar import Semanticscholar
 from wenxian.from_identifier import from_title
