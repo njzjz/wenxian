@@ -27,8 +27,7 @@ jobs:
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-
+          use_oidc: true
   pass:
     name: Pass testing
     needs: [test]
@@ -39,3 +38,5 @@ jobs:
         uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
+permissions:
+  id-token: write
