@@ -12,8 +12,12 @@ from wenxian.reference import Author, Reference
 class Semanticscholar(Feeder):
     """Feeder for Semantic Scholar API."""
 
-    def from_title(self, title: str) -> Reference | None:
-        """Fetch a reference from a title by searching Semantic Scholar."""
+    def from_title(self, title: str) -> str | None:
+        """Search for a paper by title and return its identifier.
+
+        Returns DOI, PMID (as "PMID:12345"), or arXiv ID (as "ARXIV:1234.5678") if found.
+        The caller should use the appropriate from_* method to get the full metadata.
+        """
         r = SESSION.get(
             "https://api.semanticscholar.org/graph/v1/paper/search",
             params={"query": title, "limit": 1, "fields": "externalIds"},
@@ -31,13 +35,14 @@ class Semanticscholar(Feeder):
         paper = data[0]
         external_ids = paper.get("externalIds", {})
 
+        # Return identifier for the caller to fetch metadata
         # Try to get DOI first, then PMID, then arXiv
         if external_ids.get("DOI"):
-            return self.from_doi(external_ids["DOI"])
+            return external_ids["DOI"]
         elif external_ids.get("PubMed"):
-            return self.from_pmid(external_ids["PubMed"])
+            return f"PMID:{external_ids['PubMed']}"
         elif external_ids.get("ArXiv"):
-            return self.from_arxiv(external_ids["ArXiv"])
+            return f"ARXIV:{external_ids['ArXiv']}"
 
         return None
 

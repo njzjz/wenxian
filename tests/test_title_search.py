@@ -14,7 +14,7 @@ class TestCrossrefTitleSearch:
 
     @patch("wenxian.feeder.crossref.SESSION.get")
     def test_from_title_success(self, mock_get):
-        """Test successful title search."""
+        """Test successful title search returns DOI."""
         # Mock the Crossref API response
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -29,15 +29,10 @@ class TestCrossrefTitleSearch:
         }
         mock_get.return_value = mock_response
 
-        # Create a second mock for the from_doi call
-        with patch.object(Crossref, "from_doi") as mock_from_doi:
-            mock_from_doi.return_value = MagicMock()
+        feeder = Crossref()
+        result = feeder.from_title("Deep Residual Learning for Image Recognition")
 
-            feeder = Crossref()
-            result = feeder.from_title("Deep Residual Learning for Image Recognition")
-
-            assert result is not None
-            mock_from_doi.assert_called_once_with("10.1109/CVPR.2016.90")
+        assert result == "10.1109/CVPR.2016.90"
 
     @patch("wenxian.feeder.crossref.SESSION.get")
     def test_from_title_no_results(self, mock_get):
@@ -84,14 +79,10 @@ class TestSemanticScholarTitleSearch:
         }
         mock_get.return_value = mock_response
 
-        with patch.object(Semanticscholar, "from_doi") as mock_from_doi:
-            mock_from_doi.return_value = MagicMock()
+        feeder = Semanticscholar()
+        result = feeder.from_title("Deep Residual Learning for Image Recognition")
 
-            feeder = Semanticscholar()
-            result = feeder.from_title("Deep Residual Learning for Image Recognition")
-
-            assert result is not None
-            mock_from_doi.assert_called_once_with("10.1109/CVPR.2016.90")
+        assert result == "10.1109/CVPR.2016.90"
 
     @patch("wenxian.feeder.semanticscholar.SESSION.get")
     def test_from_title_with_pmid(self, mock_get):
@@ -109,14 +100,10 @@ class TestSemanticScholarTitleSearch:
         }
         mock_get.return_value = mock_response
 
-        with patch.object(Semanticscholar, "from_pmid") as mock_from_pmid:
-            mock_from_pmid.return_value = MagicMock()
+        feeder = Semanticscholar()
+        result = feeder.from_title("Some Medical Paper")
 
-            feeder = Semanticscholar()
-            result = feeder.from_title("Some Medical Paper")
-
-            assert result is not None
-            mock_from_pmid.assert_called_once_with("12345678")
+        assert result == "PMID:12345678"
 
     @patch("wenxian.feeder.semanticscholar.SESSION.get")
     def test_from_title_with_arxiv(self, mock_get):
@@ -134,14 +121,10 @@ class TestSemanticScholarTitleSearch:
         }
         mock_get.return_value = mock_response
 
-        with patch.object(Semanticscholar, "from_arxiv") as mock_from_arxiv:
-            mock_from_arxiv.return_value = MagicMock()
+        feeder = Semanticscholar()
+        result = feeder.from_title("Attention Is All You Need")
 
-            feeder = Semanticscholar()
-            result = feeder.from_title("Attention Is All You Need")
-
-            assert result is not None
-            mock_from_arxiv.assert_called_once_with("1706.03762")
+        assert result == "ARXIV:1706.03762"
 
     @patch("wenxian.feeder.semanticscholar.SESSION.get")
     def test_from_title_no_results(self, mock_get):
@@ -172,30 +155,66 @@ class TestSemanticScholarTitleSearch:
 class TestFromTitle:
     """Test the from_title function."""
 
+    @patch("wenxian.from_identifier.from_doi")
     @patch.object(Crossref, "from_title")
-    @patch.object(Semanticscholar, "from_title")
-    def test_from_title_crossref_success(self, mock_ss, mock_cr):
-        """Test from_title when Crossref succeeds."""
-        mock_cr.return_value = MagicMock()
-        mock_ss.return_value = None
+    def test_from_title_crossref_success_calls_from_doi(self, mock_cr, mock_from_doi):
+        """Test from_title when Crossref succeeds, calls from_doi."""
+        mock_cr.return_value = "10.1109/CVPR.2016.90"
+        mock_from_doi.return_value = MagicMock()
 
         result = from_title("Test Title")
 
         assert result is not None
         mock_cr.assert_called_once_with("Test Title")
+        mock_from_doi.assert_called_once_with("10.1109/CVPR.2016.90")
 
+    @patch("wenxian.from_identifier.from_doi")
     @patch.object(Crossref, "from_title")
     @patch.object(Semanticscholar, "from_title")
-    def test_from_title_semanticscholar_fallback(self, mock_ss, mock_cr):
+    def test_from_title_semanticscholar_fallback(self, mock_ss, mock_cr, mock_from_doi):
         """Test from_title falls back to Semantic Scholar."""
         mock_cr.return_value = None
-        mock_ss.return_value = MagicMock()
+        mock_ss.return_value = "10.1109/CVPR.2016.90"
+        mock_from_doi.return_value = MagicMock()
 
         result = from_title("Test Title")
 
         assert result is not None
         mock_cr.assert_called_once_with("Test Title")
         mock_ss.assert_called_once_with("Test Title")
+        mock_from_doi.assert_called_once_with("10.1109/CVPR.2016.90")
+
+    @patch("wenxian.from_identifier.from_pmid")
+    @patch.object(Semanticscholar, "from_title")
+    @patch.object(Crossref, "from_title")
+    def test_from_title_with_pmid_calls_from_pmid(
+        self, mock_cr, mock_ss, mock_from_pmid
+    ):
+        """Test from_title with PMID calls from_pmid."""
+        mock_cr.return_value = None
+        mock_ss.return_value = "PMID:12345678"
+        mock_from_pmid.return_value = MagicMock()
+
+        result = from_title("Test Title")
+
+        assert result is not None
+        mock_from_pmid.assert_called_once_with("12345678")
+
+    @patch("wenxian.from_identifier.from_arxiv")
+    @patch.object(Semanticscholar, "from_title")
+    @patch.object(Crossref, "from_title")
+    def test_from_title_with_arxiv_calls_from_arxiv(
+        self, mock_cr, mock_ss, mock_from_arxiv
+    ):
+        """Test from_title with arXiv calls from_arxiv."""
+        mock_cr.return_value = None
+        mock_ss.return_value = "ARXIV:1706.03762"
+        mock_from_arxiv.return_value = MagicMock()
+
+        result = from_title("Test Title")
+
+        assert result is not None
+        mock_from_arxiv.assert_called_once_with("1706.03762")
 
     @patch.object(Crossref, "from_title")
     @patch.object(Semanticscholar, "from_title")

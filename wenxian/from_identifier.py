@@ -37,11 +37,38 @@ def from_arxiv(arxiv: str) -> Reference | None:
 
 
 def from_title(title: str) -> Reference | None:
-    """Fetch a reference from a title."""
-    # try crossref first, then semantic scholar
-    return (
-        Reference() | Crossref().from_title(title) | Semanticscholar().from_title(title)
-    )
+    """Fetch a reference from a title.
+
+    Searches for the paper using Crossref and Semantic Scholar,
+    extracts the identifier (DOI/PMID/arXiv), and then fetches
+    metadata from multiple sources for the best quality data.
+    """
+    # Try to find an identifier from search APIs
+    identifier = None
+
+    # Try Crossref first
+    crossref_result = Crossref().from_title(title)
+    if crossref_result:
+        identifier = crossref_result
+    else:
+        # Fall back to Semantic Scholar
+        ss_result = Semanticscholar().from_title(title)
+        if ss_result:
+            identifier = ss_result
+
+    if not identifier:
+        return Reference()
+
+    # Now fetch metadata using the full feeder chain based on identifier type
+    if identifier.startswith("PMID:"):
+        pmid = identifier[5:]  # Remove "PMID:" prefix
+        return from_pmid(pmid)
+    elif identifier.startswith("ARXIV:"):
+        arxiv_id = identifier[6:]  # Remove "ARXIV:" prefix
+        return from_arxiv(arxiv_id)
+    else:
+        # Assume it's a DOI
+        return from_doi(identifier)
 
 
 def from_identifier(identifier: str) -> Reference | None:
