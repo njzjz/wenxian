@@ -10,7 +10,7 @@ from wenxian.reference import Author, Reference
 
 
 class Semanticscholar(Feeder):
-    """Feeder for Crossref API."""
+    """Feeder for Semantic Scholar API."""
 
     def from_title(self, title: str) -> Reference | None:
         """Fetch a reference from a title by searching Semantic Scholar."""
