@@ -6,7 +6,6 @@ import html
 
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
-from wenxian.identifier import Identifier
 from wenxian.reference import Author, Reference
 
 

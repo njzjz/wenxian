@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, overload
 if TYPE_CHECKING:
     from xml.etree import ElementTree
 
-    from wenxian.identifier import Identifier
     from wenxian.reference import Reference
 
 
