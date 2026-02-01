@@ -6,21 +6,35 @@ import pytest
 
 from wenxian.from_identifier import from_identifier
 
-from .cases import TEST_CASES
+from .cases import TEST_CASES, ReferenceCase
+
+
+def _create_test_param(test_case: ReferenceCase, identifier: str | None):
+    """Create a pytest.param with skip marks if needed."""
+    return pytest.param(
+        identifier,
+        test_case.reference,
+        marks=pytest.mark.skip(reason=test_case.skip_reason)
+        if test_case.skip_reason
+        else (),
+    )
 
 
 @pytest.mark.parametrize(
     "identifier, expected",
     [
-        *[(test_case.reference.doi, test_case.reference) for test_case in TEST_CASES],
+        *[
+            _create_test_param(test_case, test_case.reference.doi)
+            for test_case in TEST_CASES
+        ],
         *[
             # from_identifier accept str
-            (str(test_case.pmid), test_case.reference)
+            _create_test_param(test_case, str(test_case.pmid))
             for test_case in TEST_CASES
             if test_case.pmid is not None
         ],
         *[
-            (test_case.arxiv, test_case.reference)
+            _create_test_param(test_case, test_case.arxiv)
             for test_case in TEST_CASES
             if test_case.arxiv is not None
         ],

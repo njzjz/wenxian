@@ -17,6 +17,7 @@ class ReferenceCase:
     expected_markdown: str
     pmid: int | None = None
     arxiv: str | None = None
+    skip_reason: str | None = None
 
     @property
     def expected_text(self) -> str:
@@ -465,6 +466,7 @@ TEST_CASES = [
                          applications in drug development and beyond.},
             }""").strip(),
         expected_markdown=r"Manyi Yang, Duo Zhang, Xinyan Wang, Lingfeng Zhang, Tong Zhu, Han Wang, Ab initio Accuracy Neural Network Potential for Drug-like Molecules, *ChemRxiv*, 2024, DOI: [10.26434/chemrxiv-2024-sq8nh](https://doi.org/10.26434/chemrxiv-2024-sq8nh). [![Citations](https://citations.njzjz.win/10.26434/chemrxiv-2024-sq8nh)](https://badge.dimensions.ai/details/doi/10.26434/chemrxiv-2024-sq8nh)",
+        skip_reason="ChemRxiv API broken",
     ),
     # chapter
     ReferenceCase(
