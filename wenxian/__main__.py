@@ -5,20 +5,24 @@ from __future__ import annotations
 import argparse
 import sys
 
-from wenxian.from_identifier import from_identifier
+from wenxian.from_identifier import from_identifier, from_title
 from wenxian.logger import logger
 
 
 def cmd_from(
     *,
     IDENTIFIER: list[str],
+    title: list[str] | None = None,
     output: str | None = None,
     ignore_errors: bool = False,
+    output_type: str = "bibtex",
     **kwargs,
 ):
-    """Generate BibTeX from a identifier."""
+    """Generate BibTeX from a identifier or title."""
     buff = []
     references = []
+
+    # Process identifiers
     for identifier in IDENTIFIER:
         try:
             ref = from_identifier(identifier.strip())
@@ -37,15 +41,59 @@ def cmd_from(
             else:
                 raise ValueError(msg)
         references.append(ref)
-        buff.append(ref.bibtex)
+        if output_type == "bibtex":
+            buff.append(ref.bibtex)
+        elif output_type == "markdown":
+            buff.append(ref.markdown)
+        elif output_type == "text":
+            buff.append(ref.text)
+        else:
+            raise ValueError(f"Unknown output type: {output_type}")
+
+    # Process titles
+    if title:
+        for t in title:
+            try:
+                ref = from_title(t.strip())
+            except Exception as e:
+                msg = f"Failed to fetch reference from title '{t}': {e}"
+                if ignore_errors:
+                    logger.exception(msg)
+                    continue
+                else:
+                    raise ValueError(msg) from e
+            if ref is None or ref.is_empty():
+                msg = f"Failed to fetch reference from title '{t}'"
+                if ignore_errors:
+                    logger.error(msg)
+                    continue
+                else:
+                    raise ValueError(msg)
+            references.append(ref)
+            if output_type == "bibtex":
+                buff.append(ref.bibtex)
+            elif output_type == "markdown":
+                buff.append(ref.markdown)
+            elif output_type == "text":
+                buff.append(ref.text)
+            else:
+                raise ValueError(f"Unknown output type: {output_type}")
+
     if output is None:
         sys.stdout.write("\n".join(buff))
         return
     if output == 0:
+        extension = {
+            "bibtex": ".bib",
+            "markdown": ".md",
+            "text": ".txt",
+        }.get(output_type)
+        if extension is None:
+            raise ValueError(f"Unknown output type: {output_type}")
         if len(references) == 1:
-            output = f"{references[0].key}.bib"
+            output = f"{references[0].key}{extension}"
         else:
-            output = "references.bib"
+            output = f"references{extension}"
     with open(output, "w") as f:
         f.write("\n".join(buff))
 
@@ -55,13 +103,22 @@ def main_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate BibTeX.")
     subparsers = parser.add_subparsers(dest="command", required=True)
     parser_from = subparsers.add_parser(
-        "from", help="Generate BibTeX from a identifier."
+        "from",
+        help="Generate BibTeX from a identifier or title.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser_from.add_argument(
         "IDENTIFIER",
         type=str,
-        nargs="+",
+        nargs="*",
         help="Identifier. Support DOI, PMID, and arXiv ID.",
+    )
+    parser_from.add_argument(
+        "-t",
+        "--title",
+        type=str,
+        action="append",
+        help="Paper title to search for. Can be used multiple times.",
     )
     parser_from.add_argument(
         "-o",
@@ -79,6 +136,19 @@ def main_parser() -> argparse.ArgumentParser:
         "--ignore-errors",
         action="store_true",
         help="Ignore errors and continue processing the rest identifiers.",
+    )
+    parser_from.add_argument(
+        "--output_type",
+        "--type",
+        "-T",
+        type=str,
+        choices=[
+            "bibtex",
+            "markdown",
+            "text",
+        ],
+        default="bibtex",
+        help="Output type.",
     )
     parser_from.set_defaults(func=cmd_from)
     return parser

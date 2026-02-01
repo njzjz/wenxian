@@ -6,11 +6,30 @@ import html
 
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
-from wenxian.reference import Author, Reference
+from wenxian.reference import Author, BibtexType, Reference
 
 
 class Crossref(Feeder):
     """Feeder for Crossref API."""
+
+    def from_title(self, title: str) -> Reference | None:
+        """Search and fetch a reference from a title."""
+        r = SESSION.get(
+            "https://api.crossref.org/works",
+            params={"query": title, "rows": 5},
+        )
+        if r.status_code != 200:
+            return None
+        res = r.json()
+        items = res.get("message", {}).get("items", [])
+        if not items:
+            return None
+        # Get the DOI of the first (most relevant) result
+        first_item = items[0]
+        doi = first_item.get("DOI")
+        if doi:
+            return self.from_doi(doi)
+        return None
 
     def from_doi(self, doi: str) -> Reference | None:
         """Fetch a reference from a DOI."""
@@ -32,7 +51,10 @@ class Crossref(Feeder):
         if "author" in m:
             author = []
             for aa in m["author"]:
-                author.append(Author(first=aa["given"], last=aa["family"]))
+                if "name" in aa:
+                    author.append(Author(first="", last=aa["name"]))
+                else:
+                    author.append(Author(first=aa["given"], last=aa["family"]))
         else:
             author = None
         # volume & issue
@@ -61,8 +83,54 @@ class Crossref(Feeder):
             # while not documented, the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
             # https://api.crossref.org/works/10.1016/j.jmst.2023.09.059
             journal = html.unescape(journal)
+        elif m.get("container-title"):
+            journal = m["container-title"][0]
+            journal = html.unescape(journal)
         else:
             journal = None
+        # journal-article
+        # journal-issue
+        # journal-volume
+        # journal
+        # proceedings-article
+        # proceedings
+        # dataset
+        # component
+        # report
+        # report-series
+        # standard
+        # standard-series
+        # edited-book
+        # monograph
+        # reference-book
+        # book
+        # book-series
+        # book-set
+        # book-chapter
+        # book-section
+        # book-part
+        # book-track
+        # reference-entry
+        # dissertation
+        # posted-content
+        # peer-review
+        # other
+        cr_type = m.get("type")
+        if cr_type in (
+            "book-series",
+            "book-set",
+            "book-chapter",
+            "book-section",
+            "book-part",
+            "book-track",
+        ):
+            ref_type = BibtexType.inbook
+        elif cr_type in ("proceedings-article",):
+            ref_type = BibtexType.inproceedings
+        elif cr_type in ("proceedings",):
+            ref_type = BibtexType.proceedings
+        else:
+            ref_type = BibtexType.article
         return Reference(
             author=author,
             title=title,
@@ -73,4 +141,5 @@ class Crossref(Feeder):
             pages=self._pages(page),
             annote=abstract,
             doi=doi,
+            type=ref_type,
         )
