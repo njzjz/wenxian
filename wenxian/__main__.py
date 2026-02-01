@@ -14,9 +14,10 @@ def cmd_from(
     IDENTIFIER: list[str],
     output: str | None = None,
     ignore_errors: bool = False,
+    output_type: str = "bibtex",
     **kwargs,
 ):
-    """Generate BibTeX from a identifier."""
+    """Generate BibTeX from a identifier or title."""
     buff = []
     references = []
     for identifier in IDENTIFIER:
@@ -37,15 +38,29 @@ def cmd_from(
             else:
                 raise ValueError(msg)
         references.append(ref)
-        buff.append(ref.bibtex)
+        if output_type == "bibtex":
+            buff.append(ref.bibtex)
+        elif output_type == "markdown":
+            buff.append(ref.markdown)
+        elif output_type == "text":
+            buff.append(ref.text)
+        else:
+            raise ValueError(f"Unknown output type: {output_type}")
     if output is None:
         sys.stdout.write("\n".join(buff))
         return
     if output == 0:
+        extension = {
+            "bibtex": ".bib",
+            "markdown": ".md",
+            "text": ".txt",
+        }.get(output_type)
+        if extension is None:
+            raise ValueError(f"Unknown output type: {output_type}")
         if len(references) == 1:
-            output = f"{references[0].key}.bib"
+            output = f"{references[0].key}{extension}"
         else:
-            output = "references.bib"
+            output = f"references{extension}"
     with open(output, "w") as f:
         f.write("\n".join(buff))
 
@@ -55,13 +70,15 @@ def main_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate BibTeX.")
     subparsers = parser.add_subparsers(dest="command", required=True)
     parser_from = subparsers.add_parser(
-        "from", help="Generate BibTeX from a identifier."
+        "from",
+        help="Generate BibTeX from a identifier or title.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser_from.add_argument(
         "IDENTIFIER",
         type=str,
         nargs="+",
-        help="Identifier. Support DOI, PMID, and arXiv ID.",
+        help="Identifier. Support DOI, PMID, arXiv ID, or paper title.",
     )
     parser_from.add_argument(
         "-o",
@@ -79,6 +96,19 @@ def main_parser() -> argparse.ArgumentParser:
         "--ignore-errors",
         action="store_true",
         help="Ignore errors and continue processing the rest identifiers.",
+    )
+    parser_from.add_argument(
+        "--output_type",
+        "--type",
+        "-t",
+        type=str,
+        choices=[
+            "bibtex",
+            "markdown",
+            "text",
+        ],
+        default="bibtex",
+        help="Output type.",
     )
     parser_from.set_defaults(func=cmd_from)
     return parser

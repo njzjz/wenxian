@@ -1,4 +1,4 @@
-"""Feeder for Crossref API."""
+"""Feeder for Semanticscholar API."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ class Semanticscholar(Feeder):
             authors.append(Author(first=first, last=last))
         # journal may be null, e.g.,
         # https://api.semanticscholar.org/graph/v1/paper/10.1103/PhysRevB.109.174106?fields=title,year,abstract,authors.name,journal,externalIds
-        if res["journal"] is not None:
+        if res["journal"] is not None and "name" in res["journal"]:
             journal = res["journal"]["name"]
             # the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
             # https://api.semanticscholar.org/graph/v1/paper/10.1016/j.jmst.2023.09.059?fields=title,year,abstract,authors.name,journal,externalIds
@@ -57,3 +57,28 @@ class Semanticscholar(Feeder):
     def from_arxiv(self, arxiv: str) -> Reference | None:
         """Fetch a reference from an arXiv ID."""
         return self._from_identifier(f"ARXIV:{arxiv}")
+
+    def from_title(self, title: str) -> Reference | None:
+        """Search and fetch a reference from a title."""
+        import urllib.parse
+
+        encoded_title = urllib.parse.quote(title)
+        r = SESSION.get(
+            f"https://api.semanticscholar.org/graph/v1/paper/search",
+            params={
+                "query": title,
+                "fields": "title,year,abstract,authors.name,journal,externalIds",
+                "limit": 5,
+            },
+        )
+        if r.status_code != 200:
+            return None
+        res = r.json()
+        data = res.get("data", [])
+        if not data:
+            return None
+        # Return the first (most relevant) result
+        paper = data[0]
+        if paper.get("externalIds") is None:
+            return None
+        return self._from_identifier(paper["externalIds"]["DOI"] or paper.get("paperId"))

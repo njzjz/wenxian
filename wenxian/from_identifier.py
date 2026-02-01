@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from wenxian.feeder.arxiv import Arxiv
+from wenxian.feeder.chemrxiv import Chemrxiv
 from wenxian.feeder.crossref import Crossref
 from wenxian.feeder.pubmed import Pubmed
 from wenxian.feeder.semanticscholar import Semanticscholar
@@ -18,6 +19,7 @@ def from_doi(doi: str) -> Reference | None:
         | Pubmed().from_doi(doi)
         | Crossref().from_doi(doi)
         | Arxiv().from_doi(doi)
+        | Chemrxiv().from_doi(doi)
         | Semanticscholar().from_doi(doi)
     )
 
@@ -34,16 +36,25 @@ def from_arxiv(arxiv: str) -> Reference | None:
     return Reference() | Arxiv().from_arxiv(arxiv)
 
 
+def from_title(title: str) -> Reference | None:
+    """Search and fetch a reference from a title."""
+    # Try multiple sources for best results
+    return (
+        Reference()
+        | Crossref().from_title(title)
+        | Semanticscholar().from_title(title)
+    )
+
+
 def from_identifier(identifier: str) -> Reference | None:
-    """Fetch a reference from an identifier."""
+    """Fetch a reference from an identifier or title."""
     identifier_type = get_identifier_type(identifier)
-    if identifier_type is None:
-        raise ValueError(f"Unknown identifier: {identifier}")
-    elif identifier_type == Identifier.DOI:
+    if identifier_type == Identifier.DOI:
         return from_doi(identifier)
     elif identifier_type == Identifier.PMID:
         return from_pmid(identifier)
     elif identifier_type == Identifier.ARXIV:
         return from_arxiv(identifier)
     else:
-        raise RuntimeError("Unknown identifier type.")
+        # Fallback to title search for unknown identifiers
+        return from_title(identifier)
