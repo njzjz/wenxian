@@ -9,7 +9,7 @@ from wenxian.from_identifier import from_identifier
 from .cases import TEST_CASES, ReferenceCase
 
 
-def _create_test_param(test_case: ReferenceCase, identifier: str):
+def _create_test_param(test_case: ReferenceCase, identifier: str | None):
     """Create a pytest.param with skip marks if needed."""
     return pytest.param(
         identifier,
