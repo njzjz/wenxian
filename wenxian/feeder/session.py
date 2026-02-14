@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pyrate_limiter import Duration, Limiter
+from pyrate_limiter import Duration, Limiter, Rate
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 from requests_ratelimiter import LimiterAdapter
@@ -32,7 +32,7 @@ adapter_crossref = LimiterAdapter(per_second=50, max_retries=retries)
 SESSION.mount("https://api.crossref.org/", adapter_crossref)
 # Arxiv: https://info.arxiv.org/help/api/tou.html
 adapter_arxiv = LimiterAdapter(
-    limiter=Limiter(RequestRate(1, Duration.SECOND * 3)), burst=1, max_retries=retries
+    limiter=Limiter(Rate(1, Duration.SECOND * 3)), burst=1, max_retries=retries
 )
 SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
 # https://www.semanticscholar.org/product/api
