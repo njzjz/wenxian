@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pyrate_limiter import Duration, Limiter, Rate
+from pyrate_limiter import Duration, Limiter
 from requests import Session
 from requests.adapters import HTTPAdapter, Retry
 from requests_ratelimiter import LimiterAdapter
