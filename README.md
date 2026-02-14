@@ -18,7 +18,7 @@ Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to use wenxian in the brows
 
 ### Command line interface
 
-`wenxian` requires Python 3.8. It's suggested to install [`uv`](https://github.com/astral-sh/uv) first:
+`wenxian` requires Python 3.10. It's suggested to install [`uv`](https://github.com/astral-sh/uv) first:
 
 ```sh
 pip install uv
