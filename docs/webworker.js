@@ -10,7 +10,7 @@ async function loadPyodideAndPackages() {
   await self.pyodide.loadPackage("micropip");
   const micropip = self.pyodide.pyimport("micropip");
   await micropip.install([
-    "pyrate-limiter==2.10.0",
+    "pyrate-limiter>=3",
     "wenxian",
     "pylatexenc==3.0a21",
   ]);
