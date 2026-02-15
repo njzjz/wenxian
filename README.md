@@ -38,6 +38,19 @@ uvx wenxian from "Attention is all you need"
 
 It is expected to see a ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entry printed into the standard output.
 
+By default, `wenxian` outputs ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ format. You can use the `-t text` or `--type text` option to generate plain text format.
+
+### The Agent Skill (used in OpenClaw or IDEs)
+
+`wenxian` provides an [Agent Skill](https://agentskills.io/) in the [`skill`](./skill/) directory, which has been supported by
+[OpenClaw](https://docs.openclaw.ai/tools/skills),
+[Claude](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview),
+[Codex](https://developers.openai.com/codex/skills/),
+and [VS Code](https://code.visualstudio.com/docs/copilot/customization/agent-skills).
+
+For example, you can ask your OpenClaw bot to `install the skill https://github.com/njzjz/wenxian/tree/master/skill`.
+After that is done, you can ask the bot to generate the references by sending the bot paper titles or DOIs.
+
 ### Use wenxian in a GitHub Actions workflow
 
 You can use `wenxian` in a GitHub Actions workflow, as a bridge between the input identifiers and the output ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entries:
