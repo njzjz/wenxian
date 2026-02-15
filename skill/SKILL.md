@@ -1,6 +1,6 @@
 ---
 name: wenxian
-description: Generate BibTeX entries from academic paper identifiers including DOI, PMID, arXiv ID, or paper titles. Use this skill when users need to create citations, bibliography entries, or convert paper identifiers to BibTeX format for LaTeX documents.
+description: Generate citations from academic paper identifiers (DOI, PMID, arXiv ID, or paper titles) in various formats including BibTeX, plain text, and Markdown. Use this skill when users need to create citations, bibliography entries, or convert paper identifiers to different citation formats.
 license: LGPL-3.0
 compatibility: Requires Python 3.10+, uv package manager recommended
 metadata:
@@ -9,19 +9,20 @@ metadata:
   repository: https://github.com/njzjz/wenxian
 ---
 
-# Wenxian - BibTeX Entry Generator
+# Wenxian - Citation Generator
 
 ## When to use this skill
 
 Use this skill when:
-- Users need to generate BibTeX entries for academic papers
+- Users need to generate citations or bibliography entries for academic papers
 - Users have DOI, PMID, arXiv ID, or paper titles and need citations
-- Users are working on LaTeX documents and need bibliography entries
+- Users are working on LaTeX documents and need BibTeX entries
+- Users need plain text or Markdown formatted citations
 - Users mention citations, references, BibTeX, or academic papers
 
 ## Overview
 
-Wenxian is a tool that generates BibTeX entries from various academic paper identifiers. The name "wenxian" (文献) means "literature" or "references" in Chinese.
+Wenxian is a tool that generates citations from various academic paper identifiers in multiple formats (BibTeX, plain text, Markdown). The name "wenxian" (文献) means "literature" or "references" in Chinese.
 
 ## Installation and Prerequisites
 
@@ -63,9 +64,35 @@ uvx wenxian from "Attention is all you need"
 
 Note: Enclose paper titles in quotes if they contain spaces.
 
+### Output formats
+
+By default, wenxian generates BibTeX format. You can specify different output formats using the `-t` or `--type` option:
+
+#### BibTeX format (default)
+
+```bash
+uvx wenxian from 1512.03385
+```
+
+#### Plain text format
+
+Generate a plain text citation instead of BibTeX:
+
+```bash
+uvx wenxian from 1512.03385 -t text
+```
+
+Example output: `Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun, Deep Residual Learning for Image Recognition, arXiv, 2015, 1512.03385.`
+
+#### Markdown format
+
+```bash
+uvx wenxian from 1512.03385 -t markdown
+```
+
 ## Expected output
 
-The command will print a BibTeX entry to standard output. For example:
+By default, the command will print a BibTeX entry to standard output. For example:
 
 ```bibtex
 @article{vaswani2017attention,
@@ -117,6 +144,12 @@ The command will print a BibTeX entry to standard output. For example:
 - **PMID**: PubMed identifier (e.g., 12345678)
 - **Paper title**: Full or partial paper title as a string (e.g., "Attention is all you need")
 
+## Supported output formats
+
+- **BibTeX** (default): For LaTeX documents and reference managers
+- **Plain text**: Human-readable citation format
+- **Markdown**: For Markdown documents and wikis
+
 ## Integration examples
 
 ### In a workflow
@@ -146,6 +179,7 @@ uvx wenxian from "Attention is all you need" >> references.bib
 
 1. **Prefer specific identifiers**: DOI and arXiv IDs are more reliable than title searches
 2. **Quote titles**: Always enclose paper titles in quotes
-3. **Verify output**: Check the generated BibTeX entry for completeness
-4. **Use uv**: The `uvx` command ensures you're always using the latest version without manual installation
-5. **Handle errors gracefully**: If wenxian fails, ask the user to verify the identifier or try an alternative identifier type
+3. **Choose appropriate format**: Use `-t text` for plain citations, `-t markdown` for Markdown documents, or default BibTeX for LaTeX
+4. **Verify output**: Check the generated citation for completeness
+5. **Use uv**: The `uvx` command ensures you're always using the latest version without manual installation
+6. **Handle errors gracefully**: If wenxian fails, ask the user to verify the identifier or try an alternative identifier type

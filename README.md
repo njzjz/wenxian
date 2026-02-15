@@ -38,6 +38,26 @@ uvx wenxian from "Attention is all you need"
 
 It is expected to see a ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entry printed into the standard output.
 
+#### Output formats
+
+By default, `wenxian` outputs BibTeX format. You can use the `-t` or `--type` option to generate different output formats:
+
+- **BibTeX format** (default):
+  ```sh
+  uvx wenxian from 1512.03385
+  ```
+
+- **Plain text format**:
+  ```sh
+  uvx wenxian from 1512.03385 -t text
+  ```
+  Example output: `Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun, Deep Residual Learning for Image Recognition, arXiv, 2015, 1512.03385.`
+
+- **Markdown format**:
+  ```sh
+  uvx wenxian from 1512.03385 -t markdown
+  ```
+
 ### Use wenxian in a GitHub Actions workflow
 
 You can use `wenxian` in a GitHub Actions workflow, as a bridge between the input identifiers and the output ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entries:
