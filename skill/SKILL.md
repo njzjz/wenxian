@@ -34,6 +34,12 @@ If `uv` is not already installed, install it with:
 pip install uv
 ```
 
+Or, if pip is not available:
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
 ## How to generate BibTeX entries
 
 ### Using DOI (Digital Object Identifier)
