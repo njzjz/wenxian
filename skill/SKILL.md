@@ -1,7 +1,7 @@
 ---
 name: wenxian
 description: Generate BibTeX entries from academic paper identifiers including DOI, PMID, arXiv ID, or paper titles. Use this skill when users need to create citations, bibliography entries, or convert paper identifiers to BibTeX format for LaTeX documents.
-license: LGPL-2.1
+license: LGPL-3.0
 compatibility: Requires Python 3.10+, uv package manager recommended
 metadata:
   author: njzjz
@@ -25,7 +25,9 @@ Wenxian is a tool that generates BibTeX entries from various academic paper iden
 
 ## Installation and Prerequisites
 
-Wenxian requires Python 3.10+. It's recommended to use `uv` package manager:
+Wenxian requires Python 3.10+. It's recommended to use `uv` package manager.
+
+If `uv` is not already installed, install it with:
 
 ```bash
 pip install uv
@@ -45,16 +47,10 @@ uvx wenxian from 10.1063/5.0155600
 uvx wenxian from 1512.03385
 ```
 
-or with the arXiv prefix:
-
-```bash
-uvx wenxian from arXiv:1512.03385
-```
-
 ### Using PMID (PubMed ID)
 
 ```bash
-uvx wenxian from PMID:12345678
+uvx wenxian from 12345678
 ```
 
 ### Using paper title
@@ -117,8 +113,8 @@ The command will print a BibTeX entry to standard output. For example:
 ## Supported identifier types
 
 - **DOI**: Digital Object Identifier (e.g., 10.1063/5.0155600)
-- **arXiv ID**: arXiv preprint identifier (e.g., 1512.03385 or arXiv:1512.03385)
-- **PMID**: PubMed identifier (e.g., PMID:12345678)
+- **arXiv ID**: arXiv preprint identifier (e.g., 1512.03385)
+- **PMID**: PubMed identifier (e.g., 12345678)
 - **Paper title**: Full or partial paper title as a string (e.g., "Attention is all you need")
 
 ## Integration examples
@@ -142,7 +138,7 @@ For multiple citations, run wenxian for each identifier and append results:
 
 ```bash
 uvx wenxian from "10.1038/nature12373" >> references.bib
-uvx wenxian from "arXiv:1512.03385" >> references.bib
+uvx wenxian from "1512.03385" >> references.bib
 uvx wenxian from "Attention is all you need" >> references.bib
 ```
 
