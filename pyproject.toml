@@ -25,7 +25,7 @@ dependencies = [
     "unidecode",
     "pyiso4",
     "requests-ratelimiter",
-    "pyrate-limiter",
+    "pyrate-limiter>=3",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
