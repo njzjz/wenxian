@@ -14,6 +14,7 @@ metadata:
 ## When to use this skill
 
 Use this skill when:
+
 - Users need to generate citations or bibliography entries for academic papers
 - Users have DOI, PMID, arXiv ID, or paper titles and need citations
 - Users are working on LaTeX documents and need BibTeX entries
@@ -113,11 +114,13 @@ By default, the command will print a BibTeX entry to standard output. For exampl
 ## Common use cases
 
 1. **Single citation**: Generate a BibTeX entry for one paper
+
    ```bash
    uvx wenxian from "10.1038/nature12373"
    ```
 
 2. **Multiple citations**: Generate entries for multiple papers by running the command multiple times
+
    ```bash
    uvx wenxian from "10.1038/nature12373"
    uvx wenxian from "10.1126/science.1158899"
@@ -163,6 +166,7 @@ By default, the command will print a BibTeX entry to standard output. For exampl
 When a user asks to "add a citation for DOI 10.1234/example", you should:
 
 1. Run wenxian to generate the BibTeX entry:
+
    ```bash
    uvx wenxian from 10.1234/example
    ```
