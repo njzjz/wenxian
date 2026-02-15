@@ -38,25 +38,18 @@ uvx wenxian from "Attention is all you need"
 
 It is expected to see a ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ entry printed into the standard output.
 
-#### Output formats
+By default, `wenxian` outputs ${\mathrm{B{\scriptstyle{IB}} T_{\displaystyle E} X}}$ format. You can use the `-t text` or `--type text` option to generate plain text format.
 
-By default, `wenxian` outputs BibTeX format. You can use the `-t` or `--type` option to generate different output formats:
+### The Agent Skill (used in OpenClaw or IDEs)
 
-- **BibTeX format** (default):
-  ```sh
-  uvx wenxian from 1512.03385
-  ```
+`wenxian` provides an [Agent Skill](https://agentskills.io/) in the [`skill`](./skill/) directory, which has been supported by
+[OpenClaw](https://docs.openclaw.ai/tools/skills),
+[Claude](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview),
+[Codex](https://developers.openai.com/codex/skills/),
+and [VS Code](https://code.visualstudio.com/docs/copilot/customization/agent-skills).
 
-- **Plain text format**:
-  ```sh
-  uvx wenxian from 1512.03385 -t text
-  ```
-  Example output: `Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun, Deep Residual Learning for Image Recognition, arXiv, 2015, 1512.03385.`
-
-- **Markdown format**:
-  ```sh
-  uvx wenxian from 1512.03385 -t markdown
-  ```
+For example, you can ask your OpenClaw bot to `install the skill https://github.com/njzjz/wenxian/tree/master/skill`.
+After that is done, you can ask the bot to generate the references by sending the bot paper titles or DOIs.
 
 ### Use wenxian in a GitHub Actions workflow
 
