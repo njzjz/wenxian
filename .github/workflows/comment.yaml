@@ -2,39 +2,61 @@ name: Reply to issue comments
 on:
   issue_comment:
     types: [created]
+
 permissions:
   issues: write
+
 jobs:
   reply:
     runs-on: ubuntu-latest
     if: contains(github.event.comment.body, '@njzjz-bot')
+
     steps:
       - uses: actions/checkout@v6
+
       - name: Extract identifiers
         id: extract-identifiers
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        shell: bash
         run: |
-          echo identifiers=$(echo "${{ github.event.comment.body }}" | grep -oE '@njzjz-bot .*' | head -n1 | cut -c12- | xargs) >> $GITHUB_OUTPUT
+          identifiers="$(
+            printf '%s\n' "$COMMENT_BODY" \
+            | grep -oE '@njzjz-bot .*' \
+            | head -n1 \
+            | cut -c12- \
+            | xargs
+          )"
+          printf 'identifiers=%s\n' "$identifiers" >> "$GITHUB_OUTPUT"
+
       - name: Run wenxian
         id: wenxian
         uses: ./
         with:
           id: ${{ steps.extract-identifiers.outputs.identifiers }}
+
       - name: Prepare the comment body
         id: prepare-comment
+        env:
+          COMMENT_USER: ${{ github.event.comment.user.login }}
+          IDENTIFIERS: ${{ steps.extract-identifiers.outputs.identifiers }}
+          OUTPUT_BIBTEX: ${{ steps.wenxian.outputs.bibtex }}
+        shell: bash
         run: |
           {
             echo 'comment<<EOF'
-            echo '@${{ github.event.comment.user.login }} Here is the BibTeX entry for `${{ steps.extract-identifiers.outputs.identifiers }}`:'
+            printf '@%s Here is the BibTeX entry for `%s`:\n' "$COMMENT_USER" "$IDENTIFIERS"
             echo '```bibtex'
-            echo "${OUTPUT_BIBTEX}"
+            printf '%s\n' "$OUTPUT_BIBTEX"
             echo '```'
-            echo EOF
-          } >> $GITHUB_OUTPUT
-        env:
-          OUTPUT_BIBTEX: ${{ steps.wenxian.outputs.bibtex }}
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Post comment
-        run: |
-          echo "${OUTPUT_COMMENT}" | gh issue comment ${{ github.event.issue.number }} --body-file -
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_COMMENT: ${{ steps.prepare-comment.outputs.comment }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        shell: bash
+        run: |
+          printf '%s\n' "$OUTPUT_COMMENT" | gh issue comment "$ISSUE_NUMBER" --body-file -
