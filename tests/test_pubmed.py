@@ -19,13 +19,17 @@ class _NonJsonResponse:
 
 def test_doi2pmid_pmc_ignores_non_json_response(monkeypatch):
     """Test non-JSON PMC responses are treated as missing records."""
-    monkeypatch.setattr("wenxian.feeder.pubmed.SESSION.get", lambda *args, **kwargs: _NonJsonResponse())
+    monkeypatch.setattr(
+        "wenxian.feeder.pubmed.SESSION.get", lambda *args, **kwargs: _NonJsonResponse()
+    )
 
     assert Pubmed()._doi2pmid_pmc("10.1038/s41524-026-02146-2") is None
 
 
 def test_doi2pmid_search_ignores_non_json_response(monkeypatch):
     """Test non-JSON PubMed search responses are treated as missing records."""
-    monkeypatch.setattr("wenxian.feeder.pubmed.SESSION.get", lambda *args, **kwargs: _NonJsonResponse())
+    monkeypatch.setattr(
+        "wenxian.feeder.pubmed.SESSION.get", lambda *args, **kwargs: _NonJsonResponse()
+    )
 
     assert Pubmed()._doi2pmid_search("10.1038/s41524-026-02146-2") is None

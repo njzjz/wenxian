@@ -37,11 +37,11 @@ class Pubmed(Feeder):
             return None
         try:
             res = r.json()
-        except JSONDecodeError:
+            if res["status"] == "error":
+                return None
+            records = res["records"]
+        except (JSONDecodeError, KeyError):
             return None
-        if res["status"] == "error":
-            return None
-        records = res["records"]
 
         if records and "pmid" in records[0]:
             return records[0]["pmid"]
@@ -78,7 +78,7 @@ class Pubmed(Feeder):
             return None
         try:
             records = r.json()["esearchresult"]["idlist"]
-        except JSONDecodeError:
+        except (JSONDecodeError, KeyError):
             return None
 
         if records:

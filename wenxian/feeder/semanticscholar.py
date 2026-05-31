@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import html
 
+from requests.exceptions import RequestException
+
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
 from wenxian.reference import Author, Reference
@@ -18,10 +20,13 @@ class Semanticscholar(Feeder):
         Returns a tuple of (identifier_type, identifier_value) or None.
         The caller should use the appropriate from_* method to get the full metadata.
         """
-        r = SESSION.get(
-            "https://api.semanticscholar.org/graph/v1/paper/search",
-            params={"query": title, "limit": "1", "fields": "externalIds"},
-        )
+        try:
+            r = SESSION.get(
+                "https://api.semanticscholar.org/graph/v1/paper/search",
+                params={"query": title, "limit": "1", "fields": "externalIds"},
+            )
+        except RequestException:
+            return None
         if r.status_code != 200:
             return None
 
@@ -47,10 +52,15 @@ class Semanticscholar(Feeder):
 
     def _from_identifier(self, identifier: str) -> Reference | None:
         """Fetch a reference from a identifier."""
-        r = SESSION.get(
-            f"https://api.semanticscholar.org/graph/v1/paper/{identifier}",
-            params={"fields": "title,year,abstract,authors.name,journal,externalIds"},
-        )
+        try:
+            r = SESSION.get(
+                f"https://api.semanticscholar.org/graph/v1/paper/{identifier}",
+                params={
+                    "fields": "title,year,abstract,authors.name,journal,externalIds"
+                },
+            )
+        except RequestException:
+            return None
         if r.status_code == 404:
             # DOI not found
             return None
