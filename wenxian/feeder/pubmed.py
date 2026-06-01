@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import ClassVar
 from xml.etree import ElementTree
 
+from requests.exceptions import JSONDecodeError
+
 from wenxian import __email__, __tool__
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION
@@ -31,10 +33,15 @@ class Pubmed(Feeder):
             "https://www.ncbi.nlm.nih.gov/pmc/utils/idconv/v1.0/",
             params={"tool": __tool__, "email": __email__, "ids": doi, "format": "json"},
         )
-        res = r.json()
-        if res["status"] == "error":
+        if r.status_code != 200:
             return None
-        records = res["records"]
+        try:
+            res = r.json()
+            if res["status"] == "error":
+                return None
+            records = res["records"]
+        except (JSONDecodeError, KeyError):
+            return None
 
         if records and "pmid" in records[0]:
             return records[0]["pmid"]
@@ -67,7 +74,12 @@ class Pubmed(Feeder):
                 "retmax": "1",
             },
         )
-        records = r.json()["esearchresult"]["idlist"]
+        if r.status_code != 200:
+            return None
+        try:
+            records = r.json()["esearchresult"]["idlist"]
+        except (JSONDecodeError, KeyError):
+            return None
 
         if records:
             return records[0]

@@ -128,6 +128,28 @@ TEST_CASES = [
             year=2020,
             volume=253,
             pages=(107206,),
+            annote=textwrap.dedent("""\
+                In recent years, promising deep learning based interatomic potential energy surface
+                (PES) models have been proposed that can potentially allow us to perform molecular
+                dynamics simulations for large scale systems with quantum accuracy. However, making
+                these models truly reliable and practically useful is still a very non-trivial
+                task. A key component in this task is the generation of datasets used in model
+                training. In this paper, we introduce the Deep Potential GENerator (DP-GEN), an
+                open-source software platform that implements the recently proposed "on-the-fly"
+                learning procedure [Phys. Rev. Materials 3, 023804] and is capable of generating
+                uniformly accurate deep learning based PES models in a way that minimizes human
+                intervention and the computational cost for data generation and model training.
+                DP-GEN automatically and iteratively performs three steps: exploration, labeling,
+                and training. It supports various popular packages for these three steps: LAMMPS
+                for exploration, Quantum Espresso, VASP, CP2K, etc. for labeling, and DeePMD-kit
+                for training. It also allows automatic job submission and result collection on
+                different types of machines, such as high performance clusters and cloud machines,
+                and is adaptive to different job management tools, including Slurm, PBS, and LSF.
+                As a concrete example, we illustrate the details of the process for generating a
+                general-purpose PES model for Cu using DP-GEN.
+                """)
+            .strip()
+            .replace("\n", " "),
             doi="10.1016/j.cpc.2020.107206",
         ),
         expected_bibtex=textwrap.dedent(r"""
@@ -141,6 +163,28 @@ TEST_CASES = [
                 volume =   253,
                 pages =    107206,
                 doi =      {10.1016/j.cpc.2020.107206},
+                abstract = {In recent years, promising deep learning based interatomic potential
+                         energy surface (PES) models have been proposed that can potentially
+                         allow us to perform molecular dynamics simulations for large scale
+                         systems with quantum accuracy. However, making these models truly
+                         reliable and practically useful is still a very non-trivial task. A
+                         key component in this task is the generation of datasets used in model
+                         training. In this paper, we introduce the Deep Potential GENerator
+                         (DP-GEN), an open-source software platform that implements the
+                         recently proposed {''}on-the-fly{''} learning procedure [Phys. Rev.
+                         Materials 3, 023804] and is capable of generating uniformly accurate
+                         deep learning based PES models in a way that minimizes human
+                         intervention and the computational cost for data generation and model
+                         training. DP-GEN automatically and iteratively performs three steps:
+                         exploration, labeling, and training. It supports various popular
+                         packages for these three steps: LAMMPS for exploration, Quantum
+                         Espresso, VASP, CP2K, etc. for labeling, and DeePMD-kit for training.
+                         It also allows automatic job submission and result collection on
+                         different types of machines, such as high performance clusters and
+                         cloud machines, and is adaptive to different job management tools,
+                         including Slurm, PBS, and LSF. As a concrete example, we illustrate
+                         the details of the process for generating a general-purpose PES model
+                         for Cu using DP-GEN.},
             }""").strip(),
         expected_markdown=r"Yuzhi Zhang, Haidi Wang, Weijie Chen, Jinzhe Zeng, Linfeng Zhang, Han Wang, Weinan E, DP-GEN: A concurrent learning platform for the generation of reliable deep learning based potential energy models, *Comput. Phys. Commun.*, 2020, 253, 107206, DOI: [10.1016/j.cpc.2020.107206](https://doi.org/10.1016/j.cpc.2020.107206). [![Citations](https://citations.njzjz.win/10.1016/j.cpc.2020.107206)](https://badge.dimensions.ai/details/doi/10.1016/j.cpc.2020.107206)",
     ),
