@@ -9,12 +9,9 @@
 
 ## Usage
 
-### Use wenxian in the browser (Deprecated)
+### Use wenxian in the browser
 
-> [!CAUTION]
-> Deprecated, as several websites that serve the API have disabled CORS.
-
-Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to use wenxian in the browser.
+Visit [wenxian.njzjz.win](https://wenxian.njzjz.win) to generate BibTeX from a DOI, PMID, or arXiv ID. The browser client retrieves metadata from the [Semantic Scholar Academic Graph API](https://www.semanticscholar.org/product/api); anonymous requests may occasionally be rate-limited.
 
 ### Command line interface
 

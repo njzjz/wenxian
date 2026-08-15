@@ -1,51 +1,51 @@
-import { asyncRun } from "./pyworker.js";
+import { fetchBibtex } from "./wenxian-core.mjs";
 
-async function from_identifier(identifier) {
-  const { results, error } = await asyncRun(`
-    import sys
-    from wenxian.from_identifier import from_identifier
-    from_identifier("${identifier}").bibtex
-    `);
-  return { results, error };
-}
+const form = document.getElementById("lookup-form");
+const identifierInput = document.getElementById("identifier");
+const submitButton = document.getElementById("submit");
+const message = document.getElementById("message");
+const outputText = document.getElementById("bibtex");
+const output = document.getElementById("output");
+const copyButton = document.getElementById("copy_button");
 
-document.getElementById("submit").addEventListener("click", function (event) {
+form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const message = document.getElementById("message");
   message.textContent = "Fetching...";
-  const output_text = document.getElementById("bibtex");
-  const output = document.getElementById("output");
-  const identifier = document.getElementById("identifier").value;
-  from_identifier(identifier).then(({ results, error }) => {
-    if (results) {
-      output_text.textContent = results;
-      Prism.highlightElement(output_text);
-      // show the output
-      output.style.display = "block";
-      message.textContent = "";
+  output.style.display = "none";
+  submitButton.disabled = true;
+
+  try {
+    outputText.textContent = await fetchBibtex(identifierInput.value);
+    if (globalThis.Prism) {
+      globalThis.Prism.highlightElement(outputText);
     }
-    if (error) {
-      message.textContent = error;
-    }
-  });
+    output.style.display = "block";
+    message.textContent = "";
+  } catch (error) {
+    message.textContent =
+      error instanceof Error ? error.message : String(error);
+  } finally {
+    submitButton.disabled = false;
+  }
 });
 
-function run_example(identifier) {
-  // fill the input
-  document.getElementById("identifier").value = identifier;
-  // submit the form
-  document.getElementById("submit").click();
+for (const example of document.querySelectorAll("[data-identifier]")) {
+  example.addEventListener("click", (event) => {
+    event.preventDefault();
+    identifierInput.value = example.dataset.identifier;
+    form.requestSubmit();
+  });
 }
-window.run_example = run_example;
 
-function copy_bibtex() {
-  const copyText = document.getElementById("bibtex");
-  navigator.clipboard.writeText(copyText.textContent);
-  const copy_button = document.getElementById("copy_button");
-  const original_text = copy_button.textContent;
-  copy_button.textContent = "Copied!";
+copyButton.addEventListener("click", async () => {
+  const originalText = copyButton.textContent;
+  try {
+    await navigator.clipboard.writeText(outputText.textContent);
+    copyButton.textContent = "Copied!";
+  } catch {
+    copyButton.textContent = "Copy failed";
+  }
   setTimeout(() => {
-    copy_button.textContent = original_text;
+    copyButton.textContent = originalText;
   }, 2000);
-}
-window.copy_bibtex = copy_bibtex;
+});

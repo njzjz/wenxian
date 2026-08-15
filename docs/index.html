@@ -16,10 +16,9 @@
     <meta name="theme-color" content="#03A89E" />
     <link rel="icon" type="image/svg" href="logo.svg" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://api.semanticscholar.org" crossorigin />
     <link
-      href="
-https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
-"
+      href="https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
@@ -41,56 +40,63 @@ https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
     <h1 style="margin-bottom: 50px; color: #03a89e">
       <img
         src="logo.svg"
-        height="100px"
-        width="100px"
+        height="100"
+        width="100"
         style="margin-bottom: -1em"
-        title="Logo"
+        alt=""
       />
       wenxian
     </h1>
-    <form style="padding-bottom: 40px" target="_blank" class="flex">
+    <form id="lookup-form" style="padding-bottom: 20px" class="flex">
       <label class="block" style="width: fit-content">
+        <span class="visually-hidden">DOI, PMID, or arXiv identifier</span>
         <input
           class="block identifier"
           id="identifier"
           type="text"
-          placeholder="DOI/PMID/arXiv identifier"
+          placeholder="DOI, PMID, or arXiv identifier"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
           required
         />
-        <div class="bar"></div>
+        <span class="bar"></span>
       </label>
-      <input
-        type="submit"
-        id="submit"
-        class="block btn"
-        value="Generate BibTeX"
-      />
+      <button type="submit" id="submit" class="block btn">
+        Generate BibTeX
+      </button>
     </form>
-    <div class="examples" id="message">
+    <div class="examples">
       <p><b>Examples:</b></p>
       <ul>
         <li>
-          <a href="javascript:run_example('10.1063/5.0155600')"
+          <a href="#identifier" data-identifier="10.1063/5.0155600"
             >10.1063/5.0155600</a
           >
         </li>
-        <li><a href="javascript:run_example('37526163')">37526163</a></li>
-        <li><a href="javascript:run_example('2304.09409')">2304.09409</a></li>
+        <li>
+          <a href="#identifier" data-identifier="37526163">37526163</a>
+        </li>
+        <li>
+          <a href="#identifier" data-identifier="2304.09409">2304.09409</a>
+        </li>
       </ul>
     </div>
+    <p id="message" class="status" role="status" aria-live="polite"></p>
     <div id="output" class="output" style="display: none">
-      <button id="copy_button" onclick="copy_bibtex()" class="copy-button">
+      <button id="copy_button" type="button" class="copy-button">
         Copy BibTeX
       </button>
       <pre><code class="language-bib" id="bibtex"></code></pre>
     </div>
-    <p style="position: sticky; top: calc(100% - 2.5em)">
-      Powered by
-      <a style="color: #3294ea" href="https://github.com/njzjz/wenxian"
-        >njzjz/wenxian</a
+    <p class="footer">
+      Part of
+      <a href="https://github.com/njzjz/wenxian">njzjz/wenxian</a>
+      · Metadata from
+      <a href="https://www.semanticscholar.org/product/api"
+        >Semantic Scholar</a
       >
     </p>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.1.0/prism-bibtex.js"

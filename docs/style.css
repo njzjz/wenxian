@@ -15,7 +15,7 @@ body {
 }
 
 p {
-  word-break: break-all;
+  word-break: break-word;
 }
 
 @media (max-width: 500px) {
@@ -36,11 +36,23 @@ p {
   position: relative;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .identifier {
   font-size: 18px;
   padding: 10px 10px 10px 5px;
   position: relative;
-  width: 300px;
+  width: min(300px, calc(100vw - 70px));
   border: none;
   border-bottom: 1px solid #bfbfbf;
 }
@@ -57,8 +69,6 @@ input:focus {
   position: absolute;
   background: #00bfb3;
   transition: 0.2s ease transform;
-  -moz-transition: 0.2s ease transform;
-  -webkit-transition: 0.2s ease transform;
   transform: scaleX(0);
 }
 
@@ -81,35 +91,36 @@ input:focus {
   margin: 30px 0;
 }
 
-.tips,
-.example {
-  color: #7b7b7b;
-  position: relative;
-  align-self: flex-start;
-  margin-left: 7.5em;
+.btn:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
-.tips > p:first-child::before {
-  position: absolute;
-  left: -3em;
-  content: "";
+.examples {
   color: #7b7b7b;
 }
 
-.example > p:first-child::before {
-  position: absolute;
-  left: -7.5em;
-  content: "Example:";
+.examples p {
+  margin-bottom: 0;
+}
+
+.examples a,
+.footer a {
+  color: #3294ea;
+}
+
+.status {
+  min-height: 1.5em;
+  max-width: 600px;
+  text-align: center;
   color: #7b7b7b;
 }
 
 .output pre[class*="language-"] {
   position: relative;
   overflow: auto;
-
-  /* make space  */
-  margin: 0 0;
-  padding: 3rem 0 1.75rem 1rem;
+  margin: 0;
+  padding: 3rem 1rem 1.75rem;
   border-radius: 10px;
 }
 
@@ -120,7 +131,7 @@ input:focus {
   z-index: 100;
 }
 
-.output .copy-button button:hover {
+.output .copy-button:hover {
   cursor: pointer;
   background-color: #bcbabb;
 }
@@ -128,6 +139,12 @@ input:focus {
 .output {
   max-width: 100%;
   position: relative;
+}
+
+.footer {
+  position: sticky;
+  top: calc(100% - 2.5em);
+  text-align: center;
 }
 
 .github-fork-ribbon:before {

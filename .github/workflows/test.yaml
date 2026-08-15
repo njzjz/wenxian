@@ -28,9 +28,19 @@ jobs:
         uses: codecov/codecov-action@v6
         with:
           use_oidc: true
+  web:
+    name: Test browser client
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check JavaScript and run browser-client tests
+        run: |
+          node --check docs/wenxian-core.mjs
+          node --check docs/wenxian.js
+          node --test tests/test_web.mjs
   pass:
     name: Pass testing
-    needs: [test]
+    needs: [test, web]
     runs-on: ubuntu-latest
     if: always()
     steps:
