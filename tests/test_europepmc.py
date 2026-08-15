@@ -21,9 +21,7 @@ class _Response:
                         "doi": "10.1234/example",
                         "abstractText": "Abstract",
                         "authorList": {
-                            "author": [
-                                {"firstName": "Ada", "lastName": "Lovelace"}
-                            ]
+                            "author": [{"firstName": "Ada", "lastName": "Lovelace"}]
                         },
                         "journalInfo": {
                             "volume": "4",

@@ -15,9 +15,7 @@ class _Response:
             "data": {
                 "attributes": {
                     "doi": "10.48550/arXiv.2304.09409",
-                    "creators": [
-                        {"givenName": "Ada", "familyName": "Lovelace"}
-                    ],
+                    "creators": [{"givenName": "Ada", "familyName": "Lovelace"}],
                     "titles": [{"title": "A preprint"}],
                     "publisher": "arXiv",
                     "publicationYear": 2023,

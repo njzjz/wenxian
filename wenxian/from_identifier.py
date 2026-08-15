@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from difflib import SequenceMatcher
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 from requests.exceptions import RequestException
 
