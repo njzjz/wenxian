@@ -18,10 +18,7 @@ test("normalizes DOI inputs", () => {
     normalizeIdentifier("https://doi.org/10.1063/5.0155600"),
     "DOI:10.1063/5.0155600",
   );
-  assert.equal(
-    normalizeIdentifier("(10.1000/test(1))"),
-    "DOI:10.1000/test(1)",
-  );
+  assert.equal(normalizeIdentifier("(10.1000/test(1))"), "DOI:10.1000/test(1)");
 });
 
 test("normalizes PubMed inputs", () => {

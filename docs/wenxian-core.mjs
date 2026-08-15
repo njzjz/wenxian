@@ -112,9 +112,9 @@ const BIBTEX_ESCAPE = {
   "\\": "\\textbackslash{}",
   "&": "\\&",
   "%": "\\%",
-  "$": "\\$",
+  $: "\\$",
   "#": "\\#",
-  "_": "\\_",
+  _: "\\_",
   "{": "\\{",
   "}": "\\}",
   "~": "\\textasciitilde{}",
@@ -270,12 +270,9 @@ export function buildBibtex(data, paperId = "") {
     field("abstract", data.abstract),
   );
 
-  return [
-    `@${entryType}{${key},`,
-    ...fields.filter(Boolean),
-    "}",
-    "",
-  ].join("\n");
+  return [`@${entryType}{${key},`, ...fields.filter(Boolean), "}", ""].join(
+    "\n",
+  );
 }
 
 function statusError(status) {
