@@ -106,3 +106,17 @@ def test_from_attributes_handles_name_and_type_fallbacks():
         pages=(10, 12),
         doi="10.1234/example",
     )
+
+
+def test_from_attributes_handles_single_first_page():
+    """Test DataCite metadata with only a first page."""
+    data = {
+        "doi": "10.1234/page",
+        "titles": [{"title": "Single page metadata"}],
+        "publisher": "Example Publisher",
+        "publicationYear": 2024,
+        "container": {"firstPage": "7"},
+    }
+
+    reference = Datacite()._from_attributes(data, doi="10.1234/page")
+    assert reference.pages == (7,)
