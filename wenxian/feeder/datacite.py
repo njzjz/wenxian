@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from wenxian.feeder.feeder import Feeder
-from wenxian.feeder.session import SESSION
+from wenxian.feeder.session import SESSION, async_get
 from wenxian.reference import Author, BibtexType, Reference
 
 
@@ -18,7 +18,16 @@ class Datacite(Feeder):
         r = SESSION.get(f"{self.API_URL}/{doi}")
         if r.status_code != 200:
             return None
+        data = r.json().get("data", {}).get("attributes", {})
+        if not data:
+            return None
+        return self._from_attributes(data, doi=doi)
 
+    async def async_from_doi(self, doi: str) -> Reference | None:
+        """Fetch a reference from a DOI asynchronously."""
+        r = await async_get(f"{self.API_URL}/{doi}")
+        if r.status_code != 200:
+            return None
         data = r.json().get("data", {}).get("attributes", {})
         if not data:
             return None
@@ -28,6 +37,16 @@ class Datacite(Feeder):
         """Fetch a reference from an arXiv identifier."""
         doi = f"{self.ARXIV_DOI_PREFIX}{arxiv}"
         reference = self.from_doi(doi)
+        if reference is None:
+            return None
+        reference.journal = "arXiv"
+        reference.pages = arxiv
+        return reference
+
+    async def async_from_arxiv(self, arxiv: str) -> Reference | None:
+        """Fetch a reference from an arXiv identifier asynchronously."""
+        doi = f"{self.ARXIV_DOI_PREFIX}{arxiv}"
+        reference = await self.async_from_doi(doi)
         if reference is None:
             return None
         reference.journal = "arXiv"

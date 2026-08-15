@@ -5,58 +5,50 @@ from __future__ import annotations
 import html
 
 from wenxian.feeder.feeder import Feeder
-from wenxian.feeder.session import SESSION
+from wenxian.feeder.session import SESSION, async_get
 from wenxian.reference import Author, BibtexType, Reference
 
 
 class Crossref(Feeder):
     """Feeder for Crossref API."""
 
-    def from_title(self, title: str) -> str | None:
-        """Search for a paper by title and return its identifier.
+    API_URL = "https://api.crossref.org/works"
 
-        Returns a tuple of (identifier_type, identifier_value) or None.
-        The caller should use the appropriate from_* method to get the full metadata.
-        """
+    @staticmethod
+    def _identifier_from_title_data(data: dict) -> str | None:
+        """Extract the best DOI from a Crossref title-search response."""
+        items = data.get("message", {}).get("items", [])
+        if not items:
+            return None
+        return items[0].get("DOI")
+
+    def from_title(self, title: str) -> str | None:
+        """Search for a paper by title and return its identifier."""
         r = SESSION.get(
-            "https://api.crossref.org/works",
+            self.API_URL,
             params={"query.title": title, "rows": "1"},
         )
         if r.status_code != 200:
             return None
+        return self._identifier_from_title_data(r.json())
 
-        res = r.json()
-        items = res.get("message", {}).get("items", [])
-
-        if not items:
-            return None
-
-        # Get the first (best match) result
-        m = items[0]
-
-        # Return identifier for the caller to fetch metadata
-        if "DOI" in m:
-            return m["DOI"]
-
-        return None
-
-    def from_doi(self, doi: str) -> Reference | None:
-        """Fetch a reference from a DOI."""
-        r = SESSION.get(
-            f"https://api.crossref.org/works/{doi}",
+    async def async_from_title(self, title: str) -> str | None:
+        """Search for a paper by title asynchronously."""
+        r = await async_get(
+            self.API_URL,
+            params={"query.title": title, "rows": "1"},
         )
-        if r.status_code == 404:
-            # DOI not found
+        if r.status_code != 200:
             return None
-        res = r.json()
+        return self._identifier_from_title_data(r.json())
 
-        m = res["message"]
-        # title
+    def _from_doi_data(self, data: dict, doi: str) -> Reference:
+        """Convert Crossref work metadata into a reference."""
+        m = data["message"]
         if "title" in m:
             title = m["title"][0]
         else:
             title = None
-        # author
         if "author" in m:
             author = []
             for aa in m["author"]:
@@ -66,64 +58,29 @@ class Crossref(Feeder):
                     author.append(Author(first=aa["given"], last=aa["family"]))
         else:
             author = None
-        # volume & issue
         volume = m.get("volume")
         issue = m.get("issue")
-        # page
         if "page" in m:
             page = m["page"]
         elif "article-number" in m:
             page = m["article-number"]
         else:
             page = None
-        # abstract
         abstract = m.get("abstract")
 
-        # year
         if "published-print" in m:
             year = m["published-print"]["date-parts"][0][0]
         elif "published-online" in m:
             year = m["published-online"]["date-parts"][0][0]
         else:
             year = None
-        # journal
         if m.get("short-container-title"):
-            journal = m["short-container-title"][0]
-            # while not documented, the journal might be HTML escaped, e.g., Journal of Materials Science &amp; Technology
-            # https://api.crossref.org/works/10.1016/j.jmst.2023.09.059
-            journal = html.unescape(journal)
+            journal = html.unescape(m["short-container-title"][0])
         elif m.get("container-title"):
-            journal = m["container-title"][0]
-            journal = html.unescape(journal)
+            journal = html.unescape(m["container-title"][0])
         else:
             journal = None
-        # journal-article
-        # journal-issue
-        # journal-volume
-        # journal
-        # proceedings-article
-        # proceedings
-        # dataset
-        # component
-        # report
-        # report-series
-        # standard
-        # standard-series
-        # edited-book
-        # monograph
-        # reference-book
-        # book
-        # book-series
-        # book-set
-        # book-chapter
-        # book-section
-        # book-part
-        # book-track
-        # reference-entry
-        # dissertation
-        # posted-content
-        # peer-review
-        # other
+
         cr_type = m.get("type")
         if cr_type in (
             "book-series",
@@ -134,9 +91,9 @@ class Crossref(Feeder):
             "book-track",
         ):
             ref_type = BibtexType.inbook
-        elif cr_type in ("proceedings-article",):
+        elif cr_type == "proceedings-article":
             ref_type = BibtexType.inproceedings
-        elif cr_type in ("proceedings",):
+        elif cr_type == "proceedings":
             ref_type = BibtexType.proceedings
         else:
             ref_type = BibtexType.article
@@ -152,3 +109,17 @@ class Crossref(Feeder):
             doi=doi,
             type=ref_type,
         )
+
+    def from_doi(self, doi: str) -> Reference | None:
+        """Fetch a reference from a DOI."""
+        r = SESSION.get(f"{self.API_URL}/{doi}")
+        if r.status_code == 404:
+            return None
+        return self._from_doi_data(r.json(), doi)
+
+    async def async_from_doi(self, doi: str) -> Reference | None:
+        """Fetch a reference from a DOI asynchronously."""
+        r = await async_get(f"{self.API_URL}/{doi}")
+        if r.status_code == 404:
+            return None
+        return self._from_doi_data(r.json(), doi)
