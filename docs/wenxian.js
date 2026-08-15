@@ -1,10 +1,11 @@
 import { asyncRun } from "./pyworker.js";
 
 async function from_identifier(identifier) {
+  const pythonIdentifier = JSON.stringify(identifier);
   const { results, error } = await asyncRun(`
-    import sys
     from wenxian.from_identifier import from_identifier
-    from_identifier("${identifier}").bibtex
+    reference = from_identifier(${pythonIdentifier})
+    reference.bibtex if reference is not None and not reference.is_empty() else None
     `);
   return { results, error };
 }
@@ -23,8 +24,12 @@ document.getElementById("submit").addEventListener("click", function (event) {
       // show the output
       output.style.display = "block";
       message.textContent = "";
+    } else if (!error) {
+      output.style.display = "none";
+      message.textContent = "No reference found.";
     }
     if (error) {
+      output.style.display = "none";
       message.textContent = error;
     }
   });
