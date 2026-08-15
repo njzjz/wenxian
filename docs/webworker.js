@@ -19,16 +19,15 @@ async function loadPyodideAndPackages() {
 let pyodideReadyPromise = loadPyodideAndPackages();
 
 self.onmessage = async (event) => {
-  // make sure loading is done
-  await pyodideReadyPromise;
-  // Don't bother yet with this line, suppose our API is built in such a way:
   const { id, python } = event.data;
-  // Now is the easy part, the one that is similar to working in the main thread:
   try {
+    // Initialization errors must be returned to the caller too; otherwise the
+    // page remains stuck on "Fetching..." forever.
+    await pyodideReadyPromise;
     await self.pyodide.loadPackagesFromImports(python);
     let results = await self.pyodide.runPythonAsync(python);
     self.postMessage({ results, id });
   } catch (error) {
-    self.postMessage({ error: error.message, id });
+    self.postMessage({ error: error.message || String(error), id });
   }
 };
