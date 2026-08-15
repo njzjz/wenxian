@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Callable
 from difflib import SequenceMatcher
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from requests.exceptions import RequestException
 
@@ -20,6 +19,9 @@ from wenxian.identifier import Identifier, get_identifier_type
 from wenxian.logger import logger
 from wenxian.reference import Reference
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 T = TypeVar("T")
 
 
@@ -31,7 +33,7 @@ def _title_similarity(title1: str, title2: str) -> float:
 
 
 def _fetch_safely(
-    source: str, fetcher: Callable[[Any], T | None], identifier: Any
+    source: str, fetcher: Callable[..., T | None], identifier: object
 ) -> T | None:
     """Fetch from one source without aborting a browser fallback chain."""
     try:
