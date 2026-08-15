@@ -10,6 +10,7 @@ class _Response:
     status_code = 200
 
     def json(self):
+        """Return a minimal Europe PMC response."""
         return {
             "resultList": {
                 "result": [
