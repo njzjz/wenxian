@@ -10,6 +10,7 @@ class _Response:
     status_code = 200
 
     def json(self):
+        """Return a minimal DataCite response."""
         return {
             "data": {
                 "attributes": {
