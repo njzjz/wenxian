@@ -69,9 +69,7 @@ async def _async_fetch_safely(
 
 
 def _fetch_references_concurrently(
-    fetches: Iterable[
-        tuple[str, Callable[..., Reference | None], str | int]
-    ],
+    fetches: Iterable[tuple[str, Callable[..., Reference | None], str | int]],
 ) -> list[Reference | None]:
     """Run independent synchronous reference lookups concurrently."""
     fetches = tuple(fetches)
@@ -118,9 +116,7 @@ async def async_from_doi(doi: str) -> Reference | None:
         _async_fetch_safely("Crossref", Crossref().async_from_doi, doi),
         _async_fetch_safely("arXiv", Arxiv().async_from_doi, doi),
         _async_fetch_safely("ChemRxiv", Chemrxiv().async_from_doi, doi),
-        _async_fetch_safely(
-            "Semantic Scholar", Semanticscholar().async_from_doi, doi
-        ),
+        _async_fetch_safely("Semantic Scholar", Semanticscholar().async_from_doi, doi),
     )
     return _merge_references(references)
 
@@ -220,9 +216,7 @@ async def async_from_title(title: str) -> Reference | None:
     if identifier_info is None:
         return None
     assert isinstance(identifier_info, str)
-    return _validate_title_result(
-        title, await async_from_identifier(identifier_info)
-    )
+    return _validate_title_result(title, await async_from_identifier(identifier_info))
 
 
 def from_identifier(identifier: str) -> Reference | None:

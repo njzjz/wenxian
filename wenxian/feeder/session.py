@@ -136,9 +136,7 @@ async def _browser_get(
     return await asyncio.wait_for(fetch_and_read(), timeout=_BROWSER_TIMEOUT)
 
 
-async def async_get(
-    url: str, *, params: Mapping[str, str | int] | None = None
-) -> Any:
+async def async_get(url: str, *, params: Mapping[str, str | int] | None = None) -> Any:
     """Perform a GET request without blocking the active event loop.
 
     Native Python runs the existing rate-limited requests session in a worker

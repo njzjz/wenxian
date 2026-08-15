@@ -22,7 +22,6 @@ from wenxian.from_identifier import (
     async_from_arxiv,
     async_from_doi,
     async_from_identifier,
-    async_from_pmid,
     async_from_title,
     from_arxiv,
     from_doi,
@@ -468,9 +467,7 @@ def test_async_datacite_and_europepmc(monkeypatch):
                 "data": {
                     "attributes": {
                         "doi": "10.48550/arXiv.2304.09409",
-                        "creators": [
-                            {"givenName": "Ada", "familyName": "Lovelace"}
-                        ],
+                        "creators": [{"givenName": "Ada", "familyName": "Lovelace"}],
                         "titles": [{"title": "Example"}],
                         "publisher": "arXiv",
                         "publicationYear": 2024,
@@ -489,9 +486,9 @@ def test_async_datacite_and_europepmc(monkeypatch):
         year=2024,
         doi="10.48550/arXiv.2304.09409",
     )
-    assert asyncio.run(
-        Datacite().async_from_doi("10.48550/arXiv.2304.09409")
-    ) == expected
+    assert (
+        asyncio.run(Datacite().async_from_doi("10.48550/arXiv.2304.09409")) == expected
+    )
     expected.pages = "2304.09409"
     assert asyncio.run(Datacite().async_from_arxiv("2304.09409")) == expected
 
@@ -505,13 +502,9 @@ def test_async_datacite_and_europepmc(monkeypatch):
                             "title": "Example",
                             "pubYear": "2024",
                             "authorList": {
-                                "author": [
-                                    {"firstName": "Ada", "lastName": "Lovelace"}
-                                ]
+                                "author": [{"firstName": "Ada", "lastName": "Lovelace"}]
                             },
-                            "journalInfo": {
-                                "journal": {"title": "Journal of Tests"}
-                            },
+                            "journalInfo": {"journal": {"title": "Journal of Tests"}},
                             "doi": "10.1234/example",
                         }
                     ]
@@ -614,9 +607,7 @@ def test_sync_pyodide_falls_back_to_serial_sources(monkeypatch):
         return fetch
 
     monkeypatch.setattr("wenxian.from_identifier.sys.platform", "emscripten")
-    monkeypatch.setattr(
-        "wenxian.from_identifier.Pubmed.from_doi", make_fetch("PubMed")
-    )
+    monkeypatch.setattr("wenxian.from_identifier.Pubmed.from_doi", make_fetch("PubMed"))
     monkeypatch.setattr(
         "wenxian.from_identifier.Crossref.from_doi", make_fetch("Crossref")
     )
