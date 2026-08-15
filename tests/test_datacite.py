@@ -58,6 +58,15 @@ def test_from_arxiv(monkeypatch):
     )
 
 
+def test_from_arxiv_ignores_missing_doi(monkeypatch):
+    """Test an arXiv identifier missing from DataCite is ignored."""
+    monkeypatch.setattr(
+        "wenxian.feeder.datacite.SESSION.get",
+        lambda *args, **kwargs: _NotFoundResponse(),
+    )
+    assert Datacite().from_arxiv("0000.00000") is None
+
+
 def test_from_doi_ignores_missing_records(monkeypatch):
     """Test missing and empty DataCite records are ignored."""
     monkeypatch.setattr(
