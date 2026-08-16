@@ -9,16 +9,17 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 from urllib.parse import urlencode
 
-from pyrate_limiter import Duration, Limiter, Rate
-from requests import Session
-from requests.adapters import HTTPAdapter, Retry
-from requests_ratelimiter import LimiterAdapter
-from requests_ratelimiter.requests_ratelimiter import HostBucketFactory
-
 if TYPE_CHECKING:
     from asyncio import AbstractEventLoop
     from collections.abc import Mapping
     from typing import Any
+
+if sys.platform != "emscripten":
+    from pyrate_limiter import Duration, Limiter, Rate
+    from requests import Session
+    from requests.adapters import HTTPAdapter, Retry
+    from requests_ratelimiter import LimiterAdapter
+    from requests_ratelimiter.requests_ratelimiter import HostBucketFactory
 
 
 @dataclass
@@ -63,47 +64,59 @@ class _AsyncSpacingLimiter:
             state.next_start = loop.time() + self.interval
 
 
-_DEFAULT_TIMEOUT = (5.0, 20.0)
+class _BrowserSession:
+    """Reject synchronous HTTP calls in browser runtimes."""
+
+    def get(self, *args: Any, **kwargs: Any) -> Any:
+        """Raise because Pyodide networking must use the asynchronous transport."""
+        raise RuntimeError(
+            "Synchronous HTTP is unavailable in Pyodide; use async_get instead."
+        )
 
 
-class _TimeoutSession(Session):
-    """Requests session that applies a bounded timeout by default."""
+if sys.platform != "emscripten":
+    _DEFAULT_TIMEOUT = (5.0, 20.0)
 
-    def request(self, method, url, **kwargs):
-        """Send a request with the shared default timeout unless overridden."""
-        kwargs.setdefault("timeout", _DEFAULT_TIMEOUT)
-        return super().request(method, url, **kwargs)
+    class _TimeoutSession(Session):
+        """Requests session that applies a bounded timeout by default."""
 
+        def request(self, method, url, **kwargs):
+            """Send a request with the shared default timeout unless overridden."""
+            kwargs.setdefault("timeout", _DEFAULT_TIMEOUT)
+            return super().request(method, url, **kwargs)
 
-SESSION = _TimeoutSession()
+    SESSION = _TimeoutSession()
 
-# retry logic
-retries = Retry(
-    total=5,
-    backoff_factor=0.1,
-    status_forcelist=[
-        429,
-        500,
-        502,
-        503,
-        504,
-    ],
-)
+    # retry logic
+    retries = Retry(
+        total=5,
+        backoff_factor=0.1,
+        status_forcelist=[
+            429,
+            500,
+            502,
+            503,
+            504,
+        ],
+    )
 
-adapter_ncbi = LimiterAdapter(per_second=3, max_retries=retries)
-SESSION.mount("https://www.ncbi.nlm.nih.gov/pmc/utils/", adapter_ncbi)
-SESSION.mount("https://eutils.ncbi.nlm.nih.gov/", adapter_ncbi)
-adapter_crossref = LimiterAdapter(per_second=50, max_retries=retries)
-SESSION.mount("https://api.crossref.org/", adapter_crossref)
-adapter_arxiv = LimiterAdapter(
-    limiter=Limiter(HostBucketFactory([Rate(1, Duration.SECOND * 3)])),
-    burst=1,
-    max_retries=retries,
-)
-SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
-adapter_semanticscholar = LimiterAdapter(per_second=1, max_retries=retries)
-SESSION.mount("https://api.semanticscholar.org/", adapter_semanticscholar)
-SESSION.mount("https://", HTTPAdapter(max_retries=retries))
+    adapter_ncbi = LimiterAdapter(per_second=3, max_retries=retries)
+    SESSION.mount("https://www.ncbi.nlm.nih.gov/pmc/utils/", adapter_ncbi)
+    SESSION.mount("https://eutils.ncbi.nlm.nih.gov/", adapter_ncbi)
+    adapter_crossref = LimiterAdapter(per_second=50, max_retries=retries)
+    SESSION.mount("https://api.crossref.org/", adapter_crossref)
+    adapter_arxiv = LimiterAdapter(
+        limiter=Limiter(HostBucketFactory([Rate(1, Duration.SECOND * 3)])),
+        burst=1,
+        max_retries=retries,
+    )
+    SESSION.mount("https://export.arxiv.org/api", adapter_arxiv)
+    adapter_semanticscholar = LimiterAdapter(per_second=1, max_retries=retries)
+    SESSION.mount("https://api.semanticscholar.org/", adapter_semanticscholar)
+    SESSION.mount("https://", HTTPAdapter(max_retries=retries))
+else:
+    SESSION = _BrowserSession()
+
 
 _BROWSER_RETRY_STATUSES = {429, 500, 502, 503, 504}
 _BROWSER_TIMEOUT = 20.0
