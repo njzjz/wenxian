@@ -11,14 +11,12 @@ const packageInstallerRequests = [];
 
 if (bundlePath) {
   const bundle = await readFile(bundlePath);
-  await page.route(
-    "**/releases/download/web-latest/wenxian-web-packages.tar.gz",
-    (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/gzip",
-        body: bundle,
-      }),
+  await page.route("**/wenxian-web-packages.tar.gz", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/gzip",
+      body: bundle,
+    }),
   );
 }
 
