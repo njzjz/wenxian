@@ -81,6 +81,34 @@ input:focus {
   margin: 30px 0;
 }
 
+.btn:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.progress-container {
+  width: min(360px, 90vw);
+  min-height: 42px;
+  margin: 0 0 18px;
+}
+
+.progress-container[hidden] {
+  display: none;
+}
+
+.progress-container progress {
+  width: 100%;
+  height: 10px;
+  accent-color: #00bfb3;
+}
+
+.progress-text {
+  margin-top: 6px;
+  color: #666;
+  font-size: 13px;
+  text-align: center;
+}
+
 .tips,
 .example {
   color: #7b7b7b;

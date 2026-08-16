@@ -1,8 +1,23 @@
 import { asyncRun } from "./pyworker.js";
 
-async function from_identifier(identifier) {
+const progressContainer = document.getElementById("progress-container");
+const progressBar = document.getElementById("progress-bar");
+const progressText = document.getElementById("progress-text");
+
+function setProgress({ progress, message }) {
+  progressContainer.hidden = false;
+  progressBar.value = progress;
+  progressText.textContent = `${message} ${progress}%`;
+}
+
+function hideProgress() {
+  progressContainer.hidden = true;
+}
+
+async function from_identifier(identifier, onProgress) {
   const pythonIdentifier = JSON.stringify(identifier);
-  const { results, error } = await asyncRun(`
+  const { results, error } = await asyncRun(
+    `
     try:
         from wenxian.from_identifier import async_from_identifier
     except ImportError:
@@ -11,18 +26,25 @@ async function from_identifier(identifier) {
     else:
         reference = await async_from_identifier(${pythonIdentifier})
     reference.bibtex if reference is not None and not reference.is_empty() else None
-    `);
+    `,
+    { onProgress },
+  );
   return { results, error };
 }
 
 document.getElementById("submit").addEventListener("click", function (event) {
   event.preventDefault();
   const message = document.getElementById("message");
-  message.textContent = "Fetching...";
+  message.textContent = "";
   const output_text = document.getElementById("bibtex");
   const output = document.getElementById("output");
+  const submit = document.getElementById("submit");
   const identifier = document.getElementById("identifier").value;
-  from_identifier(identifier).then(({ results, error }) => {
+
+  submit.disabled = true;
+  progressContainer.hidden = false;
+  from_identifier(identifier, setProgress).then(({ results, error }) => {
+    submit.disabled = false;
     if (results) {
       output_text.textContent = results;
       Prism.highlightElement(output_text);
@@ -36,6 +58,7 @@ document.getElementById("submit").addEventListener("click", function (event) {
       output.style.display = "none";
       message.textContent = error;
     }
+    setTimeout(hideProgress, 400);
   });
 });
 
