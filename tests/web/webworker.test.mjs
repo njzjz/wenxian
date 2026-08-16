@@ -136,11 +136,11 @@ test("worker returns query errors to the page", async () => {
   assert.equal(fast.messages.at(-1).error, "query failed");
 });
 
-const fallback = createHarness({ bundleOk: false });
-await import(`../../docs/webworker.js?fallback=${Date.now()}`);
-await new Promise((resolve) => setImmediate(resolve));
+test("worker falls back to micropip for releases without a web bundle", async () => {
+  const fallback = createHarness({ bundleOk: false });
+  await import(`../../docs/webworker.js?fallback=${Date.now()}`);
+  await new Promise((resolve) => setImmediate(resolve));
 
-test("worker falls back to micropip for releases without a web bundle", () => {
   assert.ok(
     fallback.calls.some(
       ([name, value]) => name === "loadPackage" && value === "micropip",
