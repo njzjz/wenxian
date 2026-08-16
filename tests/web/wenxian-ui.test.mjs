@@ -66,6 +66,7 @@ class FakeWorker {
 }
 
 const copied = [];
+globalThis.window = globalThis;
 globalThis.Worker = FakeWorker;
 globalThis.document = {
   getElementById(id) {
