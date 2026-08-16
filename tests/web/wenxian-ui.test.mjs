@@ -102,7 +102,10 @@ test("successful lookup shows progress and BibTeX", async () => {
   assert.equal(elements.output.style.display, "block");
   assert.equal(elements.bibtex.textContent, "@Article{example}");
   assert.equal(elements["progress-bar"].value, 82);
-  assert.match(elements["progress-text"].textContent, /Querying literature sources/);
+  assert.match(
+    elements["progress-text"].textContent,
+    /Querying literature sources/,
+  );
 });
 
 test("empty lookup shows a useful message", async () => {
