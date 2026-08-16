@@ -9,6 +9,7 @@ class FakeElement {
     this.value = "";
     this.textContent = "";
     this.disabled = false;
+    this.focused = false;
   }
 
   addEventListener(type, callback) {
@@ -17,6 +18,10 @@ class FakeElement {
 
   requestSubmit() {
     this.listeners.submit?.({ preventDefault() {} });
+  }
+
+  focus() {
+    this.focused = true;
   }
 }
 
@@ -47,6 +52,7 @@ class FakeWorker {
   }
 
   postMessage({ id }) {
+    if (mode === "throw") throw new Error("worker post failed");
     queueMicrotask(() => {
       this.onmessage?.({
         data: {
@@ -68,6 +74,7 @@ class FakeWorker {
 }
 
 const copied = [];
+let clipboardFails = false;
 globalThis.window = globalThis;
 globalThis.Worker = FakeWorker;
 globalThis.document = {
@@ -80,6 +87,7 @@ Object.defineProperty(globalThis, "navigator", {
   value: {
     clipboard: {
       writeText(value) {
+        if (clipboardFails) throw new Error("clipboard denied");
         copied.push(value);
       },
     },
@@ -89,6 +97,15 @@ Object.defineProperty(globalThis, "navigator", {
 await import("../../docs/wenxian.js");
 
 const flush = () => new Promise((resolve) => setImmediate(resolve));
+
+test("blank lookup prompts for an identifier", () => {
+  elements.identifier.value = "   ";
+  elements.identifier.focused = false;
+  elements["lookup-form"].requestSubmit();
+
+  assert.match(elements.message.textContent, /Enter a DOI/);
+  assert.equal(elements.identifier.focused, true);
+});
 
 test("successful lookup shows progress and BibTeX", async () => {
   mode = "success";
@@ -132,6 +149,25 @@ test("worker errors are surfaced instead of hanging", async () => {
   assert.equal(elements.submit.disabled, false);
 });
 
+test("unexpected worker failures are surfaced", async () => {
+  mode = "throw";
+  elements.identifier.value = "2304.09409";
+  elements["lookup-form"].requestSubmit();
+  await flush();
+
+  assert.equal(elements.message.textContent, "worker post failed");
+  assert.equal(elements.submit.disabled, false);
+});
+
+test("clipboard failures update the copy button", async () => {
+  clipboardFails = true;
+  elements.copy_button.textContent = "Copy BibTeX";
+  await globalThis.copy_bibtex();
+  clipboardFails = false;
+
+  assert.equal(elements.copy_button.textContent, "Copy failed");
+});
+
 test("examples and copy action remain functional", async () => {
   mode = "success";
   globalThis.run_example("2304.09409");
@@ -139,6 +175,7 @@ test("examples and copy action remain functional", async () => {
   assert.equal(elements.identifier.value, "2304.09409");
 
   elements.bibtex.textContent = "@Article{copied}";
+  elements.copy_button.textContent = "Copy BibTeX";
   await globalThis.copy_bibtex();
   assert.equal(copied.at(-1), "@Article{copied}");
   assert.equal(elements.copy_button.textContent, "Copied!");
