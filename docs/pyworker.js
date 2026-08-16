@@ -10,13 +10,13 @@ pyodideWorker.onmessage = (event) => {
   const { id, type, ...data } = event.data;
 
   if (type === "progress") {
-    workerProgress = data;
-    if (id !== null && callbacks[id]?.onProgress) {
-      callbacks[id].onProgress(data);
-    } else {
+    if (id === null) {
+      workerProgress = data;
       for (const callback of Object.values(callbacks)) {
         callback.onProgress?.(data);
       }
+    } else {
+      callbacks[id]?.onProgress?.(data);
     }
     return;
   }
