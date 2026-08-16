@@ -4,6 +4,8 @@
 // downloading and parsing the runtime twice.
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
+const WEB_BUNDLE_URL = "./wenxian-web-packages.tar.gz";
+
 function reportProgress(progress, message, id = null) {
   self.postMessage({ type: "progress", progress, message, id });
 }
@@ -44,20 +46,45 @@ if Version(version("wenxian")) < Version("0.3.4"):
 `);
 }
 
+async function loadPrebuiltWebBundle() {
+  // The bundle is deployed atomically with the rest of the website. Revalidate
+  // the stable relative URL so returning browsers pick up the current deploy.
+  const response = await fetch(WEB_BUNDLE_URL, { cache: "no-cache" });
+  if (!response.ok) {
+    throw new Error(`web bundle unavailable: HTTP ${response.status}`);
+  }
+
+  const sitePackages = self.pyodide.runPython(
+    "import site; site.getsitepackages()[0]",
+  );
+  const archive = await response.arrayBuffer();
+  self.pyodide.unpackArchive(archive, "gztar", { extractDir: sitePackages });
+  self.pyodide.runPython("import importlib; importlib.invalidate_caches()");
+  installLegacyWenxianBrowserShims();
+}
+
+async function loadWithMicropipFallback() {
+  reportProgress(36, "Loading package installer…");
+  await self.pyodide.loadPackage("micropip");
+  const micropip = self.pyodide.pyimport("micropip");
+
+  reportProgress(48, "Installing wenxian…");
+  await micropip.install(["wenxian", "pylatexenc==3.0a21"]);
+  installLegacyWenxianBrowserShims();
+}
+
 async function loadPyodideAndPackages() {
   reportProgress(8, "Loading Python runtime…");
   self.pyodide = await loadPyodide();
 
-  reportProgress(32, "Loading package installer…");
-  await self.pyodide.loadPackage("micropip");
-  const micropip = self.pyodide.pyimport("micropip");
+  reportProgress(32, "Loading prebuilt wenxian environment…");
+  try {
+    await loadPrebuiltWebBundle();
+  } catch (error) {
+    console.warn("Falling back to micropip:", error);
+    await loadWithMicropipFallback();
+  }
 
-  reportProgress(45, "Loading wenxian…");
-  await micropip.install(["wenxian", "pylatexenc==3.0a21"]);
-  installLegacyWenxianBrowserShims();
-
-  // sqlite3 used to be loaded here even though the browser code does not use
-  // it. Avoiding that extra package download shortens cold starts.
   reportProgress(65, "Ready");
 }
 const pyodideReadyPromise = loadPyodideAndPackages();
