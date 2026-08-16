@@ -1,4 +1,4 @@
-"""Tests for the release-time web bundle builder."""
+"""Tests for the web bundle builder."""
 
 from __future__ import annotations
 
@@ -7,15 +7,37 @@ import tarfile
 from pathlib import Path
 
 
-def test_web_bundle_script_declares_runtime_requirements():
-    """Keep the browser bundle aligned with the pure-Python runtime deps."""
-    from scripts.build_web_bundle import WEB_REQUIREMENTS
+def test_web_bundle_uses_uv_locked_runtime_requirements():
+    """Keep the browser bundle aligned with the pinned pure-Python runtime deps."""
+    from scripts.build_web_bundle import (
+        WEB_REQUIREMENTS_IN,
+        WEB_REQUIREMENTS_LOCK,
+        _locked_requirements,
+    )
 
-    assert "requests" in WEB_REQUIREMENTS
-    assert "pylatexenc==3.0a21" in WEB_REQUIREMENTS
-    assert "unidecode" in WEB_REQUIREMENTS
-    assert "pyiso4" in WEB_REQUIREMENTS
-    assert all("ratelimiter" not in requirement for requirement in WEB_REQUIREMENTS)
+    declared = {
+        line.strip()
+        for line in WEB_REQUIREMENTS_IN.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
+    assert declared == {
+        "requests",
+        "pylatexenc==3.0a21",
+        "unidecode",
+        "pyiso4",
+    }
+
+    locked = _locked_requirements(WEB_REQUIREMENTS_LOCK)
+    assert "requests==2.34.2" in locked
+    assert "pylatexenc==3.0a21" in locked
+    assert "unidecode==1.4.0" in locked
+    assert "pyiso4==0.1.6" in locked
+    assert "certifi==2026.7.22" in locked
+    assert "charset-normalizer==3.5.1" in locked
+    assert "idna==3.18" in locked
+    assert "urllib3==2.7.0" in locked
+    assert all("==" in requirement for requirement in locked)
+    assert all("ratelimiter" not in requirement for requirement in locked)
 
 
 def test_web_bundle_manifest_format(tmp_path: Path):
@@ -24,7 +46,8 @@ def test_web_bundle_manifest_format(tmp_path: Path):
     manifest = {
         "format": 1,
         "packages": {"wenxian": "0.0.test"},
-        "requirements": ["requests"],
+        "requirements": ["requests==2.34.2"],
+        "requirements_lock": "web-requirements.lock",
     }
     manifest_path = tmp_path / "wenxian-web-manifest.json"
     manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
@@ -37,3 +60,4 @@ def test_web_bundle_manifest_format(tmp_path: Path):
 
     assert extracted["format"] == 1
     assert extracted["packages"]["wenxian"] == "0.0.test"
+    assert extracted["requirements_lock"] == "web-requirements.lock"
