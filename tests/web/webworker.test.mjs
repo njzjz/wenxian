@@ -69,7 +69,7 @@ await import(`../../docs/webworker.js?fast=${Date.now()}`);
 await new Promise((resolve) => setImmediate(resolve));
 const fastOnMessage = globalThis.onmessage;
 
-test("worker loads the release-prebuilt environment without micropip", () => {
+test("worker loads the latest-commit prebuilt environment without micropip", () => {
   assert.deepEqual(
     fast.messages
       .slice(0, 3)
@@ -82,9 +82,12 @@ test("worker loads the release-prebuilt environment without micropip", () => {
   );
   assert.ok(
     fast.calls.some(
-      ([name, url]) =>
+      ([name, url, options]) =>
         name === "fetch" &&
-        url.endsWith("/releases/latest/download/wenxian-web-packages.tar.gz"),
+        url.endsWith(
+          "/releases/download/web-latest/wenxian-web-packages.tar.gz",
+        ) &&
+        options.cache === "no-cache",
     ),
   );
   assert.ok(
@@ -138,7 +141,7 @@ test("worker returns query errors to the page", async () => {
   assert.equal(fast.messages.at(-1).error, "query failed");
 });
 
-test("worker falls back to micropip for releases without a web bundle", async () => {
+test("worker falls back to micropip when the rolling bundle is unavailable", async () => {
   const fallback = createHarness({ bundleOk: false });
   await import(`../../docs/webworker.js?fallback=${Date.now()}`);
   await new Promise((resolve) => setImmediate(resolve));
