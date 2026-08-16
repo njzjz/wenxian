@@ -93,15 +93,26 @@ class Reference:
         if self.journal is None:
             return None
         if self.journal in {"arXiv", "ChemRxiv"}:
+            # special case
             return self.journal
         journal_title = self.journal.title()
         if journal_title.startswith("Npj"):
+            # special case
             journal_title = journal_title.replace("Npj", "npj")
         abbr = abbreviator(journal_title, remove_part=True)
+        # remove slash in the abbr
         abbr = abbr.replace("/", "")
+        # workaround to fix the missing E, e.g. Phys. Rev. E
+        # https://github.com/pierre-24/pyiso4/issues/13
+        # Example: 10.1103/PhysRevE.108.055310
         if self.journal.title().endswith(" E") and not abbr.endswith(" E"):
             abbr += " E"
         if abbr.replace(",", ".") == self.journal.title():
+            # assume it is already abbreviated, cannot handle cases like "J. Chem. Phys."
+            # https://github.com/pierre-24/pyiso4/issues/11
+            # Example: 10.1021/acs.jpcc.3c05522
+            # when it contains ., it may not be abbreviated
+            # Example: 10.1021/acs.jpcb.3c05928
             return self.journal.title()
         return abbr
 
@@ -109,6 +120,7 @@ class Reference:
     def key(self) -> str:
         """Generate a BibTeX key."""
         if self.author is None or len(self.author) == 0:
+            # 10.1126/science.288.5473.1950
             last = "NoAuthor"
         elif self.author[0].last is None:
             last = "NoLastName"
@@ -133,6 +145,8 @@ class Reference:
             key += f"_v{self.volume}"
         if first_page is not None:
             key += f"_p{first_page}"
+        # special characters are not allowed anywhere in the key, not only in journal
+        # https://tex.stackexchange.com/a/96918/262109
         key = re.sub(r"""[\ "#%'\(\),\=\{\}]""", "", key)
         return key
 
@@ -150,6 +164,7 @@ class Reference:
         else:
             page_string = str(self.pages)
 
+        # See https://us.mirrors.cicku.me/ctan/macros/latex/contrib/biblatex/doc/biblatex.pdf
         data = {
             "author": author_string,
             "title": self.title,
@@ -167,6 +182,7 @@ class Reference:
             BibtexType.incollection,
         ):
             data.pop("journal")
+            # usually book title should not use abbr
             data["booktitle"] = self.journal
         start = f"@{self.type.name.capitalize()}{{{self.key},"
         end = "}\n"
@@ -190,8 +206,12 @@ class Reference:
                     )
                 )
                 if key == "author":
+                    # prevent {} in author that is used to split first and last name
+                    # be escaped
                     valuestr = valuestr.replace(r"{\{}", r"{").replace(r"{\}}", r"}")
                 if key == "doi":
+                    # for DOI, underscore should not be escaped
+                    # https://tex.stackexchange.com/questions/550123/underscore-in-doi-in-bibtex-file
                     valuestr = valuestr.replace(r"{\_}", r"_")
                 if key == "title":
                     valuestr = f"{{{{{valuestr}}}}}"
