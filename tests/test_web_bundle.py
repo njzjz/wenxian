@@ -24,32 +24,28 @@ def test_web_bundle_uses_uv_locked_runtime_requirements():
         if line.strip() and not line.lstrip().startswith("#")
     }
     assert declared == {
-        "requests",
         "pylatexenc==3.0a21",
         "unidecode",
         "pyiso4",
     }
 
     locked = _locked_requirements(WEB_REQUIREMENTS_LOCK)
-    assert "requests==2.34.2" in locked
-    assert "pylatexenc==3.0a21" in locked
-    assert "unidecode==1.4.0" in locked
-    assert "pyiso4==0.1.6" in locked
-    assert "certifi==2026.7.22" in locked
-    assert "charset-normalizer==3.5.1" in locked
-    assert "idna==3.18" in locked
-    assert "urllib3==2.7.0" in locked
-    assert all("==" in requirement for requirement in locked)
+    assert locked == [
+        "pyiso4==0.1.6",
+        "pylatexenc==3.0a21",
+        "unidecode==1.4.0",
+    ]
+    assert all("requests" not in requirement for requirement in locked)
     assert all("ratelimiter" not in requirement for requirement in locked)
 
 
 def test_web_bundle_manifest_format(tmp_path: Path):
-    """Document the metadata contract consumed by release diagnostics."""
+    """Document the metadata contract consumed by deployment diagnostics."""
     archive = tmp_path / "bundle.tar.gz"
     manifest = {
         "format": 1,
         "packages": {"wenxian": "0.0.test"},
-        "requirements": ["requests==2.34.2"],
+        "requirements": ["pyiso4==0.1.6"],
         "requirements_lock": "web-requirements.lock",
     }
     manifest_path = tmp_path / "wenxian-web-manifest.json"
