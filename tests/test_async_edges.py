@@ -43,9 +43,7 @@ def test_safe_fetch_helpers_handle_transport_and_browser_errors(monkeypatch):
 
     assert identifier_module._fetch_safely("test", offline, "id") is None
     assert (
-        asyncio.run(
-            identifier_module._async_fetch_safely("test", async_offline, "id")
-        )
+        asyncio.run(identifier_module._async_fetch_safely("test", async_offline, "id"))
         is None
     )
 
@@ -100,7 +98,9 @@ def test_async_primary_and_fallback_sources(monkeypatch):
 
     monkeypatch.setattr(identifier_module.Arxiv, "async_from_arxiv", primary_arxiv)
     monkeypatch.setattr(identifier_module.Datacite, "async_from_arxiv", forbidden)
-    monkeypatch.setattr(identifier_module.Semanticscholar, "async_from_arxiv", forbidden)
+    monkeypatch.setattr(
+        identifier_module.Semanticscholar, "async_from_arxiv", forbidden
+    )
     assert asyncio.run(identifier_module.async_from_arxiv("2304.09409")) == Reference(
         title="Primary arXiv"
     )
@@ -142,7 +142,9 @@ def test_async_identifier_dispatches_all_supported_types(monkeypatch):
         assert result is not None
         assert result.title == expected_title
 
-    monkeypatch.setattr(identifier_module, "get_identifier_type", lambda identifier: object())
+    monkeypatch.setattr(
+        identifier_module, "get_identifier_type", lambda identifier: object()
+    )
     with pytest.raises(RuntimeError, match="Unknown identifier type"):
         asyncio.run(identifier_module.async_from_identifier("value"))
 
@@ -161,10 +163,10 @@ def test_async_title_uses_semantic_fallback_and_handles_no_match(monkeypatch):
     async def lookup(identifier):
         return Reference(title="A matching paper title")
 
-    monkeypatch.setattr(identifier_module.Crossref, "async_from_title", missing_crossref)
     monkeypatch.setattr(
-        identifier_module.Semanticscholar, "async_from_title", semantic
+        identifier_module.Crossref, "async_from_title", missing_crossref
     )
+    monkeypatch.setattr(identifier_module.Semanticscholar, "async_from_title", semantic)
     monkeypatch.setattr(identifier_module, "async_from_identifier", lookup)
     assert asyncio.run(
         identifier_module.async_from_title("A matching paper title")
@@ -177,7 +179,10 @@ def test_async_title_uses_semantic_fallback_and_handles_no_match(monkeypatch):
     monkeypatch.setattr(
         identifier_module.Semanticscholar, "async_from_title", no_identifier
     )
-    assert asyncio.run(identifier_module.async_from_title("No matching paper title")) is None
+    assert (
+        asyncio.run(identifier_module.async_from_title("No matching paper title"))
+        is None
+    )
 
 
 def test_spacing_limiter_and_url_helpers(monkeypatch):
@@ -197,7 +202,9 @@ def test_spacing_limiter_and_url_helpers(monkeypatch):
     asyncio.run(run())
     assert len(sleeps) == 1
     assert sleeps[0] > 0
-    assert session._url_with_params("https://example.test", None) == "https://example.test"
+    assert (
+        session._url_with_params("https://example.test", None) == "https://example.test"
+    )
     assert (
         session._url_with_params("https://example.test", {"query": "a b"})
         == "https://example.test?query=a+b"
@@ -299,9 +306,9 @@ def test_async_feeders_handle_http_misses(monkeypatch):
         return _Response(status_code=404)
 
     monkeypatch.setattr("wenxian.feeder.chemrxiv.async_get", chemrxiv_get)
-    assert asyncio.run(
-        Chemrxiv().async_from_doi("10.26434/chemrxiv-2024-example")
-    ) is None
+    assert (
+        asyncio.run(Chemrxiv().async_from_doi("10.26434/chemrxiv-2024-example")) is None
+    )
 
     async def datacite_unavailable(url, **kwargs):
         return _Response(status_code=503)
