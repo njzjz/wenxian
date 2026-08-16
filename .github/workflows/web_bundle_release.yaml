@@ -1,52 +1,36 @@
 name: Publish web bundle
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
   workflow_dispatch:
-    inputs:
-      tag:
-        description: Release tag to build and attach the web bundle to
-        required: true
-        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: web-latest-bundle
+  cancel-in-progress: true
 
 jobs:
   web-bundle:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout bundle tooling
+      - name: Checkout latest source
         uses: actions/checkout@v7
         with:
-          ref: master
-          path: tooling
-      - name: Resolve release tag
-        id: release
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          INPUT_TAG: ${{ inputs.tag }}
-        run: |
-          tag="${RELEASE_TAG:-$INPUT_TAG}"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
-      - name: Checkout released source
-        uses: actions/checkout@v7
-        with:
-          ref: ${{ steps.release.outputs.tag }}
-          path: release-src
           fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v7
         with:
           python-version: "3.13"
-      - name: Build released wheel
-        working-directory: release-src
+      - name: Build latest wheel
         run: pipx run build --wheel
       - name: Build prepackaged Pyodide environment
         run: |
-          wheel=$(echo release-src/dist/wenxian-*.whl)
-          python tooling/scripts/build_web_bundle.py \
+          wheel=$(echo dist/wenxian-*.whl)
+          python scripts/build_web_bundle.py \
             "$wheel" wenxian-web-packages.tar.gz
       - name: Validate bundle contents
         run: |
@@ -69,12 +53,20 @@ jobs:
           assert manifest["packages"]["wenxian"] == version("wenxian")
           print(json.dumps(manifest, indent=2, sort_keys=True))
           PY
-      - name: Attach bundle to GitHub Release
+      - name: Publish rolling web bundle
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          WEB_TAG: web-latest
         run: |
-          gh release upload "$RELEASE_TAG" \
+          if ! gh release view "$WEB_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$WEB_TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "Latest web bundle" \
+              --notes "Rolling Pyodide bundle built from the latest master commit. This prerelease is updated automatically." \
+              --prerelease
+          fi
+          gh release upload "$WEB_TAG" \
             wenxian-web-packages.tar.gz \
             --repo "$GITHUB_REPOSITORY" \
             --clobber
