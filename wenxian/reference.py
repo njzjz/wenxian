@@ -287,7 +287,7 @@ class Reference:
             pages=self.pages or other.pages,
             annote=self.annote or other.annote,
             doi=self.doi or other.doi,
-            type=self.type or other.type,
+            type=other.type if self.is_empty() else self.type,
         )
 
     def is_empty(self) -> bool:
