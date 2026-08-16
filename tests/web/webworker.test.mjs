@@ -51,7 +51,11 @@ test("worker warms Pyodide and reports initialization progress", () => {
       [65, "Ready"],
     ],
   );
-  assert.ok(calls.some(([name, value]) => name === "loadPackage" && value === "micropip"));
+  assert.ok(
+    calls.some(
+      ([name, value]) => name === "loadPackage" && value === "micropip",
+    ),
+  );
   assert.ok(
     calls.some(
       ([name, value]) =>
@@ -61,7 +65,11 @@ test("worker warms Pyodide and reports initialization progress", () => {
         value.includes("pylatexenc==3.0a21"),
     ),
   );
-  assert.ok(!calls.some(([name, value]) => name === "loadPackage" && value === "sqlite3"));
+  assert.ok(
+    !calls.some(
+      ([name, value]) => name === "loadPackage" && value === "sqlite3",
+    ),
+  );
 });
 
 test("worker reports query progress and returns results", async () => {
@@ -69,12 +77,22 @@ test("worker reports query progress and returns results", async () => {
   await globalThis.onmessage({ data: { id: 7, python: "reference.bibtex" } });
 
   assert.deepEqual(
-    messages.map(({ type, progress, id, results }) => ({ type, progress, id, results })),
+    messages.map(({ type, progress, id, results }) => ({
+      type,
+      progress,
+      id,
+      results,
+    })),
     [
       { type: "progress", progress: 72, id: 7, results: undefined },
       { type: "progress", progress: 82, id: 7, results: undefined },
       { type: "progress", progress: 100, id: 7, results: undefined },
-      { type: undefined, progress: undefined, id: 7, results: "@Article{example}" },
+      {
+        type: undefined,
+        progress: undefined,
+        id: 7,
+        results: "@Article{example}",
+      },
     ],
   );
 });
