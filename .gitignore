@@ -45,11 +45,16 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+coverage/
 *.cover
 *.py,cover
 .hypothesis/
 .pytest_cache/
 cover/
+web-e2e-failure.png
+
+# JavaScript dependencies
+node_modules/
 
 # Translations
 *.mo
