@@ -45,11 +45,33 @@ function createHarness({ bundleOk }) {
   };
   globalThis.fetch = async (url, options) => {
     calls.push(["fetch", url, options]);
+    let chunk = 0;
     return {
       ok: bundleOk,
       status: bundleOk ? 200 : 404,
+      headers: {
+        get(name) {
+          return name.toLowerCase() === "content-length" && bundleOk ? "4" : null;
+        },
+      },
+      body: bundleOk
+        ? {
+            getReader() {
+              return {
+                async read() {
+                  const chunks = [
+                    new Uint8Array([1, 2]),
+                    new Uint8Array([3, 4]),
+                  ];
+                  if (chunk >= chunks.length) return { done: true };
+                  return { done: false, value: chunks[chunk++] };
+                },
+              };
+            },
+          }
+        : null,
       async arrayBuffer() {
-        return new Uint8Array([1, 2, 3]).buffer;
+        return new Uint8Array([1, 2, 3, 4]).buffer;
       },
     };
   };
@@ -69,17 +91,11 @@ await import(`../../docs/webworker.js?fast=${Date.now()}`);
 await new Promise((resolve) => setImmediate(resolve));
 const fastOnMessage = globalThis.onmessage;
 
-test("worker loads the website-local prebuilt environment without micropip", () => {
-  assert.deepEqual(
-    fast.messages
-      .slice(0, 3)
-      .map(({ progress, message }) => [progress, message]),
-    [
-      [8, "Loading Python runtime…"],
-      [32, "Loading prebuilt wenxian environment…"],
-      [65, "Ready"],
-    ],
-  );
+test("worker streams the website-local bundle in parallel with Pyodide", () => {
+  const fetchIndex = fast.calls.findIndex(([name]) => name === "fetch");
+  const pyodideIndex = fast.calls.findIndex(([name]) => name === "loadPyodide");
+  assert.ok(fetchIndex >= 0);
+  assert.ok(fetchIndex < pyodideIndex);
   assert.ok(
     fast.calls.some(
       ([name, url, options]) =>
@@ -89,17 +105,30 @@ test("worker loads the website-local prebuilt environment without micropip", () 
     ),
   );
   assert.ok(
+    fast.messages.some(({ message }) =>
+      message?.includes("Downloading browser package… 2 B / 4 B"),
+    ),
+  );
+  assert.ok(
     fast.calls.some(
-      ([name, , format, options]) =>
+      ([name, bytes, format, options]) =>
         name === "unpackArchive" &&
+        bytes === 4 &&
         format === "gztar" &&
         options.extractDir === "/lib/python3.12/site-packages",
     ),
   );
+  assert.equal(fast.messages.at(-1).message, "Ready");
   assert.ok(!fast.calls.some(([name]) => name === "install"));
   assert.ok(
     !fast.calls.some(
       ([name, value]) => name === "loadPackage" && value === "micropip",
+    ),
+  );
+  assert.ok(
+    !fast.calls.some(
+      ([name, script]) =>
+        name === "runPython" && script?.includes("requests_ratelimiter"),
     ),
   );
 });
