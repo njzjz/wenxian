@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import html
-
-from requests.exceptions import RequestException
+import sys
 
 from wenxian.feeder.feeder import Feeder
 from wenxian.feeder.session import SESSION, async_get
 from wenxian.reference import Author, Reference
+
+if sys.platform != "emscripten":
+    from requests.exceptions import RequestException
+
+    _REQUEST_ERRORS = (OSError, RequestException)
+else:
+    _REQUEST_ERRORS = (OSError,)
 
 
 class Semanticscholar(Feeder):
@@ -36,7 +42,7 @@ class Semanticscholar(Feeder):
                 f"{self.API_URL}/search",
                 params={"query": title, "limit": "1", "fields": "externalIds"},
             )
-        except RequestException:
+        except _REQUEST_ERRORS:
             return None
         if r.status_code != 200:
             return None
@@ -49,7 +55,7 @@ class Semanticscholar(Feeder):
                 f"{self.API_URL}/search",
                 params={"query": title, "limit": "1", "fields": "externalIds"},
             )
-        except (OSError, RequestException):
+        except _REQUEST_ERRORS:
             return None
         if r.status_code != 200:
             return None
@@ -87,7 +93,7 @@ class Semanticscholar(Feeder):
                     "fields": "title,year,abstract,authors.name,journal,externalIds"
                 },
             )
-        except RequestException:
+        except _REQUEST_ERRORS:
             return None
         if r.status_code == 404:
             return None
@@ -102,7 +108,7 @@ class Semanticscholar(Feeder):
                     "fields": "title,year,abstract,authors.name,journal,externalIds"
                 },
             )
-        except (OSError, RequestException):
+        except _REQUEST_ERRORS:
             return None
         if r.status_code == 404:
             return None

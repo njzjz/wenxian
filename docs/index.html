@@ -6,103 +6,127 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <meta
       name="description"
-      content="Generate BibTeX from DOI/PMID/arXiv identifier"
+      content="Generate BibTeX from a DOI, PMID, arXiv identifier, or paper title"
     />
     <meta
       name="keywords"
       content="BibTeX, DOI, PMID, arXiv, citation, reference"
     />
     <meta name="author" content="Jinzhe Zeng" />
-    <meta name="theme-color" content="#03A89E" />
-    <link rel="icon" type="image/svg" href="logo.svg" />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
-    <link rel="preconnect" href="https://pypi.org" />
-    <link rel="preconnect" href="https://files.pythonhosted.org" />
+    <meta name="theme-color" content="#0f766e" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link
-      href="
-https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
-"
-      rel="stylesheet"
+      rel="preload"
+      href="./wenxian-web-packages.tar.gz"
+      as="fetch"
+      type="application/gzip"
+      crossorigin="anonymous"
     />
     <link rel="stylesheet" href="style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-solarizedlight.min.css"
-    />
-    <title>wenxian</title>
+    <title>wenxian · BibTeX from identifiers</title>
   </head>
 
-  <body class="flex">
-    <a
-      class="github-fork-ribbon"
-      href="https://github.com/njzjz/wenxian"
-      data-ribbon="Fork me on GitHub"
-      title="Fork me on GitHub"
-      >Fork me on GitHub</a
-    >
-    <h1 style="margin-bottom: 50px; color: #03a89e">
-      <img
-        src="logo.svg"
-        height="100px"
-        width="100px"
-        style="margin-bottom: -1em"
-        title="Logo"
-      />
-      wenxian
-    </h1>
-    <form style="padding-bottom: 20px" target="_blank" class="flex">
-      <label class="block" style="width: fit-content">
-        <input
-          class="block identifier"
-          id="identifier"
-          type="text"
-          placeholder="DOI/PMID/arXiv identifier"
-          required
-        />
-        <div class="bar"></div>
-      </label>
-      <input
-        type="submit"
-        id="submit"
-        class="block btn"
-        value="Generate BibTeX"
-      />
-    </form>
-    <div id="progress-container" class="progress-container" hidden>
-      <progress id="progress-bar" max="100" value="0"></progress>
-      <div id="progress-text" class="progress-text" aria-live="polite"></div>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="./" aria-label="wenxian home">
+          <img src="logo.svg" width="44" height="44" alt="" />
+          <span>wenxian</span>
+        </a>
+        <a
+          class="github-link"
+          href="https://github.com/njzjz/wenxian"
+          target="_blank"
+          rel="noreferrer"
+        >
+          GitHub
+          <span aria-hidden="true">↗</span>
+        </a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="eyebrow">
+            <span class="status-dot" aria-hidden="true"></span>
+            Runs entirely in your browser
+          </div>
+          <h1 id="hero-title">Turn a paper identifier into clean BibTeX.</h1>
+          <p class="hero-copy">
+            Paste a DOI, PMID, arXiv ID, or paper title. wenxian checks multiple
+            scholarly sources and formats the result for you.
+          </p>
+        </section>
+
+        <section class="lookup-card" aria-label="Generate a reference">
+          <form id="lookup-form">
+            <label class="input-label" for="identifier">Paper identifier</label>
+            <div class="input-row">
+              <input
+                class="identifier"
+                id="identifier"
+                name="identifier"
+                type="text"
+                placeholder="e.g. 10.1063/5.0155600"
+                autocomplete="off"
+                autocapitalize="off"
+                spellcheck="false"
+                required
+              />
+              <button type="submit" id="submit" class="btn">
+                <span>Generate BibTeX</span>
+                <span class="button-arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </form>
+
+          <div class="examples">
+            <span class="examples-label">Try an example</span>
+            <button type="button" onclick="run_example('10.1063/5.0155600')">
+              DOI
+            </button>
+            <button type="button" onclick="run_example('37526163')">
+              PMID
+            </button>
+            <button type="button" onclick="run_example('2304.09409')">
+              arXiv
+            </button>
+          </div>
+          <div id="message" class="message" aria-live="polite"></div>
+
+          <div id="progress-container" class="progress-container" hidden>
+            <div class="progress-meta">
+              <span id="progress-text" aria-live="polite">Preparing…</span>
+              <span id="progress-percent">0%</span>
+            </div>
+            <progress id="progress-bar" max="100" value="0"></progress>
+          </div>
+        </section>
+
+        <section id="output" class="output" style="display: none">
+          <div class="output-header">
+            <div>
+              <span class="result-label">Result</span>
+              <h2>BibTeX</h2>
+            </div>
+            <button
+              id="copy_button"
+              onclick="copy_bibtex()"
+              class="copy-button"
+            >
+              Copy BibTeX
+            </button>
+          </div>
+          <pre><code id="bibtex"></code></pre>
+        </section>
+      </main>
+
+      <footer>
+        <span>Open source · powered by</span>
+        <a href="https://github.com/njzjz/wenxian">njzjz/wenxian</a>
+      </footer>
     </div>
-    <div class="examples" id="message">
-      <p><b>Examples:</b></p>
-      <ul>
-        <li>
-          <a href="javascript:run_example('10.1063/5.0155600')"
-            >10.1063/5.0155600</a
-          >
-        </li>
-        <li><a href="javascript:run_example('37526163')">37526163</a></li>
-        <li><a href="javascript:run_example('2304.09409')">2304.09409</a></li>
-      </ul>
-    </div>
-    <div id="output" class="output" style="display: none">
-      <button id="copy_button" onclick="copy_bibtex()" class="copy-button">
-        Copy BibTeX
-      </button>
-      <pre><code class="language-bib" id="bibtex"></code></pre>
-    </div>
-    <p style="position: sticky; top: calc(100% - 2.5em)">
-      Powered by
-      <a style="color: #3294ea" href="https://github.com/njzjz/wenxian"
-        >njzjz/wenxian</a
-      >
-    </p>
-    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.1.0/prism-bibtex.js"
-      integrity="sha256-A5GMUmGHpY8mVpfcaRLQFeHtmdjZLumKBOMpf81FXX0="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+
     <script src="wenxian.js" type="module"></script>
   </body>
 </html>

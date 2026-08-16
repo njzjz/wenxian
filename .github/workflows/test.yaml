@@ -83,6 +83,9 @@ jobs:
           uv build --wheel
           wheel=$(echo dist/wenxian-*.whl)
           python scripts/build_web_bundle.py "$wheel" test-web-bundle.tar.gz
+          bundle_bytes=$(stat -c%s test-web-bundle.tar.gz)
+          echo "Web bundle: $bundle_bytes bytes"
+          test "$bundle_bytes" -lt 1000000
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run browser end-to-end smoke test

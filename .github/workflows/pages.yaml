@@ -53,6 +53,9 @@ jobs:
           test -f _site/index.html
           test -f _site/webworker.js
           test -f _site/wenxian-web-packages.tar.gz
+          bundle_bytes=$(stat -c%s _site/wenxian-web-packages.tar.gz)
+          echo "Web bundle: $bundle_bytes bytes"
+          test "$bundle_bytes" -lt 1000000
           mkdir bundle-check
           tar -xzf _site/wenxian-web-packages.tar.gz -C bundle-check
           PYTHONPATH=bundle-check python - <<'PY'
@@ -60,8 +63,8 @@ jobs:
           from importlib.metadata import version
           from pathlib import Path
 
+          import pyiso4
           import pylatexenc
-          import requests
           import unidecode
           import wenxian
 
@@ -71,7 +74,12 @@ jobs:
           assert manifest["format"] == 1
           assert manifest["packages"]["wenxian"] == version("wenxian")
           assert manifest["requirements_lock"] == "web-requirements.lock"
-          assert "requests==2.34.2" in manifest["requirements"]
+          assert "requests" not in {name.lower() for name in manifest["packages"]}
+          assert manifest["requirements"] == [
+              "pyiso4==0.1.6",
+              "pylatexenc==3.0a21",
+              "unidecode==1.4.0",
+          ]
           print(json.dumps(manifest, indent=2, sort_keys=True))
           PY
       - name: Upload website artifact

@@ -1,17 +1,29 @@
 import { asyncRun } from "./pyworker.js";
 
+const form = document.getElementById("lookup-form");
 const progressContainer = document.getElementById("progress-container");
 const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress-text");
+const progressPercent = document.getElementById("progress-percent");
+const message = document.getElementById("message");
+const outputText = document.getElementById("bibtex");
+const output = document.getElementById("output");
+const submit = document.getElementById("submit");
+const identifierInput = document.getElementById("identifier");
 
-function setProgress({ progress, message }) {
+function setProgress({ progress, message: progressMessage }) {
   progressContainer.hidden = false;
   progressBar.value = progress;
-  progressText.textContent = `${message} ${progress}%`;
+  progressText.textContent = progressMessage;
+  if (progressPercent) progressPercent.textContent = `${progress}%`;
 }
 
 function hideProgress() {
   progressContainer.hidden = true;
+}
+
+function showMessage(text) {
+  message.textContent = text;
 }
 
 async function from_identifier(identifier, onProgress) {
@@ -32,50 +44,59 @@ async function from_identifier(identifier, onProgress) {
   return { results, error };
 }
 
-document.getElementById("submit").addEventListener("click", function (event) {
+async function runLookup(event) {
   event.preventDefault();
-  const message = document.getElementById("message");
-  message.textContent = "";
-  const output_text = document.getElementById("bibtex");
-  const output = document.getElementById("output");
-  const submit = document.getElementById("submit");
-  const identifier = document.getElementById("identifier").value;
+  const identifier = identifierInput.value.trim();
+  if (!identifier) {
+    showMessage("Enter a DOI, PMID, arXiv ID, or paper title.");
+    identifierInput.focus?.();
+    return;
+  }
 
+  identifierInput.value = identifier;
+  showMessage("");
+  output.style.display = "none";
   submit.disabled = true;
   progressContainer.hidden = false;
-  from_identifier(identifier, setProgress).then(({ results, error }) => {
-    submit.disabled = false;
+
+  try {
+    const { results, error } = await from_identifier(identifier, setProgress);
     if (results) {
-      output_text.textContent = results;
-      Prism.highlightElement(output_text);
+      outputText.textContent = results;
       output.style.display = "block";
-      message.textContent = "";
-    } else if (!error) {
-      output.style.display = "none";
-      message.textContent = "No reference found.";
+      output.scrollIntoView?.({ behavior: "smooth", block: "nearest" });
+    } else if (error) {
+      showMessage(error);
+    } else {
+      showMessage("No reference found. Check the identifier and try again.");
     }
-    if (error) {
-      output.style.display = "none";
-      message.textContent = error;
-    }
-    setTimeout(hideProgress, 400);
-  });
-});
+  } catch (error) {
+    showMessage(error?.message || String(error));
+  } finally {
+    submit.disabled = false;
+    setTimeout(hideProgress, 500);
+  }
+}
+
+form.addEventListener("submit", runLookup);
 
 function run_example(identifier) {
-  document.getElementById("identifier").value = identifier;
-  document.getElementById("submit").click();
+  identifierInput.value = identifier;
+  form.requestSubmit();
 }
 window.run_example = run_example;
 
-function copy_bibtex() {
-  const copyText = document.getElementById("bibtex");
-  navigator.clipboard.writeText(copyText.textContent);
-  const copy_button = document.getElementById("copy_button");
-  const original_text = copy_button.textContent;
-  copy_button.textContent = "Copied!";
+async function copy_bibtex() {
+  const copyButton = document.getElementById("copy_button");
+  const originalText = copyButton.textContent;
+  try {
+    await navigator.clipboard.writeText(outputText.textContent);
+    copyButton.textContent = "Copied!";
+  } catch {
+    copyButton.textContent = "Copy failed";
+  }
   setTimeout(() => {
-    copy_button.textContent = original_text;
-  }, 2000);
+    copyButton.textContent = originalText;
+  }, 1600);
 }
 window.copy_bibtex = copy_bibtex;
