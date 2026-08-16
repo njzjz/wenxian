@@ -1,0 +1,137 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+class FakeElement {
+  constructor() {
+    this.listeners = {};
+    this.style = {};
+    this.hidden = false;
+    this.value = "";
+    this.textContent = "";
+    this.disabled = false;
+  }
+
+  addEventListener(type, callback) {
+    this.listeners[type] = callback;
+  }
+
+  click() {
+    this.listeners.click?.({ preventDefault() {} });
+  }
+}
+
+const elements = Object.fromEntries(
+  [
+    "progress-container",
+    "progress-bar",
+    "progress-text",
+    "submit",
+    "message",
+    "bibtex",
+    "output",
+    "identifier",
+    "copy_button",
+  ].map((id) => [id, new FakeElement()]),
+);
+
+elements["progress-container"].hidden = true;
+elements.output.style.display = "none";
+elements.copy_button.textContent = "Copy BibTeX";
+
+let mode = "success";
+class FakeWorker {
+  constructor() {
+    this.onmessage = null;
+  }
+
+  postMessage({ id }) {
+    queueMicrotask(() => {
+      this.onmessage?.({
+        data: {
+          type: "progress",
+          id,
+          progress: 82,
+          message: "Querying literature sources…",
+        },
+      });
+      if (mode === "success") {
+        this.onmessage?.({ data: { id, results: "@Article{example}" } });
+      } else if (mode === "empty") {
+        this.onmessage?.({ data: { id, results: null } });
+      } else {
+        this.onmessage?.({ data: { id, error: "lookup failed" } });
+      }
+    });
+  }
+}
+
+const copied = [];
+globalThis.Worker = FakeWorker;
+globalThis.document = {
+  getElementById(id) {
+    return elements[id];
+  },
+};
+globalThis.Prism = { highlightElement() {} };
+Object.defineProperty(globalThis, "navigator", {
+  configurable: true,
+  value: {
+    clipboard: {
+      writeText(value) {
+        copied.push(value);
+      },
+    },
+  },
+});
+
+await import("../../docs/wenxian.js");
+
+const flush = () => new Promise((resolve) => setImmediate(resolve));
+
+test("successful lookup shows progress and BibTeX", async () => {
+  mode = "success";
+  elements.identifier.value = "10.1063/5.0155600";
+  elements.submit.click();
+
+  assert.equal(elements.submit.disabled, true);
+  assert.equal(elements["progress-container"].hidden, false);
+
+  await flush();
+
+  assert.equal(elements.submit.disabled, false);
+  assert.equal(elements.output.style.display, "block");
+  assert.equal(elements.bibtex.textContent, "@Article{example}");
+  assert.equal(elements["progress-bar"].value, 82);
+  assert.match(elements["progress-text"].textContent, /Querying literature sources/);
+});
+
+test("empty lookup shows a useful message", async () => {
+  mode = "empty";
+  elements.submit.click();
+  await flush();
+
+  assert.equal(elements.output.style.display, "none");
+  assert.equal(elements.message.textContent, "No reference found.");
+});
+
+test("worker errors are surfaced instead of hanging", async () => {
+  mode = "error";
+  elements.submit.click();
+  await flush();
+
+  assert.equal(elements.output.style.display, "none");
+  assert.equal(elements.message.textContent, "lookup failed");
+  assert.equal(elements.submit.disabled, false);
+});
+
+test("examples and copy action remain functional", async () => {
+  mode = "success";
+  globalThis.run_example("37526163");
+  await flush();
+  assert.equal(elements.identifier.value, "37526163");
+
+  elements.bibtex.textContent = "@Article{copied}";
+  globalThis.copy_bibtex();
+  assert.equal(copied.at(-1), "@Article{copied}");
+  assert.equal(elements.copy_button.textContent, "Copied!");
+});
