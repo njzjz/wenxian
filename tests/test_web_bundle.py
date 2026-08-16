@@ -56,7 +56,9 @@ def test_web_bundle_manifest_format(tmp_path: Path):
         bundle.add(manifest_path, arcname=manifest_path.name)
 
     with tarfile.open(archive, "r:gz") as bundle:
-        extracted = json.load(bundle.extractfile("wenxian-web-manifest.json"))
+        extracted_file = bundle.extractfile("wenxian-web-manifest.json")
+        assert extracted_file is not None
+        extracted = json.load(extracted_file)
 
     assert extracted["format"] == 1
     assert extracted["packages"]["wenxian"] == "0.0.test"
