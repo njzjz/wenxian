@@ -15,16 +15,18 @@ class FakeElement {
     this.listeners[type] = callback;
   }
 
-  click() {
-    this.listeners.click?.({ preventDefault() {} });
+  requestSubmit() {
+    this.listeners.submit?.({ preventDefault() {} });
   }
 }
 
 const elements = Object.fromEntries(
   [
+    "lookup-form",
     "progress-container",
     "progress-bar",
     "progress-text",
+    "progress-percent",
     "submit",
     "message",
     "bibtex",
@@ -73,7 +75,6 @@ globalThis.document = {
     return elements[id];
   },
 };
-globalThis.Prism = { highlightElement() {} };
 Object.defineProperty(globalThis, "navigator", {
   configurable: true,
   value: {
@@ -91,11 +92,12 @@ const flush = () => new Promise((resolve) => setImmediate(resolve));
 
 test("successful lookup shows progress and BibTeX", async () => {
   mode = "success";
-  elements.identifier.value = "10.1063/5.0155600";
-  elements.submit.click();
+  elements.identifier.value = " 10.1063/5.0155600 ";
+  elements["lookup-form"].requestSubmit();
 
   assert.equal(elements.submit.disabled, true);
   assert.equal(elements["progress-container"].hidden, false);
+  assert.equal(elements.identifier.value, "10.1063/5.0155600");
 
   await flush();
 
@@ -103,6 +105,7 @@ test("successful lookup shows progress and BibTeX", async () => {
   assert.equal(elements.output.style.display, "block");
   assert.equal(elements.bibtex.textContent, "@Article{example}");
   assert.equal(elements["progress-bar"].value, 82);
+  assert.equal(elements["progress-percent"].textContent, "82%");
   assert.match(
     elements["progress-text"].textContent,
     /Querying literature sources/,
@@ -111,16 +114,17 @@ test("successful lookup shows progress and BibTeX", async () => {
 
 test("empty lookup shows a useful message", async () => {
   mode = "empty";
-  elements.submit.click();
+  elements.identifier.value = "37526163";
+  elements["lookup-form"].requestSubmit();
   await flush();
 
   assert.equal(elements.output.style.display, "none");
-  assert.equal(elements.message.textContent, "No reference found.");
+  assert.match(elements.message.textContent, /No reference found/);
 });
 
 test("worker errors are surfaced instead of hanging", async () => {
   mode = "error";
-  elements.submit.click();
+  elements["lookup-form"].requestSubmit();
   await flush();
 
   assert.equal(elements.output.style.display, "none");
@@ -130,12 +134,12 @@ test("worker errors are surfaced instead of hanging", async () => {
 
 test("examples and copy action remain functional", async () => {
   mode = "success";
-  globalThis.run_example("37526163");
+  globalThis.run_example("2304.09409");
   await flush();
-  assert.equal(elements.identifier.value, "37526163");
+  assert.equal(elements.identifier.value, "2304.09409");
 
   elements.bibtex.textContent = "@Article{copied}";
-  globalThis.copy_bibtex();
+  await globalThis.copy_bibtex();
   assert.equal(copied.at(-1), "@Article{copied}");
   assert.equal(elements.copy_button.textContent, "Copied!");
 });
