@@ -31,7 +31,10 @@ async function downloadPrebuiltWebBundle() {
   const total = Number(response.headers?.get?.("content-length") ?? 0);
   if (!response.body?.getReader) {
     const archive = await response.arrayBuffer();
-    reportProgress(40, `Downloaded browser package · ${formatBytes(archive.byteLength)}`);
+    reportProgress(
+      40,
+      `Downloaded browser package · ${formatBytes(archive.byteLength)}`,
+    );
     return archive;
   }
 
@@ -45,9 +48,10 @@ async function downloadPrebuiltWebBundle() {
     received += value.byteLength;
     const fraction = total > 0 ? Math.min(received / total, 1) : 0;
     const progress = total > 0 ? 12 + Math.round(fraction * 28) : 24;
-    const size = total > 0
-      ? `${formatBytes(received)} / ${formatBytes(total)}`
-      : formatBytes(received);
+    const size =
+      total > 0
+        ? `${formatBytes(received)} / ${formatBytes(total)}`
+        : formatBytes(received);
     reportProgress(progress, `Downloading browser package… ${size}`);
   }
 

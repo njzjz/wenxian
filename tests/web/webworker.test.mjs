@@ -51,7 +51,9 @@ function createHarness({ bundleOk }) {
       status: bundleOk ? 200 : 404,
       headers: {
         get(name) {
-          return name.toLowerCase() === "content-length" && bundleOk ? "4" : null;
+          return name.toLowerCase() === "content-length" && bundleOk
+            ? "4"
+            : null;
         },
       },
       body: bundleOk
