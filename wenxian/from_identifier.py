@@ -193,30 +193,36 @@ def _validate_title_result(title: str, result: Reference | None) -> Reference | 
 
 def from_title(title: str) -> Reference | None:
     """Fetch a reference from a title."""
-    identifier_info = _fetch_safely("Crossref", Crossref().from_title, title)
-    if identifier_info is None:
-        identifier_info = _fetch_safely(
-            "Semantic Scholar", Semanticscholar().from_title, title
-        )
-    if identifier_info is None:
-        return None
-    assert isinstance(identifier_info, str)
-    return _validate_title_result(title, from_identifier(identifier_info))
+    for source, fetcher in (
+        ("Crossref", Crossref().from_title),
+        ("Semantic Scholar", Semanticscholar().from_title),
+    ):
+        identifier_info = _fetch_safely(source, fetcher, title)
+        if identifier_info is None:
+            continue
+        assert isinstance(identifier_info, str)
+        result = _validate_title_result(title, from_identifier(identifier_info))
+        if result is not None:
+            return result
+    return None
 
 
 async def async_from_title(title: str) -> Reference | None:
     """Fetch a reference from a title without blocking the event loop."""
-    identifier_info = await _async_fetch_safely(
-        "Crossref", Crossref().async_from_title, title
-    )
-    if identifier_info is None:
-        identifier_info = await _async_fetch_safely(
-            "Semantic Scholar", Semanticscholar().async_from_title, title
+    for source, fetcher in (
+        ("Crossref", Crossref().async_from_title),
+        ("Semantic Scholar", Semanticscholar().async_from_title),
+    ):
+        identifier_info = await _async_fetch_safely(source, fetcher, title)
+        if identifier_info is None:
+            continue
+        assert isinstance(identifier_info, str)
+        result = _validate_title_result(
+            title, await async_from_identifier(identifier_info)
         )
-    if identifier_info is None:
-        return None
-    assert isinstance(identifier_info, str)
-    return _validate_title_result(title, await async_from_identifier(identifier_info))
+        if result is not None:
+            return result
+    return None
 
 
 def from_identifier(identifier: str) -> Reference | None:
