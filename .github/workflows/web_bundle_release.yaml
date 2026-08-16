@@ -25,9 +25,11 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
       - name: Build latest wheel
-        run: pipx run build --wheel
-      - name: Build prepackaged Pyodide environment
+        run: uv build --wheel
+      - name: Build prepackaged Pyodide environment from lock
         run: |
           wheel=$(echo dist/wenxian-*.whl)
           python scripts/build_web_bundle.py \
@@ -51,6 +53,8 @@ jobs:
           )
           assert manifest["format"] == 1
           assert manifest["packages"]["wenxian"] == version("wenxian")
+          assert manifest["requirements_lock"] == "web-requirements.lock"
+          assert "requests==2.34.2" in manifest["requirements"]
           print(json.dumps(manifest, indent=2, sort_keys=True))
           PY
       - name: Publish rolling web bundle
@@ -63,7 +67,7 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
               --title "Latest web bundle" \
-              --notes "Rolling Pyodide bundle built from the latest master commit. This prerelease is updated automatically." \
+              --notes "Rolling Pyodide bundle built from the latest master commit with uv-locked dependencies. This prerelease is updated automatically." \
               --prerelease
           fi
           gh release upload "$WEB_TAG" \
