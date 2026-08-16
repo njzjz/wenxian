@@ -37,6 +37,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -52,9 +57,16 @@ jobs:
           flags: web
           name: web
           fail_ci_if_error: true
+      - name: Build test web bundle
+        run: |
+          pipx run build --wheel
+          wheel=$(echo dist/wenxian-*.whl)
+          python scripts/build_web_bundle.py "$wheel" test-web-bundle.tar.gz
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Run browser end-to-end smoke test
+        env:
+          WENXIAN_WEB_BUNDLE_PATH: ${{ github.workspace }}/test-web-bundle.tar.gz
         run: |
           python3 -m http.server 8000 --directory docs >/tmp/wenxian-web.log 2>&1 &
           server_pid=$!
