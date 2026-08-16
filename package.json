@@ -1,0 +1,13 @@
+{
+  "name": "wenxian-web-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:web": "c8 --reporter=text --reporter=lcov --include=docs/*.js node --test tests/web/*.test.mjs",
+    "test:web:e2e": "node tests/web/e2e.mjs"
+  },
+  "devDependencies": {
+    "c8": "^10.1.3",
+    "playwright": "^1.55.0"
+  }
+}
