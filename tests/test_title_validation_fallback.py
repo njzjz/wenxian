@@ -57,5 +57,7 @@ def test_async_title_mismatch_falls_back_to_semantic_scholar(monkeypatch):
     monkeypatch.setattr(identifier_module.Semanticscholar, "async_from_title", semantic)
     monkeypatch.setattr(identifier_module, "async_from_identifier", lookup)
 
-    assert asyncio.run(identifier_module.async_from_title(query)) == Reference(title=query)
+    assert asyncio.run(identifier_module.async_from_title(query)) == Reference(
+        title=query
+    )
     assert semantic_calls == [query]
