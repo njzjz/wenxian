@@ -1,7 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-function createHarness({ bundleOk }) {
+function createHarness({
+  bundleOk,
+  streaming = true,
+  contentLength = 4,
+  bundleSize = 4,
+}) {
   const messages = [];
   const calls = [];
   let failQuery = false;
@@ -52,28 +57,29 @@ function createHarness({ bundleOk }) {
       headers: {
         get(name) {
           return name.toLowerCase() === "content-length" && bundleOk
-            ? "4"
+            ? String(contentLength)
             : null;
         },
       },
-      body: bundleOk
-        ? {
-            getReader() {
-              return {
-                async read() {
-                  const chunks = [
-                    new Uint8Array([1, 2]),
-                    new Uint8Array([3, 4]),
-                  ];
-                  if (chunk >= chunks.length) return { done: true };
-                  return { done: false, value: chunks[chunk++] };
-                },
-              };
-            },
-          }
-        : null,
+      body:
+        bundleOk && streaming
+          ? {
+              getReader() {
+                return {
+                  async read() {
+                    const chunks = [
+                      new Uint8Array([1, 2]),
+                      new Uint8Array([3, 4]),
+                    ];
+                    if (chunk >= chunks.length) return { done: true };
+                    return { done: false, value: chunks[chunk++] };
+                  },
+                };
+              },
+            }
+          : null,
       async arrayBuffer() {
-        return new Uint8Array([1, 2, 3, 4]).buffer;
+        return new Uint8Array(bundleSize).buffer;
       },
     };
   };
@@ -88,7 +94,7 @@ function createHarness({ bundleOk }) {
   };
 }
 
-const fast = createHarness({ bundleOk: true });
+const fast = createHarness({ bundleOk: true, contentLength: 2048 });
 await import(`../../docs/webworker.js?fast=${Date.now()}`);
 await new Promise((resolve) => setImmediate(resolve));
 const fastOnMessage = globalThis.onmessage;
@@ -108,7 +114,7 @@ test("worker streams the website-local bundle in parallel with Pyodide", () => {
   );
   assert.ok(
     fast.messages.some(({ message }) =>
-      message?.includes("Downloading browser package… 2 B / 4 B"),
+      message?.includes("Downloading browser package… 2 B / 2 KiB"),
     ),
   );
   assert.ok(
@@ -168,6 +174,28 @@ test("worker returns query errors to the page", async () => {
 
   assert.equal(fast.messages.at(-1).id, 8);
   assert.equal(fast.messages.at(-1).error, "query failed");
+});
+
+test("worker accepts non-streaming bundle responses", async () => {
+  const nonStreaming = createHarness({
+    bundleOk: true,
+    streaming: false,
+    contentLength: 2 * 1024 * 1024,
+    bundleSize: 2 * 1024 * 1024,
+  });
+  await import(`../../docs/webworker.js?nonstream=${Date.now()}`);
+  await new Promise((resolve) => setImmediate(resolve));
+
+  assert.ok(
+    nonStreaming.messages.some(
+      ({ message }) => message === "Downloaded browser package · 2.00 MiB",
+    ),
+  );
+  assert.ok(
+    nonStreaming.calls.some(
+      ([name, bytes]) => name === "unpackArchive" && bytes === 2 * 1024 * 1024,
+    ),
+  );
 });
 
 test("worker falls back to micropip when the deployed bundle is unavailable", async () => {
