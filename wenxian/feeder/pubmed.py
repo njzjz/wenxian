@@ -152,7 +152,14 @@ class Pubmed(Feeder):
             return None
         rets = {}
         for key, path in self.PUBMED_PATH.items():
-            if key != "author":
+            if key == "abstract":
+                abstract_sections = [
+                    self._text(node) for node in tree.findall(self.PUBMED_PATH["abstract"])
+                ]
+                rets[key] = " ".join(
+                    section for section in abstract_sections if section
+                ) or None
+            elif key != "author":
                 rets[key] = self._text(tree.find(path))
 
         if rets["journal"] == "Physical chemistry chemical physics : PCCP":
