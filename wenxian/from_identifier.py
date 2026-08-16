@@ -9,8 +9,6 @@ from difflib import SequenceMatcher
 from typing import TYPE_CHECKING, TypeVar
 from xml.etree.ElementTree import ParseError
 
-from requests.exceptions import RequestException
-
 from wenxian.feeder.arxiv import Arxiv
 from wenxian.feeder.chemrxiv import Chemrxiv
 from wenxian.feeder.crossref import Crossref
@@ -22,11 +20,19 @@ from wenxian.identifier import Identifier, get_identifier_type
 from wenxian.logger import logger
 from wenxian.reference import Reference
 
+if sys.platform != "emscripten":
+    from requests.exceptions import RequestException
+
+    _NETWORK_ERRORS = (OSError, RequestException)
+else:
+    _NETWORK_ERRORS = (OSError,)
+
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable
 
 T = TypeVar("T")
 _SOURCE_DATA_ERRORS = (KeyError, IndexError, TypeError, ValueError, ParseError)
+_EXPECTED_FETCH_ERRORS = _NETWORK_ERRORS + _SOURCE_DATA_ERRORS
 
 
 def _title_similarity(title1: str, title2: str) -> float:
@@ -42,7 +48,7 @@ def _fetch_safely(
     """Fetch from one source without aborting a fallback chain."""
     try:
         return fetcher(identifier)
-    except (OSError, RequestException, *_SOURCE_DATA_ERRORS) as exc:
+    except _EXPECTED_FETCH_ERRORS as exc:
         logger.warning("%s lookup failed for %s: %s", source, identifier, exc)
         return None
     except Exception as exc:
@@ -60,7 +66,7 @@ async def _async_fetch_safely(
     """Fetch from one source asynchronously without aborting other sources."""
     try:
         return await fetcher(identifier)
-    except (OSError, RequestException, *_SOURCE_DATA_ERRORS) as exc:
+    except _EXPECTED_FETCH_ERRORS as exc:
         logger.warning("%s lookup failed for %s: %s", source, identifier, exc)
         return None
     except Exception as exc:
