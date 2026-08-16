@@ -154,11 +154,13 @@ class Pubmed(Feeder):
         for key, path in self.PUBMED_PATH.items():
             if key == "abstract":
                 abstract_sections = [
-                    self._text(node) for node in tree.findall(self.PUBMED_PATH["abstract"])
+                    self._text(node)
+                    for node in tree.findall(self.PUBMED_PATH["abstract"])
                 ]
-                rets[key] = " ".join(
-                    section for section in abstract_sections if section
-                ) or None
+                rets[key] = (
+                    " ".join(section for section in abstract_sections if section)
+                    or None
+                )
             elif key != "author":
                 rets[key] = self._text(tree.find(path))
 
