@@ -7,6 +7,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 from difflib import SequenceMatcher
 from typing import TYPE_CHECKING, TypeVar
+from xml.etree.ElementTree import ParseError
 
 from requests.exceptions import RequestException
 
@@ -25,6 +26,7 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Iterable
 
 T = TypeVar("T")
+_SOURCE_DATA_ERRORS = (KeyError, IndexError, TypeError, ValueError, ParseError)
 
 
 def _title_similarity(title1: str, title2: str) -> float:
@@ -40,7 +42,7 @@ def _fetch_safely(
     """Fetch from one source without aborting a fallback chain."""
     try:
         return fetcher(identifier)
-    except (OSError, RequestException) as exc:
+    except (OSError, RequestException, *_SOURCE_DATA_ERRORS) as exc:
         logger.warning("%s lookup failed for %s: %s", source, identifier, exc)
         return None
     except Exception as exc:
@@ -58,7 +60,7 @@ async def _async_fetch_safely(
     """Fetch from one source asynchronously without aborting other sources."""
     try:
         return await fetcher(identifier)
-    except (OSError, RequestException) as exc:
+    except (OSError, RequestException, *_SOURCE_DATA_ERRORS) as exc:
         logger.warning("%s lookup failed for %s: %s", source, identifier, exc)
         return None
     except Exception as exc:
