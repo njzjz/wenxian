@@ -24,8 +24,8 @@ dependencies = [
     "pylatexenc",
     "unidecode",
     "pyiso4",
-    "requests-ratelimiter",
-    "pyrate-limiter>=3",
+    "requests-ratelimiter; sys_platform != 'emscripten'",
+    "pyrate-limiter>=3; sys_platform != 'emscripten'",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
