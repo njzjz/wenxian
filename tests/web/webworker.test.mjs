@@ -71,7 +71,9 @@ const fastOnMessage = globalThis.onmessage;
 
 test("worker loads the release-prebuilt environment without micropip", () => {
   assert.deepEqual(
-    fast.messages.slice(0, 3).map(({ progress, message }) => [progress, message]),
+    fast.messages
+      .slice(0, 3)
+      .map(({ progress, message }) => [progress, message]),
     [
       [8, "Loading Python runtime…"],
       [32, "Loading prebuilt wenxian environment…"],
