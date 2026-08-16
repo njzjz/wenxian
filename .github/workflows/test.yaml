@@ -18,10 +18,10 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python }}
-      - name: Setup uv
-        run: python -m pip install uv
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
       - name: Install dependencies
-        run: python -m uv pip install --system nox[uv]
+        run: uv pip install --system nox[uv]
       - name: Test with pytest
         run: nox -db uv
       - name: Upload Python coverage to Codecov
@@ -42,6 +42,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10
       - uses: actions/setup-node@v6
         with:
           node-version: 22
@@ -57,9 +59,9 @@ jobs:
           flags: web
           name: web
           fail_ci_if_error: true
-      - name: Build test web bundle
+      - name: Build test web bundle from locked dependencies
         run: |
-          pipx run build --wheel
+          uv build --wheel
           wheel=$(echo dist/wenxian-*.whl)
           python scripts/build_web_bundle.py "$wheel" test-web-bundle.tar.gz
       - name: Install Chromium
