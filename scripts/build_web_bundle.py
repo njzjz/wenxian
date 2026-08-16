@@ -6,32 +6,52 @@ import argparse
 import json
 import shutil
 import subprocess
-import sys
 import tarfile
 import tempfile
 from importlib.metadata import PathDistribution
 from pathlib import Path
 
-WEB_REQUIREMENTS = (
-    "requests",
-    "pylatexenc==3.0a21",
-    "unidecode",
-    "pyiso4",
-)
+ROOT = Path(__file__).resolve().parents[1]
+WEB_REQUIREMENTS_IN = ROOT / "web-requirements.in"
+WEB_REQUIREMENTS_LOCK = ROOT / "web-requirements.lock"
 
 
-def _install(target: Path, requirements: list[str]) -> None:
+def _locked_requirements(lock: Path = WEB_REQUIREMENTS_LOCK) -> list[str]:
+    """Return the exact package pins recorded by the uv-generated lock file."""
+    requirements = []
+    for raw_line in lock.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if line and not line.startswith("#"):
+            requirements.append(line)
+    return requirements
+
+
+def _sync_locked_dependencies(target: Path) -> None:
+    """Install exactly the locked browser dependencies into ``target`` with uv."""
     subprocess.run(
         [
-            sys.executable,
-            "-m",
+            "uv",
             "pip",
-            "install",
-            "--disable-pip-version-check",
-            "--no-compile",
+            "sync",
+            str(WEB_REQUIREMENTS_LOCK),
             "--target",
             str(target),
-            *requirements,
+        ],
+        check=True,
+    )
+
+
+def _install_wenxian_wheel(target: Path, wheel: Path) -> None:
+    """Overlay the current wenxian wheel without resolving dependencies again."""
+    subprocess.run(
+        [
+            "uv",
+            "pip",
+            "install",
+            "--target",
+            str(target),
+            "--no-deps",
+            str(wheel),
         ],
         check=True,
     )
@@ -53,22 +73,8 @@ def build_bundle(wheel: Path, output: Path) -> None:
         target = Path(tmp) / "site-packages"
         target.mkdir()
 
-        _install(target, list(WEB_REQUIREMENTS))
-        subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "--disable-pip-version-check",
-                "--no-compile",
-                "--no-deps",
-                "--target",
-                str(target),
-                str(wheel),
-            ],
-            check=True,
-        )
+        _sync_locked_dependencies(target)
+        _install_wenxian_wheel(target, wheel)
 
         for cache in target.rglob("__pycache__"):
             shutil.rmtree(cache)
@@ -79,7 +85,8 @@ def build_bundle(wheel: Path, output: Path) -> None:
         manifest = {
             "format": 1,
             "packages": _versions(target),
-            "requirements": list(WEB_REQUIREMENTS),
+            "requirements": _locked_requirements(),
+            "requirements_lock": WEB_REQUIREMENTS_LOCK.name,
         }
         (target / "wenxian-web-manifest.json").write_text(
             json.dumps(manifest, indent=2, sort_keys=True) + "\n",
