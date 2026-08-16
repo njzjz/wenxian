@@ -5,7 +5,7 @@
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
 
 const WEB_BUNDLE_URL =
-  "https://github.com/njzjz/wenxian/releases/latest/download/wenxian-web-packages.tar.gz";
+  "https://github.com/njzjz/wenxian/releases/download/web-latest/wenxian-web-packages.tar.gz";
 
 function reportProgress(progress, message, id = null) {
   self.postMessage({ type: "progress", progress, message, id });
@@ -48,7 +48,9 @@ if Version(version("wenxian")) < Version("0.3.4"):
 }
 
 async function loadPrebuiltWebBundle() {
-  const response = await fetch(WEB_BUNDLE_URL, { cache: "force-cache" });
+  // The asset behind this stable URL is replaced after every master update.
+  // Revalidate it so a returning browser does not pin an older commit bundle.
+  const response = await fetch(WEB_BUNDLE_URL, { cache: "no-cache" });
   if (!response.ok) {
     throw new Error(`web bundle unavailable: HTTP ${response.status}`);
   }
