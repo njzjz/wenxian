@@ -16,6 +16,8 @@
     <meta name="theme-color" content="#03A89E" />
     <link rel="icon" type="image/svg" href="logo.svg" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://pypi.org" />
+    <link rel="preconnect" href="https://files.pythonhosted.org" />
     <link
       href="
 https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
@@ -48,7 +50,7 @@ https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
       />
       wenxian
     </h1>
-    <form style="padding-bottom: 40px" target="_blank" class="flex">
+    <form style="padding-bottom: 20px" target="_blank" class="flex">
       <label class="block" style="width: fit-content">
         <input
           class="block identifier"
@@ -66,6 +68,10 @@ https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
         value="Generate BibTeX"
       />
     </form>
+    <div id="progress-container" class="progress-container" hidden>
+      <progress id="progress-bar" max="100" value="0"></progress>
+      <div id="progress-text" class="progress-text" aria-live="polite"></div>
+    </div>
     <div class="examples" id="message">
       <p><b>Examples:</b></p>
       <ul>
@@ -90,7 +96,6 @@ https://cdn.jsdelivr.net/npm/github-fork-ribbon-css@0.2.3/gh-fork-ribbon.min.css
         >njzjz/wenxian</a
       >
     </p>
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/prismjs-bibtex@2.1.0/prism-bibtex.js"
