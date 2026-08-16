@@ -12,7 +12,7 @@ const packageInstallerRequests = [];
 if (bundlePath) {
   const bundle = await readFile(bundlePath);
   await page.route(
-    "**/releases/latest/download/wenxian-web-packages.tar.gz",
+    "**/releases/download/web-latest/wenxian-web-packages.tar.gz",
     (route) =>
       route.fulfill({
         status: 200,
