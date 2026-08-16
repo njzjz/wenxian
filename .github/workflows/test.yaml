@@ -65,7 +65,7 @@ jobs:
           version: "0.12.5"
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Install web test dependencies
         run: npm install
       - name: Run web unit tests with coverage
