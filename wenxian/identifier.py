@@ -17,8 +17,11 @@ class Identifier(Enum):
 
 REGEX: dict[Identifier, re.Pattern] = {
     Identifier.DOI: re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.IGNORECASE),
-    Identifier.PMID: re.compile(r"\b\d{8}\b"),
-    Identifier.ARXIV: re.compile(r"\d{4}\.\d{4,5}(v\d+)?"),
+    Identifier.PMID: re.compile(r"\d{1,8}"),
+    Identifier.ARXIV: re.compile(
+        r"(?:\d{4}\.\d{4,5}|[A-Z][A-Z0-9.-]*/\d{7})(?:v\d+)?",
+        re.IGNORECASE,
+    ),
 }
 """Regex for identifiers."""
 
@@ -26,7 +29,7 @@ REGEX: dict[Identifier, re.Pattern] = {
 def get_identifier_type(identifier: str) -> Identifier | None:
     """Get the type of an identifier."""
     for id_type, regex in REGEX.items():
-        if regex.match(identifier):
+        if regex.fullmatch(identifier):
             return id_type
     # Check if it could be a reasonable paper title
     # Title should have at least 3 words and be at least 10 characters
