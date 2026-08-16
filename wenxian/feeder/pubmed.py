@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
+from json import JSONDecodeError
 from typing import ClassVar
 from xml.etree import ElementTree
-
-from requests.exceptions import JSONDecodeError
 
 from wenxian import __email__, __tool__
 from wenxian.feeder.feeder import Feeder
