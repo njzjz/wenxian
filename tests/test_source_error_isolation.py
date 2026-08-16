@@ -51,9 +51,9 @@ def test_async_doi_keeps_good_result_when_one_source_has_bad_payload(monkeypatch
     monkeypatch.setattr(identifier_module.Chemrxiv, "async_from_doi", missing)
     monkeypatch.setattr(identifier_module.Semanticscholar, "async_from_doi", missing)
 
-    assert asyncio.run(identifier_module.async_from_doi("10.1234/example")) == Reference(
-        title="Usable", journal="Journal"
-    )
+    assert asyncio.run(
+        identifier_module.async_from_doi("10.1234/example")
+    ) == Reference(title="Usable", journal="Journal")
 
 
 def test_native_programming_error_still_escapes(monkeypatch):
