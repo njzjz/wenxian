@@ -3,49 +3,60 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import sys
 
-from wenxian.from_identifier import from_identifier
+from wenxian.from_identifier import async_from_identifier
 from wenxian.logger import logger
 
 
-def cmd_from(
+async def _async_cmd_from(
     *,
     IDENTIFIER: list[str],
     output: str | None = None,
     ignore_errors: bool = False,
     output_type: str = "bibtex",
-    **kwargs,
 ):
-    """Generate BibTeX from a identifier."""
+    """Generate references concurrently from identifiers."""
+    identifiers = [identifier.strip() for identifier in IDENTIFIER]
+    tasks = [
+        asyncio.create_task(async_from_identifier(identifier))
+        for identifier in identifiers
+    ]
+
     buff = []
     references = []
-    for identifier in IDENTIFIER:
-        try:
-            ref = from_identifier(identifier.strip())
-        except Exception as e:
-            msg = f"Failed to fetch reference from {identifier}: {e}"
-            if ignore_errors:
-                logger.exception(msg)
-                continue
-            else:
+    try:
+        for identifier, task in zip(identifiers, tasks, strict=True):
+            try:
+                ref = await task
+            except Exception as e:
+                msg = f"Failed to fetch reference from {identifier}: {e}"
+                if ignore_errors:
+                    logger.exception(msg)
+                    continue
                 raise ValueError(msg) from e
-        if ref is None or ref.is_empty():
-            msg = f"Failed to fetch reference from {identifier}"
-            if ignore_errors:
-                logger.error(msg)
-                continue
-            else:
+            if ref is None or ref.is_empty():
+                msg = f"Failed to fetch reference from {identifier}"
+                if ignore_errors:
+                    logger.error(msg)
+                    continue
                 raise ValueError(msg)
-        references.append(ref)
-        if output_type == "bibtex":
-            buff.append(ref.bibtex)
-        elif output_type == "markdown":
-            buff.append(ref.markdown)
-        elif output_type == "text":
-            buff.append(ref.text)
-        else:
-            raise ValueError(f"Unknown output type: {output_type}")
+            references.append(ref)
+            if output_type == "bibtex":
+                buff.append(ref.bibtex)
+            elif output_type == "markdown":
+                buff.append(ref.markdown)
+            elif output_type == "text":
+                buff.append(ref.text)
+            else:
+                raise ValueError(f"Unknown output type: {output_type}")
+    finally:
+        for task in tasks:
+            if not task.done():
+                task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+
     if output is None:
         sys.stdout.write("\n".join(buff))
         return
@@ -63,6 +74,25 @@ def cmd_from(
             output = f"references{extension}"
     with open(output, "w") as f:
         f.write("\n".join(buff))
+
+
+def cmd_from(
+    *,
+    IDENTIFIER: list[str],
+    output: str | None = None,
+    ignore_errors: bool = False,
+    output_type: str = "bibtex",
+    **kwargs,
+):
+    """Generate references from identifiers using asynchronous lookups."""
+    asyncio.run(
+        _async_cmd_from(
+            IDENTIFIER=IDENTIFIER,
+            output=output,
+            ignore_errors=ignore_errors,
+            output_type=output_type,
+        )
+    )
 
 
 def main_parser() -> argparse.ArgumentParser:

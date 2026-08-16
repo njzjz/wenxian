@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from wenxian.feeder.feeder import Feeder
-from wenxian.feeder.session import SESSION
+from wenxian.feeder.session import SESSION, async_get
 from wenxian.reference import Author, Reference
 
 
@@ -12,20 +12,31 @@ class Europepmc(Feeder):
 
     API_URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
 
+    @staticmethod
+    def _params(pmid: str | int) -> dict[str, str]:
+        """Build an unambiguous Europe PMC query for a PubMed record."""
+        return {
+            "query": f"EXT_ID:{pmid} AND SRC:MED",
+            "resultType": "core",
+            "format": "json",
+            "pageSize": "1",
+        }
+
     def from_pmid(self, pmid: str | int) -> Reference | None:
         """Fetch a reference from a PubMed identifier."""
-        r = SESSION.get(
-            self.API_URL,
-            params={
-                "query": f"EXT_ID:{pmid} AND SRC:MED",
-                "resultType": "core",
-                "format": "json",
-                "pageSize": "1",
-            },
-        )
+        r = SESSION.get(self.API_URL, params=self._params(pmid))
         if r.status_code != 200:
             return None
+        results = r.json().get("resultList", {}).get("result", [])
+        if not results:
+            return None
+        return self._from_result(results[0])
 
+    async def async_from_pmid(self, pmid: str | int) -> Reference | None:
+        """Fetch a reference from a PubMed identifier asynchronously."""
+        r = await async_get(self.API_URL, params=self._params(pmid))
+        if r.status_code != 200:
+            return None
         results = r.json().get("resultList", {}).get("result", [])
         if not results:
             return None

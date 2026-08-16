@@ -3,8 +3,13 @@ import { asyncRun } from "./pyworker.js";
 async function from_identifier(identifier) {
   const pythonIdentifier = JSON.stringify(identifier);
   const { results, error } = await asyncRun(`
-    from wenxian.from_identifier import from_identifier
-    reference = from_identifier(${pythonIdentifier})
+    try:
+        from wenxian.from_identifier import async_from_identifier
+    except ImportError:
+        from wenxian.from_identifier import from_identifier
+        reference = from_identifier(${pythonIdentifier})
+    else:
+        reference = await async_from_identifier(${pythonIdentifier})
     reference.bibtex if reference is not None and not reference.is_empty() else None
     `);
   return { results, error };
@@ -21,7 +26,6 @@ document.getElementById("submit").addEventListener("click", function (event) {
     if (results) {
       output_text.textContent = results;
       Prism.highlightElement(output_text);
-      // show the output
       output.style.display = "block";
       message.textContent = "";
     } else if (!error) {
@@ -36,9 +40,7 @@ document.getElementById("submit").addEventListener("click", function (event) {
 });
 
 function run_example(identifier) {
-  // fill the input
   document.getElementById("identifier").value = identifier;
-  // submit the form
   document.getElementById("submit").click();
 }
 window.run_example = run_example;
