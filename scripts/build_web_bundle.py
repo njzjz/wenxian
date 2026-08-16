@@ -101,6 +101,7 @@ def build_bundle(wheel: Path, output: Path) -> None:
 
 
 def main() -> None:
+    """Build a web bundle from command-line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("wheel", type=Path)
     parser.add_argument("output", type=Path)
