@@ -63,7 +63,19 @@ class _AsyncSpacingLimiter:
             state.next_start = loop.time() + self.interval
 
 
-SESSION = Session()
+_DEFAULT_TIMEOUT = (5.0, 20.0)
+
+
+class _TimeoutSession(Session):
+    """Requests session that applies a bounded timeout by default."""
+
+    def request(self, method, url, **kwargs):
+        """Send a request with the shared default timeout unless overridden."""
+        kwargs.setdefault("timeout", _DEFAULT_TIMEOUT)
+        return super().request(method, url, **kwargs)
+
+
+SESSION = _TimeoutSession()
 
 # retry logic
 retries = Retry(
