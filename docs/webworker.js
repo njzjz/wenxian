@@ -1,9 +1,12 @@
 // webworker.js
 
-// Setup your project to serve `py-worker.js`. You should also serve
-// `pyodide.js`, and all its associated `.asm.js`, `.json`,
-// and `.wasm` files as well:
+// Pyodide only runs inside this worker. Keeping it off the main thread avoids
+// downloading and parsing the runtime twice.
 importScripts("https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js");
+
+function reportProgress(progress, message, id = null) {
+  self.postMessage({ type: "progress", progress, message, id });
+}
 
 function installLegacyWenxianBrowserShims() {
   self.pyodide.runPython(`
@@ -42,23 +45,32 @@ if Version(version("wenxian")) < Version("0.3.4"):
 }
 
 async function loadPyodideAndPackages() {
+  reportProgress(8, "Loading Python runtime…");
   self.pyodide = await loadPyodide();
+
+  reportProgress(32, "Loading package installer…");
   await self.pyodide.loadPackage("micropip");
   const micropip = self.pyodide.pyimport("micropip");
+
+  reportProgress(45, "Loading wenxian…");
   await micropip.install(["wenxian", "pylatexenc==3.0a21"]);
   installLegacyWenxianBrowserShims();
-  await self.pyodide.loadPackage("sqlite3");
+
+  // sqlite3 used to be loaded here even though the browser code does not use
+  // it. Avoiding that extra package download shortens cold starts.
+  reportProgress(65, "Ready");
 }
-let pyodideReadyPromise = loadPyodideAndPackages();
+const pyodideReadyPromise = loadPyodideAndPackages();
 
 self.onmessage = async (event) => {
   const { id, python } = event.data;
   try {
-    // Initialization errors must be returned to the caller too; otherwise the
-    // page remains stuck on "Fetching..." forever.
     await pyodideReadyPromise;
+    reportProgress(72, "Preparing query…", id);
     await self.pyodide.loadPackagesFromImports(python);
-    let results = await self.pyodide.runPythonAsync(python);
+    reportProgress(82, "Querying literature sources…", id);
+    const results = await self.pyodide.runPythonAsync(python);
+    reportProgress(100, "Done", id);
     self.postMessage({ results, id });
   } catch (error) {
     self.postMessage({ error: error.message || String(error), id });
