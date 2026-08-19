@@ -99,4 +99,4 @@ jobs:
     steps:
       - name: Deploy website and Python bundle together
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
