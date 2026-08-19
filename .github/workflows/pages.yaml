@@ -83,7 +83,7 @@ jobs:
           print(json.dumps(manifest, indent=2, sort_keys=True))
           PY
       - name: Upload website artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
